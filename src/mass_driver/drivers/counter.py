@@ -15,7 +15,7 @@ class Counter(PatchDriver):
 
     def detect(self, repo_path: Path) -> bool:
         """Detect if we need to patch the counter file"""
-        counter_filepath_abs = self.counter_file.relative_to(repo_path)
+        counter_filepath_abs = repo_path / self.counter_file
         if not counter_filepath_abs.is_file():
             print("File not found: let's Patch!")
             return True
@@ -32,5 +32,5 @@ class Counter(PatchDriver):
 
     def patch(self, repo_path: Path):
         """Increment the counter"""
-        counter_filepath_abs = self.counter_file.relative_to(repo_path)
+        counter_filepath_abs = repo_path / self.counter_file
         counter_filepath_abs.write_text(str(self.target_count))

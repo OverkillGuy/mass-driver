@@ -10,7 +10,8 @@ mass-driver = "mass_driver.cli:cli"
 
 [tool.poetry.dependencies]
 python = "^3.10"
-
+# Manipulate git repos: Clone, diff, commit patches...
+GitPython = "*"
 
 # Note: Linters not defined in this file but .pre-commit-config.yaml, which
 # installs/manages each tool in its own isolated virtualenv

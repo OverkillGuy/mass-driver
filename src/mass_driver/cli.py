@@ -5,6 +5,7 @@ from pathlib import Path
 from typing import Optional
 
 from mass_driver.drivers import Counter
+from mass_driver.repo import clone_if_remote, commit
 
 
 def parse_arguments(arguments: list[str]) -> argparse.Namespace:
@@ -33,16 +34,17 @@ def cli(arguments: Optional[list[str]] = None):
     if arguments is None:
         arguments = sys.argv[1:]
     args = parse_arguments(arguments)
-    repo_path = Path(args.repo_path)
-    main(repo_path, args.patch)
+    main(args.repo_path, args.patch)
 
 
-def main(repo_path: Path, do_patch: bool):
+def main(repo_path: str, do_patch: bool):
     """Run the program's main command"""
     driver = Counter(counter_file=Path("counter"), target_count=1)
+    repo = clone_if_remote(repo_path)
     if do_patch:
         print(f"Patching '{repo_path}'...")
-        driver.patch(repo_path)
+        driver.patch(repo.working_dir)
+        commit(repo, driver)
     else:
-        needs_patch = driver.detect(repo_path)
+        needs_patch = driver.detect(repo.working_dir)
         print(f"Detecting '{repo_path}': {needs_patch=}")

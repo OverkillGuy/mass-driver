@@ -7,7 +7,7 @@ The project uses semantic versioning (see [semver](https://semver.org)).
 ## [Unreleased]
 
 ### Added
-- Basic PatchDriver system, to detect/patch local repos
+- Basic clone/detect/patch/commit workflow
 
 
 ## v0.1.0 - 2022-11-10
