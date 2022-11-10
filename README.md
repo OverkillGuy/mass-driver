@@ -1,13 +1,12 @@
 # Mass Driver
 
-Send bulk repo change requests
+Send bulk repo change requests.
 
 Requires Python 3.10
 
 
 ## Usage
 
-Depends on what the code in there does.
 
 ### Run the command
 

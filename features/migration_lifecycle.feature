@@ -9,4 +9,3 @@ Scenario: Migration progress dashboard
   When I open the migration's view
   Then all the organisation's repos using old "log4j" are listed
   And all the repos which adopted new version are crossed out
-

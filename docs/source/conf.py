@@ -69,3 +69,4 @@ autoapi_add_toctree_entry = False
 autosectionlabel_prefix_document = True
 
 myst_heading_anchors = 2
+myst_enable_extensions = ["substitution"]
