@@ -13,7 +13,9 @@ def parse_arguments(arguments: list[str]) -> argparse.Namespace:
         "mass-driver",
         description="Send bulk repo change requests",
     )
-    parser.add_argument("repo_path", help="Repository to Patch, as Git Url")
+    parser.add_argument(
+        "repo_path", help="Repository to Patch. If not a local path, will git clone it"
+    )
 
     detect_group = parser.add_mutually_exclusive_group()
     detect_group.add_argument(

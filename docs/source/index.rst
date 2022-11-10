@@ -11,5 +11,6 @@ root of the code repository.
    :caption: Table of Contents:
 
    Changelog <changelog>
+   usage
    architecture
    API Reference <autoapi/mass_driver/index>
