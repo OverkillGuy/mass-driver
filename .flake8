@@ -1,0 +1,15 @@
+[flake8]
+# Black (formatter) uses 88 characters per line not PEP8's 79
+max-line-length = 88
+# Per-project ignored rules: show rule name + explain why ignored for whole project
+ignore =
+    # "Use of assert detected. The enclosed code will be removed when compiling to optimised byte code."
+    # This is useless in tests/ where we WANT to have asserts
+    S101
+    # "Docstrings first line must end in a period"
+    # Overly strict rule don't serve anyone. PEP8 be damned on this
+    D400
+    # "Line too long"
+    # We have "black" formatter to deal with those (splits line), and flake8
+    # still complains about long comments(!!!) automatically
+    E501

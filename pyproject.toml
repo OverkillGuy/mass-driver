@@ -1,0 +1,62 @@
+[tool.poetry]
+name = "mass_driver"
+version = "0.1.0"
+description = "Send bulk repo change requests"
+authors = ["Jb Doyon <jb@jiby.tech>"]
+readme = "README.md"
+
+[tool.poetry.scripts]
+mass-driver = "mass_driver.cli:cli"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+
+
+# Note: Linters not defined in this file but .pre-commit-config.yaml, which
+# installs/manages each tool in its own isolated virtualenv
+
+[tool.poetry.group.test.dependencies]
+pytest = "7.*"
+# Test coverage
+pytest-cov = "3.*"
+# Clearer assertion failures (colorful diff)
+pytest-clarity = "1.*"
+# Expose unittest.Mocker in pytest
+pytest-mock = "*"
+
+[tool.poetry.group.docs.dependencies]
+# Main documentation-as-code (HTML/PDF generator)
+Sphinx = "5.*"
+# Read the docs (pretty) theme for sphinx
+sphinx-rtd-theme = "1.*"
+# Markdown parser for sphinx: Sphinx uses "RST" files, this adds markdown
+myst-parser = "*"
+# Automatic Python module docs (javadoc-style)
+sphinx-autoapi = "*"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+# Make isort work with Black
+# Avoids conflicting imports
+# As per https://pycqa.github.io/isort/docs/configuration/black_compatibility/#using-a-config-file-such-as-isortcfg
+[tool.isort]
+profile = "black"
+multi_line_output = 3
+
+# Avoid pointless warning about performance hit of f-string in loggers
+[tool.pylint.message_control]
+disable = ["logging-fstring-interpolation"]
+
+[tool.pytest.ini_options]
+addopts = """-vv \
+      --doctest-modules \
+      --cov=mass_driver \
+      --cov-report=xml:test_results/coverage.xml \
+      --cov-report=html:test_results/coverage.html \
+      --cov-report=term \
+      --junit-xml=test_results/results.xml"""
+
+[tool.mypy]
+python_version = "3.10"
