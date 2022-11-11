@@ -6,8 +6,11 @@ The project uses semantic versioning (see [semver](https://semver.org)).
 
 ## [Unreleased]
 
+
+## v0.2.0 - 2022-11-11
+
 ### Added
-- Basic clone/detect/patch/commit workflow
+- Basic clone/detect/patch/commit workflow, with basic Github support
 
 
 ## v0.1.0 - 2022-11-10
