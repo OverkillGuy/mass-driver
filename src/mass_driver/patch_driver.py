@@ -9,9 +9,6 @@ GitUrl = str
 class PatchDriver:
     """Base class for creating patches over repositories"""
 
-    patch_parameters: dict
-    """Parameters given to the driver"""
-
     def detect(self, repo_path: Path) -> bool:
         """
         Scan the given (cloned) Git Repository for patch-ablity.
