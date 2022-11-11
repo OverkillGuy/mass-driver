@@ -21,6 +21,12 @@ lint:  # Use all linters on all files (not just staged for commit)
 test:
 	poetry run pytest
 
+ACTION=--detect
+REPOS=--repo-path "git@github.com:OverkillGuy/sphinx-needs-test.git"
+.PHONY: run
+run:
+	poetry run mass-driver ${ACTION} ${REPOS}
+
 .PHONY: docs
 docs: clean-docs
 	cd docs && make html
