@@ -51,27 +51,18 @@ class Poetry(PatchDriver):
                 f"/tool/poetry/group/{self.package_group}/dependencies/{self.package}"
             )
         else:
-            return f"/tool/poetry/dependencies/{self.package_target}"
+            return f"/tool/poetry/dependencies/{self.package}"
 
-    def detect(self, repo_path: Path) -> bool:
-        """Detect if we need to patch the counter file"""
-        project = get_pyproject(repo_path)
+    def run(self, repo: Path, dry_run: bool = True) -> bool:
+        """Process the major bump file"""
+        project = get_pyproject(repo)
         dep_version = resolve_pointer(project.data, self.json_pointer, None)
         if not dep_version:
             print(f"Didn't find {self.package} in pyproject.toml test deps!")
             return False
         major_version, *other_versions = dep_version.split(".")
-        print(f"Detected {major_version=} vs target major of {self.target_major}")
-        return int(major_version) < int(self.target_major)
-
-    def patch(self, repo_path: Path):
-        """Actually do patch, upgrading major version"""
-        project = get_pyproject(repo_path)
-        dep_version = resolve_pointer(project.data, self.json_pointer, None)
-        if not dep_version:
-            print(f"Didn't find {self.package} in pyproject.toml test deps!")
-            return False
-        major_version, *other_versions = dep_version.split(".")
-        if int(major_version) < int(self.target_major):
+        inferior_version = int(major_version) < int(self.target_major)
+        if inferior_version and not dry_run:
             set_pointer(project.data, self.json_pointer, f"{self.target_major}.*")
             project.save()
+        return inferior_version

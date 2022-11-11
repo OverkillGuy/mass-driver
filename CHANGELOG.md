@@ -7,8 +7,14 @@ The project uses semantic versioning (see [semver](https://semver.org)).
 ## [Unreleased]
 
 
-## v0.3.0 - 2022-11-11
+### Changed
+- PatchDriver API simplified, now using single func for detect + patch:
+  called via `PatchDriver.run(repo: Path, dry_run: bool)`.
+- CLI simplified when exposing `PatchDriver.run()`, now uses either `--dry-run`
+  (the default setup) or `--really-commit-changes` for committing (not pushing)
 
+
+## v0.3.0 - 2022-11-11
 
 ### Added
 - Poetry Driver stub for major version of packages in `pyproject.toml`.

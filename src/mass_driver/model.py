@@ -6,17 +6,14 @@ from pathlib import Path
 class PatchDriver:
     """Base class for creating patches over repositories"""
 
-    def detect(self, repo_path: Path) -> bool:
+    def run(self, repo: Path, dry_run: bool = True) -> bool:
         """
-        Scan the given (cloned) Git Repository for patch-ablity.
+        Apply the update to given (cloned) Git Repository.
 
-        Return True if the repo is "non-compliant", needing a patch.
+        If dry_run is True, just detect if the changes are needed.
+        If dry_run is False, actually mutate the given folder
         """
-        raise NotImplementedError("PatchDriver base class can't detect, use derived")
-
-    def patch(self, repo_path: Path):
-        """Mutate the given (cloned) repo to Patch it out"""
-        raise NotImplementedError("PatchDriver base class can't patch, use derived")
+        raise NotImplementedError("PatchDriver base class can't run, use derived")
 
 
 class Forge:

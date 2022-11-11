@@ -30,12 +30,18 @@ def parse_arguments(arguments: list[str]) -> argparse.Namespace:
     )
     detect_group = parser.add_mutually_exclusive_group()
     detect_group.add_argument(
-        "--patch", action="store_true", help="Actually do the patching"
+        "--really-commit-changes",
+        dest="dry_run",
+        action="store_false",
+        help="Really commit changes (locally, no pushing)",
     )
     detect_group.add_argument(
-        "--detect", action="store_true", help="Just detect, no patching (default)"
+        "--dry-run",
+        action="store_true",
+        dest="dry_run",
+        help="Dry run, no actual commit, no pushing (default)",
     )
-    parser.set_defaults(patch=False, detect=True)
+    parser.set_defaults(dry_run=True)
     parser.add_argument(
         "--token-file",
         help="File containing Github API Token",
@@ -52,7 +58,7 @@ def cli(arguments: list[str] | None = None):
     if args.repo_filelist:
         args.repo_path = args.repo_filelist.read().strip().split("\n")
     token = get_token(args)
-    main(args.repo_path, args.patch, args.branch_name, token)
+    main(args.repo_path, args.dry_run, args.branch_name, token)
 
 
 def get_token(args) -> str:
