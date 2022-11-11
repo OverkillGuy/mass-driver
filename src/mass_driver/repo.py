@@ -14,8 +14,12 @@ def clone_if_remote(repo_path: str, cache_folder: Path = DEFAULT_CACHE) -> Repo:
     if Path(repo_path).is_dir():
         print("Given an existing (local) repo: no cloning")
         return Repo(path=repo_path)
-    *_junk, repo_blurb = repo_path.split(":")
-    org, repo_name = repo_blurb.split("/")
+    if ":" in repo_path:
+        *_junk, repo_blurb = repo_path.split(":")
+        org, repo_name = repo_blurb.split("/")
+    else:
+        org = "local"
+        repo_name = Path(repo_path).name
     clone_target = cache_folder / org / repo_name
     if clone_target.is_dir():
         print("Given a URL for we cloned already: no cloning")
