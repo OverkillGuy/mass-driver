@@ -24,6 +24,7 @@ test:
 # ACTION=--really-commit-changes
 ACTION=--dry-run
 REPOS=--repo-path "git@github.com:OverkillGuy/sphinx-needs-test.git"
+#REPOS=--repo-filelist repos
 .PHONY: run
 run:  # Remember to export GITHUB_API_TOKEN beforehand
 	poetry run mass-driver ${ACTION} ${REPOS}

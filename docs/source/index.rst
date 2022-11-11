@@ -10,7 +10,8 @@ root of the code repository.
 .. toctree::
    :caption: Table of Contents:
 
-   Changelog <changelog>
    usage
+   development
    architecture
+   Changelog <changelog>
    API Reference <autoapi/mass_driver/index>
