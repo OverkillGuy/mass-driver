@@ -7,6 +7,9 @@ The project uses semantic versioning (see [semver](https://semver.org)).
 ## [Unreleased]
 
 
+## v0.3.0 - 2022-11-11
+
+
 ### Added
 - Poetry Driver stub for major version of packages in `pyproject.toml`.
   Showcases JSON Pointers (RFC6901) for structured fields modification.

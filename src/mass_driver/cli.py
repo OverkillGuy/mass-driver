@@ -11,7 +11,7 @@ def parse_arguments(arguments: list[str]) -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         "mass-driver",
         description="Send bulk repo change requests",
-        epilog="Github API token requires either --token-file flag or envvar GITHUB_API_TOKEN\nCurrently, only the simplistic 'Counter' Driver is set up",
+        epilog="Github API token requires either --token-file flag or envvar GITHUB_API_TOKEN\nCurrently no driver selection",
     )
     repolist_group = parser.add_mutually_exclusive_group(required=True)
     repolist_group.add_argument(
