@@ -7,6 +7,9 @@ The project uses semantic versioning (see [semver](https://semver.org)).
 ## [Unreleased]
 
 
+## v0.3.1 - 2022-11-11
+
+
 ### Changed
 - PatchDriver API simplified, now using single func for detect + patch:
   called via `PatchDriver.run(repo: Path, dry_run: bool)`.
