@@ -2,7 +2,17 @@
 
 from pathlib import Path
 
-from github import Github
+try:
+    from github import Github
+
+    # We want to hard fail only when actively USING the dependencies, not just importing
+    # it at toplevel (not actively using) ==> Set a flag for availability of deps,
+    # to check at runtime and raise only then
+    DEPS_AVAILABLE = True
+except ImportError:
+    Github = None  # Define a dummy type to avoid crash
+    DEPS_AVAILABLE = False
+
 
 from mass_driver.model import Forge
 
@@ -15,6 +25,12 @@ class GithubForge(Forge):
 
     def __init__(self, auth_token: str):
         """Instantiate the Github API, mostly for authing"""
+        if not DEPS_AVAILABLE:
+            raise ImportError(
+                "Missing dependencies required for this Forge. "
+                "Please install the package fully"
+            )
+
         self.api = Github(auth_token)
 
     def create_pr(self, forge_repo: str, repo_path: Path, branch: str, msg: str):

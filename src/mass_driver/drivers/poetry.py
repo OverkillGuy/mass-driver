@@ -21,8 +21,18 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Optional
 
-from jsonpointer import resolve_pointer, set_pointer
-from poetry.core.pyproject.toml import PyProjectTOML
+try:
+    from jsonpointer import resolve_pointer, set_pointer
+    from poetry.core.pyproject.toml import PyProjectTOML
+
+    # We want to hard fail only when actively USING the dependencies, not just importing
+    # it at toplevel (not actively using) ==> Set a flag for availability of deps,
+    # to check at runtime and raise only then
+    DEPS_AVAILABLE = True
+except ImportError:
+    DEPS_AVAILABLE = False
+
+    pass  # Shouldn't error at import time (docs, CLI), but instead at runtime
 
 from mass_driver.model import PatchDriver
 
@@ -55,6 +65,11 @@ class Poetry(PatchDriver):
 
     def run(self, repo: Path, dry_run: bool = True) -> bool:
         """Process the major bump file"""
+        if not DEPS_AVAILABLE:
+            raise ImportError(
+                "Missing dependencies required for this Driver. "
+                "Please install the package fully"
+            )
         project = get_pyproject(repo)
         dep_version = resolve_pointer(project.data, self.json_pointer, None)
         if not dep_version:

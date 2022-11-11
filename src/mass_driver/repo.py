@@ -2,7 +2,17 @@
 
 from pathlib import Path
 
-from git import Repo
+try:
+    from git import Repo
+
+    # We want to hard fail only when actively USING the dependencies, not just importing
+    # it at toplevel (not actively using) ==> Set a flag for availability of deps,
+    # to check at runtime and raise only then
+    DEPS_AVAILABLE = True
+except ImportError:
+    Repo = None  # Define a dummy type to avoid crash
+    DEPS_AVAILABLE = False
+
 
 from mass_driver.model import PatchDriver
 
