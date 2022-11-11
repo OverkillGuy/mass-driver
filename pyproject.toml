@@ -4,6 +4,7 @@ version = "0.1.0"
 description = "Send bulk repo change requests"
 authors = ["Jb Doyon <jb@jiby.tech>"]
 readme = "README.md"
+license = "GPL-3.0-or-later"
 
 [tool.poetry.scripts]
 mass-driver = "mass_driver.cli:cli"

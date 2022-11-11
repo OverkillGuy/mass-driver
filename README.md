@@ -88,6 +88,10 @@ documentation and serve it:
 
     make docs docs-serve
 
+## License
+
+This project is released under GPLv3 or later. See `COPYING` file for GPLv3
+license details.
 
 ### Templated repository
 
