@@ -3,7 +3,7 @@
 from dataclasses import dataclass
 from pathlib import Path
 
-from mass_driver.patch_driver import PatchDriver
+from mass_driver.model import PatchDriver
 
 
 @dataclass

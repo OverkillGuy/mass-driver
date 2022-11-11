@@ -13,6 +13,8 @@ mass-driver = "mass_driver.cli:cli"
 python = "^3.10"
 # Manipulate git repos: Clone, diff, commit patches...
 GitPython = "*"
+# Github Forge support
+PyGithub = "*"
 
 # Note: Linters not defined in this file but .pre-commit-config.yaml, which
 # installs/manages each tool in its own isolated virtualenv

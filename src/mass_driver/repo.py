@@ -4,7 +4,7 @@ from pathlib import Path
 
 from git import Repo
 
-from mass_driver.patch_driver import PatchDriver
+from mass_driver.model import PatchDriver
 
 DEFAULT_CACHE = Path(".mass_driver/repos/")
 

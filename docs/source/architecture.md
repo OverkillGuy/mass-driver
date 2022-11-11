@@ -4,9 +4,8 @@ myst:
     Repository: "[Repository](concept-repository)"
     Repositories: "[Repositories](concept-repository)"
     Migration: "[Migration](concept-migration)"
-    Driver: "[Driver](concept-driver)"
     Forge: "[Forge](concept-forge)"
-    Patch Driver: "[Patch Driver](concept-patch-driver)"
+    Driver: "[Patch Driver](concept-patch-driver)"
     Patch: "[Patch](concept-patch)"
 ---
 
@@ -36,10 +35,10 @@ create Patches against a {{Repository}}.
 ## Patch
 (concept-patch)=
 
-A Patch is a diff-able change, the outcome of a {{Patch Driver}}, usually in the
+A Patch is a diff-able change, the outcome of a {{Driver}}, usually in the
 context of a single {{Repository }}.
 
-When discussing a set of Patches created by the same {{Patch Driver}}, we refer
+When discussing a set of Patches created by the same {{ Driver }}, we refer
 to the collective as a {{Migration}}
 
 ## Migration
