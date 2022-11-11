@@ -15,7 +15,10 @@ python = "^3.10"
 GitPython = "*"
 # Github Forge support
 PyGithub = "*"
-
+# Poetry driver
+poetry-core = "*"
+# Json path resolving within
+jsonpointer = "*"
 # Note: Linters not defined in this file but .pre-commit-config.yaml, which
 # installs/manages each tool in its own isolated virtualenv
 
