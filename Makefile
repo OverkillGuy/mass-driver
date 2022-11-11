@@ -22,8 +22,12 @@ test:
 	poetry run pytest
 
 .PHONY: docs
-docs:
+docs: clean-docs
 	cd docs && make html
+
+.PHONY: clean-docs
+clean-docs:
+	-find docs/build/ -delete
 
 .PHONY: docs-serve
 docs-serve:
