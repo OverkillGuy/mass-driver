@@ -29,8 +29,10 @@ def clone_if_remote(repo_path: str, cache_folder: Path = DEFAULT_CACHE) -> Repo:
     return cloned
 
 
-def commit(repo: Repo, driver: PatchDriver):
-    """Commit the repo's changes, given the PatchDriver that did it"""
+def commit(repo: Repo, driver: PatchDriver, branch_name: str):
+    """Commit the repo's changes in branch_name, given the PatchDriver that did it"""
     assert repo.is_dirty(untracked_files=True), "Repo is clean, nothing to commit"
+    branch = repo.create_head(branch_name)
+    branch.checkout()
     repo.git.add(A=True)
     repo.git.commit(m="Bump by driver")
