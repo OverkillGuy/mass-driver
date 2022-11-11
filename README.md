@@ -2,11 +2,12 @@
 
 Send bulk repo change requests.
 
+This repository is on Github: [Overkillguy/mass-driver](https://github.com/OverkillGuy/mass-driver/).
+
 Requires Python 3.10
-
-
 ## Usage
 
+See the docs at [jiby.tech/mass-driver/](https://jiby.tech/mass-driver/)
 
 ### Run the command
 
