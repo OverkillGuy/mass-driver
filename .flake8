@@ -13,3 +13,10 @@ ignore =
     # We have "black" formatter to deal with those (splits line), and flake8
     # still complains about long comments(!!!) automatically
     E501
+    # Consider possible security implications associated with the subprocess module.
+    # We're driving code updates, we NEED to run processes
+    S404
+    # Starting a process with a partial executable path
+    S607
+    # subprocess call - check for execution of untrusted input.
+    S603
