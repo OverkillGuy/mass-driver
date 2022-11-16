@@ -6,6 +6,9 @@ The project uses semantic versioning (see [semver](https://semver.org)).
 
 ## [Unreleased]
 
+
+## v0.4.0 - 2022-11-16
+
 ### Added
 - New `Jsonpatch` Driver, for applying an RFC6902 JSON Patch
 - New `PreCommit` Driver, for running `pre-commit autoupdate`
