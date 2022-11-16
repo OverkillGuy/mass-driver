@@ -6,6 +6,9 @@ The project uses semantic versioning (see [semver](https://semver.org)).
 
 ## [Unreleased]
 
+### Fixed
+- Missing import guard on `JsonPatch` broke usage docs
+
 
 ## v0.4.0 - 2022-11-16
 

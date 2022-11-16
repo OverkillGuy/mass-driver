@@ -5,7 +5,17 @@ import json
 from pathlib import Path
 from typing import Any
 
-from jsonpatch import JsonPatch as Patch
+try:
+    from jsonpatch import JsonPatch as Patch
+
+    # We want to hard fail only when actively USING the dependencies, not just importing
+    # it at toplevel (not actively using) ==> Set a flag for availability of deps,
+    # to check at runtime and raise only then
+    DEPS_AVAILABLE = True
+except ImportError:
+    Patch = None  # Define a dummy type to avoid crash
+    DEPS_AVAILABLE = False
+
 
 from mass_driver.model import PatchDriver
 
@@ -34,6 +44,11 @@ class JsonPatch(PatchDriver):
 
     def run(self, repo: Path, dry_run: bool = True) -> bool:
         """Patch the given file"""
+        if not DEPS_AVAILABLE:
+            raise ImportError(
+                "Missing dependencies required for this Driver. "
+                "Please install the package fully"
+            )
         json_filepath_abs = repo / self.target_file
         if not json_filepath_abs.is_file():
             raise RuntimeError("File not found: can't patch!")
