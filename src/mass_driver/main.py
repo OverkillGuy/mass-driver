@@ -3,7 +3,7 @@
 from pathlib import Path
 from typing import Optional
 
-from mass_driver.drivers import Poetry
+from mass_driver.drivers import JsonPatch
 from mass_driver.forges import GithubForge
 from mass_driver.model import Forge, PatchDriver
 from mass_driver.repo import clone_if_remote, commit
@@ -13,7 +13,9 @@ def main(
     repo_paths: list[str], dry_run: bool, branch_name: Optional[str], auth_token: str
 ):
     """Run the program's main command"""
-    driver = Poetry(package="pytest", target_major="8", package_group="test")
+    driver = JsonPatch(
+        target_file=Path("test.json"), **{"op": "add", "path": "/foo", "value": "bar"}
+    )
     forge = GithubForge(auth_token)
     if not branch_name:
         branch_name = driver.__class__.__name__.lower()
