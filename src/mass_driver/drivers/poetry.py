@@ -1,21 +1,4 @@
-"""
-Poetry package version bump
-
-Using the following:
-
-.. code:: python
-
-    Poetry(package="pytest",target_major="8",package_group="test")
-
-Will provide the following diff:
-
-.. code-block:: diff
-
-    [tool.poetry.group.test.dependencies]
-    -pytest = "7.*"
-    +pytest = "8.*"
-
-"""
+"""Poetry package version bump"""
 
 from dataclasses import dataclass
 from pathlib import Path
@@ -44,7 +27,22 @@ def get_pyproject(repo_path: Path):
 
 @dataclass
 class Poetry(PatchDriver):
-    """Bump a package's major version in the pyproject.toml"""
+    """Bump a package's major version in the pyproject.toml
+
+    Using the following:
+
+    .. code:: python
+
+        Poetry(package="pytest",target_major="8",package_group="test")
+
+    Will provide the following diff:
+
+    .. code-block:: diff
+
+        [tool.poetry.group.test.dependencies]
+        -pytest = "7.*"
+        +pytest = "8.*"
+    """
 
     package: str
     """The target package to update major version for"""
