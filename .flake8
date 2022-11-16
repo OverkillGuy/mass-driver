@@ -20,3 +20,5 @@ ignore =
     S607
     # subprocess call - check for execution of untrusted input.
     S603
+    # subprocess call with shell=True identified, security issue.
+    S602
