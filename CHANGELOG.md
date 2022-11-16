@@ -6,6 +6,10 @@ The project uses semantic versioning (see [semver](https://semver.org)).
 
 ## [Unreleased]
 
+### Added
+- New `Jsonpatch` Driver, for applying an RFC6902 JSON Patch
+- New `mass-driver(1)` man page output to `make docs`
+
 
 ## v0.3.1 - 2022-11-11
 
