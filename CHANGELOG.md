@@ -9,6 +9,7 @@ The project uses semantic versioning (see [semver](https://semver.org)).
 ### Added
 - New `Jsonpatch` Driver, for applying an RFC6902 JSON Patch
 - New `PreCommit` Driver, for running `pre-commit autoupdate`
+- New `ShellDriver` for running arbitrary shell commands
 - New `mass-driver(1)` man page output to `make docs`
 
 
