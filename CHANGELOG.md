@@ -7,8 +7,8 @@ The project uses semantic versioning (see [semver](https://semver.org)).
 ## [Unreleased]
 
 ### Fixed
+- Project objectives (gherkin features in `features/`) now part of docs
 - Missing import guard on `JsonPatch` broke usage docs
-
 
 ## v0.4.0 - 2022-11-16
 
