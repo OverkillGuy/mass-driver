@@ -2,7 +2,9 @@
 import argparse
 import os
 import sys
+from pathlib import Path
 
+from mass_driver.discovery import discover_drivers, load_drivers
 from mass_driver.main import main
 
 
@@ -27,6 +29,10 @@ def parse_arguments(arguments: list[str]) -> argparse.Namespace:
     parser.add_argument(
         "--branch-name",
         help="Name of the patch branch. Defaults to the PatchDriver's classname",
+    )
+    parser.add_argument(
+        "driver",
+        help="Name of the driver to use",
     )
     detect_group = parser.add_mutually_exclusive_group()
     detect_group.add_argument(
@@ -58,7 +64,11 @@ def cli(arguments: list[str] | None = None):
     if args.repo_filelist:
         args.repo_path = args.repo_filelist.read().strip().split("\n")
     token = get_token(args)
-    main(args.repo_path, args.dry_run, args.branch_name, token)
+    driver_class = get_driver(args.driver)
+    driver_instance = driver_class(
+        target_file=Path("test.json"), **{"op": "add", "path": "/foo", "value": "bar"}
+    )
+    main(driver_instance, args.repo_path, args.dry_run, args.branch_name, token)
 
 
 def get_token(args) -> str:
@@ -74,3 +84,12 @@ def get_token(args) -> str:
         )
         exit(2)  # Simulate the argparse behaviour of exiting on bad args
     return token
+
+
+def get_driver(driver_name: str):
+    """Fetch the given driver, by name"""
+    discovered = discover_drivers()
+    drivers = load_drivers(discovered)
+    if driver_name not in drivers:
+        raise ImportError("Driver not found")
+    return drivers[driver_name]
