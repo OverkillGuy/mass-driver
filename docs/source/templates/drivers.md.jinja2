@@ -1,0 +1,13 @@
+{% for name, details in drivers | items %}
+### {{ name }}
+
+Plugin name: `{{name}}`
+
+```{eval-rst}
+.. autoclass:: {{details.module}}.{{details.class_name}}
+  :noindex:
+  :members:
+  :show-inheritance:
+```
+
+{% endfor %}

@@ -38,6 +38,8 @@ myst-parser = "*"
 sphinx-autoapi = "*"
 # Display the output of a program in docs, cool for --help
 sphinxcontrib-programoutput = "^0.17"
+# Templated docs page like 'Drivers'
+sphinx-jinja = "*"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]

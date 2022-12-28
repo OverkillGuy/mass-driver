@@ -11,7 +11,7 @@ root of the code repository.
    :caption: Table of Contents:
 
    usage
-
+   drivers
    development
    objectives
    architecture

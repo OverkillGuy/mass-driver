@@ -9,18 +9,28 @@ pip install mass-driver??? Not uploaded to Pypi
 
 ## Usage
 
-
-### Full help message
+Top-level command:
 
 ```{program-output} poetry run mass-driver --help
 ```
+
+Inspecting drivers:
+
+```{program-output} poetry run mass-driver drivers --help
+```
+
+Running the actual mass driver:
+
+```{program-output} poetry run mass-driver run --help
+```
+
 
 ### Selecting repos
 
 First, provide a list of repositories to look up.
 This can be done either via successive `--repo-path` invocations on the fly,
 ```sh
-mass-driver \
+mass-driver run \
     --repo-path "git@github.com:OverkillGuy/sphinx-needs-test.git"\
     --repo-path "git@github.com:OverkillGuy/literate-wordle.git"
 ```
@@ -65,7 +75,7 @@ mass-driver --repo-filelist repos.txt --really-commit-changes
 
 For a dry-run invocation like this:
 ```shell
-poetry run mass-driver --dry-run --repo-filelist repos
+poetry run mass-driver run --dry-run --repo-filelist repos
 ```
 
 The outcome is:

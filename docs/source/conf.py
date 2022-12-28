@@ -33,6 +33,7 @@ extensions = [
     "sphinx.ext.autosummary",
     "sphinx.ext.autosectionlabel",
     "sphinx.ext.viewcode",
+    "sphinx_jinja",
     "autoapi.extension",
     "myst_parser",
     "sphinxcontrib.programoutput",
@@ -75,3 +76,24 @@ myst_enable_extensions = ["substitution"]
 man_pages = [
     ("manpage", "mass-driver", "Send pull-requests to many repos, monitor PRs adoption", author, "1")
 ]
+
+# Sphinx-jinja:
+
+from mass_driver.discovery import discover_drivers
+
+discovered_drivers = discover_drivers()
+drivers = {}
+for driver in discovered_drivers:
+    drivers[driver.name] = {"name": driver.name,
+                            "module": driver.module,
+                            "class_name": driver.attr,
+                            # "class": driver_class,
+                            }
+
+jinja_contexts = {
+    'drivers': {"drivers": drivers},
+}
+
+jinja_env_kwargs = {
+    'trim_blocks': True,
+}
