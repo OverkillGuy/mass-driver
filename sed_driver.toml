@@ -1,0 +1,3 @@
+[driver.shell]
+command = ["sed", "-i", "s/GPL/APL/g", "pyproject.toml"]
+shell = true
