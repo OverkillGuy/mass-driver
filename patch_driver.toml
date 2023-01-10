@@ -1,0 +1,5 @@
+[[driver.jsonpatch]]
+op = "add"
+path = "/foo"
+value = "bar"
+target_file = "test.json"

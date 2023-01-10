@@ -2,7 +2,7 @@
 
 import sys
 
-from tomlkit import load
+from tomlkit import loads
 
 from mass_driver.model import PatchDriver
 
@@ -28,11 +28,11 @@ def get_driver(driver_name: str) -> type[PatchDriver]:
     return driver.load()
 
 
-def driver_from_config(path: str) -> PatchDriver:
+def driver_from_config(config_str: str) -> PatchDriver:
     """Create PatchDriver instance from config file (TOML)"""
-    with open(path, "r") as config_fd:
-        config = load(config_fd)
+    config = loads(config_str)
     print(config)
+    # FIXME: No schema-ing yet.
     assert "driver" in config, "Config must have top-level 'driver' key"
     drivers = config["driver"]
     assert len(drivers) == 1, "Config key 'driver' must have ONE item"

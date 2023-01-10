@@ -11,7 +11,7 @@ class Counter(PatchDriver):
     """Increments a counter in a given file of repo, creating if non-existent"""
 
     target_count: int
-    counter_file: Path
+    counter_file: str
 
     def run(self, repo: Path, dry_run: bool = True) -> bool:
         """Process the counter file"""

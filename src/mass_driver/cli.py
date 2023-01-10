@@ -27,6 +27,7 @@ def subparsers(parser: ArgumentParser) -> ArgumentParser:
     subparser.required = True
     drivers = subparser.add_parser(
         "drivers",
+        aliases=["driver"],
         help="Inspect drivers (Plugins)",
     )
     drivers.add_argument("--list", action="store_true", help="List available drivers")
@@ -38,8 +39,9 @@ def subparsers(parser: ArgumentParser) -> ArgumentParser:
         epilog="Github API token requires either --token-file flag or envvar GITHUB_API_TOKEN\nCurrently no driver selection",
     )
     run.add_argument(
-        "--driver-config",
-        help="Config of driver to apply (TOML)",
+        "driver_config_file",
+        help="Filepath of config driver to apply (TOML file)",
+        type=FileType("r"),
     )
     detect_group = run.add_mutually_exclusive_group()
     detect_group.add_argument(
@@ -91,7 +93,7 @@ def run_command(args: Namespace):
     if args.repo_filelist:
         args.repo_path = args.repo_filelist.read().strip().split("\n")
     notatoken = ""  # get_token(args)
-    driver_instance = driver_from_config(args.driver_config)
+    driver_instance = driver_from_config(args.driver_config_file.read())
     main(driver_instance, args.repo_path, args.dry_run, args.branch_name, notatoken)
 
 
