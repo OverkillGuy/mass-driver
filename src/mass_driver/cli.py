@@ -3,7 +3,11 @@ import os
 import sys
 from argparse import ArgumentParser, FileType, Namespace
 
-from mass_driver.discovery import driver_from_config
+from mass_driver.discovery import (
+    discover_drivers,
+    driver_from_config,
+    get_driver_entrypoint,
+)
 from mass_driver.main import main
 
 
@@ -83,8 +87,25 @@ def parse_arguments(arguments: list[str]) -> Namespace:
 
 def drivers_command(args: Namespace):
     """Process the CLI for 'Drivers' subcommand"""
-    print("Drivers subcommand!")
-    print(args)
+    if args.info:
+        target_driver = args.info
+        try:
+            driver = get_driver_entrypoint(target_driver)
+            print(
+                f"Plugin name: {driver.name}; Import path: {driver.module}; Class: {driver.attr}"
+            )
+            print(driver.load().__doc__)
+            return
+        except ImportError as e:
+            print(str(e), file=sys.stderr)
+            print("Try `mass driver drivers --list`", file=sys.stderr)
+            return
+    # if args.list:  # Implicit
+    drivers = discover_drivers()
+    print("Available drivers:")
+    for driver in drivers:
+        print(f"{driver.name}")
+    return
 
 
 def run_command(args: Namespace):

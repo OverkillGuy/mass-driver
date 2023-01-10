@@ -7,11 +7,9 @@ from tomlkit import loads
 from mass_driver.model import PatchDriver
 
 if sys.version_info < (3, 10):
-    from importlib_metadata import EntryPoints, entry_points
+    from importlib_metadata import EntryPoint, EntryPoints, entry_points
 else:
-    from importlib.metadata import EntryPoints, entry_points
-
-DriverName = str
+    from importlib.metadata import EntryPoint, EntryPoints, entry_points
 
 
 def discover_drivers() -> EntryPoints:
@@ -19,12 +17,18 @@ def discover_drivers() -> EntryPoints:
     return entry_points(group="massdriver.drivers")
 
 
-def get_driver(driver_name: str) -> type[PatchDriver]:
-    """Fetch the given driver class, by name"""
+def get_driver_entrypoint(driver_name: str) -> EntryPoint:
+    """Fetch the given driver Entrypoint, by name"""
     drivers = discover_drivers()
     if driver_name not in drivers.names:
         raise ImportError(f"Driver '{driver_name}' not found in 'massdriver.drivers'")
     (driver,) = drivers.select(name=driver_name)
+    return driver
+
+
+def get_driver(driver_name: str) -> type[PatchDriver]:
+    """Get the given driver Class, by entrypoint name"""
+    driver = get_driver_entrypoint(driver_name)
     return driver.load()
 
 
