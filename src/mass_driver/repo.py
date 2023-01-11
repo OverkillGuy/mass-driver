@@ -2,29 +2,18 @@
 
 from pathlib import Path
 
-try:
-    from git import Repo
-
-    # We want to hard fail only when actively USING the dependencies, not just importing
-    # it at toplevel (not actively using) ==> Set a flag for availability of deps,
-    # to check at runtime and raise only then
-    DEPS_AVAILABLE = True
-except ImportError:
-    Repo = None  # Define a dummy type to avoid crash
-    DEPS_AVAILABLE = False
-
+from git import Repo
 
 from mass_driver.model import PatchDriver
 
-DEFAULT_CACHE = Path(".mass_driver/repos/")
 
-
-def clone_if_remote(repo_path: str, cache_folder: Path = DEFAULT_CACHE) -> Repo:
+def clone_if_remote(repo_path: str, cache_folder: Path) -> Repo:
     """Build a git Repo; If repo_path isn't a directory, clone it"""
     if Path(repo_path).is_dir():
         print("Given an existing (local) repo: no cloning")
         return Repo(path=repo_path)
-    if ":" in repo_path:
+    # SSH clone URL e.g: git@github.com:OverkillGuy/python-template
+    if ":" in repo_path:  # Presence of : is proxy for SSH clone URL
         *_junk, repo_blurb = repo_path.split(":")
         org, repo_name = repo_blurb.split("/")
     else:

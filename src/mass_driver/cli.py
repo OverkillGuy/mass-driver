@@ -47,6 +47,11 @@ def subparsers(parser: ArgumentParser) -> ArgumentParser:
         help="Filepath of config driver to apply (TOML file)",
         type=FileType("r"),
     )
+    run.add_argument(
+        "--no-cache",
+        help="Disable any repo caching",
+        action="store_true",
+    )
     detect_group = run.add_mutually_exclusive_group()
     detect_group.add_argument(
         "--really-commit-changes",
@@ -115,7 +120,14 @@ def run_command(args: Namespace):
         args.repo_path = args.repo_filelist.read().strip().split("\n")
     notatoken = ""  # get_token(args)
     driver_instance = driver_from_config(args.driver_config_file.read())
-    main(driver_instance, args.repo_path, args.dry_run, args.branch_name, notatoken)
+    main(
+        driver_instance,
+        args.repo_path,
+        args.dry_run,
+        args.branch_name,
+        notatoken,
+        not args.no_cache,
+    )
 
 
 def cli(arguments: list[str] | None = None):
