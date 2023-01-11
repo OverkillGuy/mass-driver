@@ -1,12 +1,10 @@
 """Simplest Patch Driver: increments a file counter"""
 
-from dataclasses import dataclass
 from pathlib import Path
 
 from mass_driver.model import PatchDriver
 
 
-@dataclass
 class Counter(PatchDriver):
     """Increments a counter in a given file of repo, creating if non-existent"""
 
@@ -21,8 +19,7 @@ class Counter(PatchDriver):
             return True
         counter_content = counter_filepath_abs.read_text().strip()
         if not counter_content.isdigit():
-            print("File content isn't a number: Patch!")
-            return True
+            raise ValueError("File content isn't a number: Patch!")
         counter_number = int(counter_content)
         counter_is_different = counter_number != self.target_count
         print(

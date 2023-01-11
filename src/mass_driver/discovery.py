@@ -35,14 +35,11 @@ def get_driver(driver_name: str) -> type[PatchDriver]:
 def driver_from_config(config_str: str) -> PatchDriver:
     """Create PatchDriver instance from config file (TOML)"""
     config = loads(config_str)
-    print(config)
     # FIXME: No schema-ing yet.
     assert "driver" in config, "Config must have top-level 'driver' key"
     drivers = config["driver"]
     assert len(drivers) == 1, "Config key 'driver' must have ONE item"
     driver_name = list(drivers.keys())[0]  # First and only
     driver_config = drivers[driver_name]
-    print(f"Driver: '{driver_name}'")
-    print(f"Config: {driver_config}")
     driver_class = get_driver(driver_name)
-    return driver_class(**driver_config)
+    return driver_class.parse_obj(driver_config)

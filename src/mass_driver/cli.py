@@ -120,7 +120,7 @@ def run_command(args: Namespace):
         args.repo_path = args.repo_filelist.read().strip().split("\n")
     notatoken = ""  # get_token(args)
     driver_instance = driver_from_config(args.driver_config_file.read())
-    main(
+    return main(
         driver_instance,
         args.repo_path,
         args.dry_run,
@@ -135,7 +135,7 @@ def cli(arguments: list[str] | None = None):
     if arguments is None:
         arguments = sys.argv[1:]
     pargs = parse_arguments(arguments)
-    pargs.func(pargs)  # Dispatch to the subcommand func (drivers/run)
+    return pargs.func(pargs)  # Dispatch to the subcommand func (drivers/run)
 
 
 def get_token(args) -> str:
