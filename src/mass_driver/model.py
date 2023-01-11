@@ -2,8 +2,10 @@
 
 from pathlib import Path
 
+from pydantic import BaseModel
 
-class PatchDriver:
+
+class PatchDriver(BaseModel):
     """Base class for creating patches over repositories"""
 
     def run(self, repo: Path, dry_run: bool = True) -> bool:

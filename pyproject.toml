@@ -17,7 +17,8 @@ GitPython = "*"
 PyGithub = "*"
 # TOML = Driver config files
 tomlkit = "*"
-
+# Mass-driver settings
+pydantic = "*"
 
 # Note: Linters not defined in this file but .pre-commit-config.yaml, which
 # installs/manages each tool in its own isolated virtualenv
