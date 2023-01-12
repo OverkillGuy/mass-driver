@@ -3,12 +3,9 @@ import os
 import sys
 from argparse import ArgumentParser, FileType, Namespace
 
-from mass_driver.discovery import (
-    discover_drivers,
-    driver_from_config,
-    get_driver_entrypoint,
-)
+from mass_driver.discovery import discover_drivers, get_driver_entrypoint
 from mass_driver.main import main
+from mass_driver.migration import load_migration
 
 
 def gen_parser() -> ArgumentParser:
@@ -43,8 +40,8 @@ def subparsers(parser: ArgumentParser) -> ArgumentParser:
         epilog="Github API token requires either --token-file flag or envvar GITHUB_API_TOKEN\nCurrently no driver selection",
     )
     run.add_argument(
-        "driver_config_file",
-        help="Filepath of config driver to apply (TOML file)",
+        "migration_file",
+        help="Filepath of migration-config to apply (TOML file)",
         type=FileType("r"),
     )
     run.add_argument(
@@ -76,10 +73,6 @@ def subparsers(parser: ArgumentParser) -> ArgumentParser:
         "--repo-filelist",
         type=FileType("r"),
         help="File with list of Repositories to Patch. If not local paths, will git clone them",
-    )
-    run.add_argument(
-        "--branch-name",
-        help="Name of the patch branch. Defaults to the PatchDriver's classname",
     )
     return parser
 
@@ -119,12 +112,12 @@ def run_command(args: Namespace):
     if args.repo_filelist:
         args.repo_path = args.repo_filelist.read().strip().split("\n")
     notatoken = ""  # get_token(args)
-    driver_instance = driver_from_config(args.driver_config_file.read())
+    migration_config_str = args.migration_file.read()
+    migration = load_migration(migration_config_str)
     return main(
-        driver_instance,
+        migration,
         args.repo_path,
         args.dry_run,
-        args.branch_name,
         notatoken,
         not args.no_cache,
     )

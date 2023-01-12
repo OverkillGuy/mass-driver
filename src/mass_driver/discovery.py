@@ -2,8 +2,7 @@
 
 import sys
 
-from tomlkit import loads
-
+from mass_driver.migration import Migration
 from mass_driver.model import PatchDriver
 
 if sys.version_info < (3, 10):
@@ -32,14 +31,7 @@ def get_driver(driver_name: str) -> type[PatchDriver]:
     return driver.load()
 
 
-def driver_from_config(config_str: str) -> PatchDriver:
+def driver_from_config(config: Migration) -> PatchDriver:
     """Create PatchDriver instance from config file (TOML)"""
-    config = loads(config_str)
-    # FIXME: No schema-ing yet.
-    assert "driver" in config, "Config must have top-level 'driver' key"
-    drivers = config["driver"]
-    assert len(drivers) == 1, "Config key 'driver' must have ONE item"
-    driver_name = list(drivers.keys())[0]  # First and only
-    driver_config = drivers[driver_name]
-    driver_class = get_driver(driver_name)
-    return driver_class.parse_obj(driver_config)
+    driver_class = get_driver(config.driver)
+    return driver_class.parse_obj(config.driver_config)

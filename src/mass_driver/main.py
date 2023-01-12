@@ -2,9 +2,10 @@
 
 from pathlib import Path
 from tempfile import mkdtemp
-from typing import Optional
 
+from mass_driver.discovery import driver_from_config
 from mass_driver.forges import GithubForge
+from mass_driver.migration import Migration
 from mass_driver.model import Forge, PatchDriver
 from mass_driver.repo import clone_if_remote, commit
 
@@ -12,17 +13,15 @@ DEFAULT_CACHE = Path(".mass_driver/repos/")
 
 
 def main(
-    driver: PatchDriver,
+    config: Migration,
     repo_paths: list[str],
     dry_run: bool,
-    branch_name: Optional[str],
     auth_token: str,
     cache: bool,
 ):
     """Run the program's main command"""
+    driver = driver_from_config(config)
     forge = GithubForge(auth_token)
-    if not branch_name:
-        branch_name = driver.__class__.__name__.lower()
     repo_count = len(repo_paths)
     cache_folder = DEFAULT_CACHE
     if not cache:
@@ -33,7 +32,7 @@ def main(
         try:
             print(f"[{repo_index:03d}/{repo_count:03d}] Processing {repo_path}...")
             process_repo(
-                repo_path, driver, dry_run, branch_name, forge, cache_path=cache_folder
+                repo_path, driver, config, dry_run, forge, cache_path=cache_folder
             )
         except Exception as e:
             print(f"Error processing repo '{repo_path}'\nError was: {e}")
@@ -44,8 +43,8 @@ def main(
 def process_repo(
     repo_path: str,
     driver: PatchDriver,
+    config: Migration,
     dry_run: bool,
-    branch_name: str,
     forge: Forge,
     cache_path: Path,
 ):
@@ -62,5 +61,8 @@ def process_repo(
         return
     # Not a dry run: save the mutation
     print("Done patching, committing")
+    branch_name = config.branch_name
+    if branch_name is None:  # Branchname is Optional in TOML config
+        branch_name = driver.__class__.__name__.lower()
     commit(repo, driver, branch_name)
     print("Done committing")
