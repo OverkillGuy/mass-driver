@@ -11,7 +11,7 @@ from mass_driver.cli import cli as massdriver_cli
 def repoize(path: Path):
     """Create a git repo with inital commit at path"""
     repo = Repo.init(path, bare=False)
-    repo.index.add(".")
+    repo.index.add("*")
     repo.index.commit("Initial commit from template")
     return path
 

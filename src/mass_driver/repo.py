@@ -4,7 +4,7 @@ from pathlib import Path
 
 from git import Repo
 
-from mass_driver.model import PatchDriver
+from mass_driver.migration import Migration
 
 
 def clone_if_remote(repo_path: str, cache_folder: Path) -> Repo:
@@ -32,10 +32,10 @@ def clone_if_remote(repo_path: str, cache_folder: Path) -> Repo:
     return cloned
 
 
-def commit(repo: Repo, driver: PatchDriver, branch_name: str):
+def commit(repo: Repo, migration: Migration):
     """Commit the repo's changes in branch_name, given the PatchDriver that did it"""
     assert repo.is_dirty(untracked_files=True), "Repo shouldn't be clean on committing"
-    branch = repo.create_head(branch_name)
+    branch = repo.create_head(migration.branch_name)
     branch.checkout()
     repo.git.add(A=True)
-    repo.git.commit(m="Bump by driver")
+    repo.git.commit(m=migration.commit_message)

@@ -19,8 +19,7 @@ from pathlib import Path
 
 import pytest
 
-from mass_driver.discovery import driver_from_config
-from mass_driver.migration import load_migration
+from mass_driver.migration import Migration
 from mass_driver.tests.fixtures import copy_folder, massdrive
 
 
@@ -34,16 +33,18 @@ def test_counter_bumped(tmp_path, datadir, configfilename):
     repo_path = Path(tmp_path / "test_repo/")
     copy_folder(Path(datadir / "sample_repo"), repo_path)
     config_filepath = datadir / configfilename
-    migration = load_migration(config_filepath.read_text())
-    driver = driver_from_config(migration)
+    migration = Migration.from_config(config_filepath.read_text())
     # When I run mass-driver
     massdrive(
         repo_path,
         config_filepath,
     )
-    counter_text_post = (repo_path / driver.counter_file).read_text()
+    counter_text_post = (repo_path / migration.driver.counter_file).read_text()
     # Then the counter is bumped to config value
-    assert int(counter_text_post) == driver.target_count, "Counter not updated properly"
+    # Note: Different configfilename set the target_count to different value
+    assert (
+        int(counter_text_post) == migration.driver.target_count
+    ), "Counter not updated properly"
 
 
 def test_counter_borked(
@@ -56,9 +57,8 @@ def test_counter_borked(
     repo_path = Path(tmp_path / "test_repo/")
     copy_folder(Path(datadir / "sample_repo"), repo_path)
     config_fullpath = datadir / "counter_config2.toml"
-    migration = load_migration(config_fullpath.read_text())
-    driver = driver_from_config(migration)
-    with open(repo_path / driver.counter_file, "w") as counter_fd:
+    migration = Migration.from_config(config_fullpath.read_text())
+    with open(repo_path / migration.driver.counter_file, "w") as counter_fd:
         counter_fd.write("Hello World! Not an integer!")
     # When I run mass-driver
     massdrive(repo_path, config_fullpath)

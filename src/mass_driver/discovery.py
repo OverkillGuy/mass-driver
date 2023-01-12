@@ -2,7 +2,6 @@
 
 import sys
 
-from mass_driver.migration import Migration
 from mass_driver.model import PatchDriver
 
 if sys.version_info < (3, 10):
@@ -29,9 +28,3 @@ def get_driver(driver_name: str) -> type[PatchDriver]:
     """Get the given driver Class, by entrypoint name"""
     driver = get_driver_entrypoint(driver_name)
     return driver.load()
-
-
-def driver_from_config(config: Migration) -> PatchDriver:
-    """Create PatchDriver instance from config file (TOML)"""
-    driver_class = get_driver(config.driver)
-    return driver_class.parse_obj(config.driver_config)
