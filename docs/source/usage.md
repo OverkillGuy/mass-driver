@@ -52,15 +52,19 @@ local directories, so the following does work:
 ```sh
 mass-driver --repo-path ~/workspace/java_project2
 ```
-### Configuring a driver
+### Configuring a PatchDriver, creating a Migration
 
+Pick a driver from [available drivers](./drivers#available-drivers).
 
-Head over to [mass_driver.Drivers](autoapi/mass_driver/drivers/index) and pick
-a driver.
+You'll need to create a Migration config file:
 
-WIP (driver selection is not yet exposed in CLI)
+```{literalinclude} ../../src/mass_driver/tests/test_counterdriver/counter_config2.toml
+---
+language: toml
+---
+```
 
-
+Save it and use it as `migration_file` parameter to `mass-driver run`.
 ### Dry run
 
 The default run mode is to only detect the change to be done, no destructive
@@ -68,7 +72,7 @@ action.
 To make local commits (no pushes), you'll need to disable dry-run mode:
 
 ```sh
-mass-driver --repo-filelist repos.txt --really-commit-changes
+mass-driver run migration.toml --repo-filelist repos.txt --really-commit-changes
 ```
 
 ## Sample output

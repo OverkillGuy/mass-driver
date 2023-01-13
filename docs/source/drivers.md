@@ -5,6 +5,7 @@ docs generation. Note that drivers are expected to be coming from third parties,
 and are exposed as "plugins" (also known as python package entry_points).
 
 ## Available drivers
+(available-drivers)=
 
 ```{jinja} drivers
 ---

@@ -3,7 +3,7 @@
 migration_name = "[JIRA-123] Bump counter.txt to 1"
 commit_message = """Bump counter to 1
 
-Upgrade counter to two, as part of change number blablabla
+Upgrade counter to one, as part of change number blablabla
 
 See JIRA-123, where we document the need for counter to go up.
 """
