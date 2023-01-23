@@ -1,11 +1,8 @@
 """Command line entrypoint for mass-driver"""
-import os
 import sys
 from argparse import ArgumentParser, FileType, Namespace
 
-from mass_driver.discovery import discover_drivers, get_driver_entrypoint
-from mass_driver.main import main
-from mass_driver.migration import load_migration
+from mass_driver import commands
 
 
 def gen_parser() -> ArgumentParser:
@@ -33,7 +30,7 @@ def subparsers(parser: ArgumentParser) -> ArgumentParser:
     )
     drivers.add_argument("--list", action="store_true", help="List available drivers")
     drivers.add_argument("--info", help="Show docs of a specific driver")
-    drivers.set_defaults(func=drivers_command)
+    drivers.set_defaults(func=commands.drivers_command)
     run = subparser.add_parser(
         "run",
         help="Run mass-driver over multiple repos",
@@ -62,7 +59,7 @@ def subparsers(parser: ArgumentParser) -> ArgumentParser:
         dest="dry_run",
         help="Dry run, no actual commit, no pushing (default)",
     )
-    run.set_defaults(dry_run=True, func=run_command)
+    run.set_defaults(dry_run=True, func=commands.run_command)
     repolist_group = run.add_mutually_exclusive_group(required=True)
     repolist_group.add_argument(
         "--repo-path",
@@ -83,64 +80,9 @@ def parse_arguments(arguments: list[str]) -> Namespace:
     return parser.parse_args(arguments)
 
 
-def drivers_command(args: Namespace):
-    """Process the CLI for 'Drivers' subcommand"""
-    if args.info:
-        target_driver = args.info
-        try:
-            driver = get_driver_entrypoint(target_driver)
-            print(
-                f"Plugin name: {driver.name}; Import path: {driver.module}; Class: {driver.attr}"
-            )
-            print(driver.load().__doc__)
-            return
-        except ImportError as e:
-            print(str(e), file=sys.stderr)
-            print("Try `mass driver drivers --list`", file=sys.stderr)
-            return
-    # if args.list:  # Implicit
-    drivers = discover_drivers()
-    print("Available drivers:")
-    for driver in drivers:
-        print(f"{driver.name}")
-    return
-
-
-def run_command(args: Namespace):
-    """Process the CLI for 'run' subcommand"""
-    print("Run mode!")
-    if args.repo_filelist:
-        args.repo_path = args.repo_filelist.read().strip().split("\n")
-    notatoken = ""  # get_token(args)
-    migration_config_str = args.migration_file.read()
-    migration = load_migration(migration_config_str)
-    return main(
-        migration,
-        args.repo_path,
-        args.dry_run,
-        notatoken,
-        not args.no_cache,
-    )
-
-
 def cli(arguments: list[str] | None = None):
     """Run the mass_driver cli"""
     if arguments is None:
         arguments = sys.argv[1:]
     pargs = parse_arguments(arguments)
     return pargs.func(pargs)  # Dispatch to the subcommand func (drivers/run)
-
-
-def get_token(args) -> str:
-    """Grab the Forge API Token one way or the other"""
-    if args.token_file:
-        token = args.token_file.read().strip()
-    else:
-        token = os.getenv("GITHUB_API_TOKEN")
-    if token is None:
-        print(
-            "Missing API token: --token-file or set GITHUB_API_TOKEN envvar",
-            file=sys.stderr,
-        )
-        exit(2)  # Simulate the argparse behaviour of exiting on bad args
-    return token
