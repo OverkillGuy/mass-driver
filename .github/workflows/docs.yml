@@ -36,8 +36,7 @@ jobs:
           python-version: '3.10'
       - name: Poetry setup
         uses: Gr1N/setup-poetry@v7
-      - run: poetry install
-      - run: poetry install --only=docs
+      - run: poetry install --with=docs
       - name: Build the docs
         run: make docs
       - name: Setup Pages
