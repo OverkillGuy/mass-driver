@@ -4,7 +4,7 @@ from pydantic import BaseModel
 from tomlkit import loads
 
 from mass_driver.discovery import get_driver
-from mass_driver.model import PatchDriver
+from mass_driver.patchdriver import PatchDriver
 
 TOML_PROJECTKEY = "mass-driver"
 

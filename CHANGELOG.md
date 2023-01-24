@@ -6,9 +6,22 @@ The project uses semantic versioning (see [semver](https://semver.org)).
 
 ## [Unreleased]
 
-### Fixed
+### Added
+- New plugin system for including third-party PatchDrivers, based on the
+  setuptools "entrypoints" system.
+- CLI Subcommands for inspecting drivers, running migrations...
+- PatchDriver test harness, for ease of plugin development.
 - Project objectives (gherkin features in `features/`) now part of docs
-- Missing import guard on `JsonPatch` broke usage docs
+
+### Changed
+- `PatchDriver` now inherits Pydantic BaseModel (allows serialization)
+- `PatchDriver` func prototype: `run(repo: Path) -> OutcomeOrResult`
+
+
+### Removed
+- Complex PatchDrivers (the ones requiring package dependencies)
+  removed, moved to separate "plugins" repo.
+
 
 ## v0.4.0 - 2022-11-16
 

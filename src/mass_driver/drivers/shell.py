@@ -5,7 +5,7 @@ import subprocess
 from dataclasses import dataclass
 from pathlib import Path
 
-from mass_driver.model import PatchDriver
+from mass_driver.patchdriver import PatchDriver, PatchOutcome, PatchResult
 
 
 @dataclass
@@ -28,7 +28,11 @@ class ShellDriver(PatchDriver):
     shell: bool = True
     """Passed to subprocess.check_call, to enable true shell behaviour rather than exec"""
 
-    def run(self, repo: Path, dry_run: bool = True) -> bool:
+    def run(self, repo: Path) -> PatchResult:
         """Run the command on the repo"""
-        subprocess.check_call(self.command, cwd=repo, shell=self.shell)
-        return True
+        cmd = subprocess.run(self.command, cwd=repo, shell=self.shell)
+        return (
+            PatchResult(PatchOutcome.PATCHED_OK)
+            if cmd.returncode == 0
+            else PatchResult(outcome=PatchOutcome.PATCH_ERROR, details=cmd.stderr)
+        )

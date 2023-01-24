@@ -2,21 +2,6 @@
 
 from pathlib import Path
 
-from pydantic import BaseModel
-
-
-class PatchDriver(BaseModel):
-    """Base class for creating patches over repositories"""
-
-    def run(self, repo: Path, dry_run: bool = True) -> bool:
-        """
-        Apply the update to given (cloned) Git Repository.
-
-        If dry_run is True, just detect if the changes are needed.
-        If dry_run is False, actually mutate the given folder
-        """
-        raise NotImplementedError("PatchDriver base class can't run, use derived")
-
 
 class Forge:
     """Base class for git Forges like Github"""

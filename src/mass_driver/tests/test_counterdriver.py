@@ -20,13 +20,18 @@ from pathlib import Path
 import pytest
 
 from mass_driver.migration import Migration
+from mass_driver.patchdriver import PatchOutcome
 from mass_driver.tests.fixtures import copy_folder, massdrive
 
 
 @pytest.mark.parametrize(
-    "configfilename", ["counter_config1.toml", "counter_config2.toml"]
+    "configfilename,expected_outcome",
+    [
+        ("counter_config1.toml", PatchOutcome.ALREADY_PATCHED),
+        ("counter_config2.toml", PatchOutcome.PATCHED_OK),
+    ],
 )
-def test_counter_bumped(tmp_path, datadir, configfilename):
+def test_counter_bumped(tmp_path, datadir, configfilename, expected_outcome):
     """Scenario: Counter file bumped properly"""
     # Given a sample repo to mass-drive
     # And sample repo has counter at value 1
@@ -35,10 +40,11 @@ def test_counter_bumped(tmp_path, datadir, configfilename):
     config_filepath = datadir / configfilename
     migration = Migration.from_config(config_filepath.read_text())
     # When I run mass-driver
-    massdrive(
+    result = massdrive(
         repo_path,
         config_filepath,
     )
+    assert result.outcome == expected_outcome, "Wrong outcome from patching"
     counter_text_post = (repo_path / migration.driver.counter_file).read_text()
     # Then the counter is bumped to config value
     # Note: Different configfilename set the target_count to different value

@@ -28,9 +28,12 @@ def massdrive(repo_path: Path, migration_configfilepath: Path):
 
     Note:
         See pytest-datadir's "datadir" fixture for convenient data linking
+
+    Returns:
+        The PatchResult object returned by mass-driver for that repo
     """
     repoize(repo_path)
-    massdriver_cli(
+    result_dict = massdriver_cli(
         [
             "run",
             str(migration_configfilepath),
@@ -39,3 +42,4 @@ def massdrive(repo_path: Path, migration_configfilepath: Path):
             str(repo_path),
         ]
     )
+    return result_dict[str(repo_path)]
