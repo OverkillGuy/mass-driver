@@ -6,6 +6,9 @@ The project uses semantic versioning (see [semver](https://semver.org)).
 
 ## [Unreleased]
 
+
+## v0.5.0 - 2023-01-24
+
 ### Added
 - New plugin system for including third-party PatchDrivers, based on the
   setuptools "entrypoints" system.
