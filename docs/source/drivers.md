@@ -31,7 +31,7 @@ Simply create a class that inherits from
 slots, and exposing a single `run` method:
 
 ```python
-from mass_driver.patchdriver import PatchDriver
+from mass_driver.patchdriver import PatchDriver, PatchResult, PatchOutcome
 
 class PerlPackageBumper(PatchDriver):
     """Bump version of Perl packages"""
@@ -39,15 +39,17 @@ class PerlPackageBumper(PatchDriver):
     package_target: str
     package_version: str
 
-    def run(self, repo: Path, dry_run: bool = True) -> bool:
+    def run(self, repo: Path) -> PatchResult:
         """Run the package bumper"""
         packages = get_packages()
         if self.package_target not in packages:
-            return False  # Didn't need to bump package: no such package present
-        if dry_run:
-            return True  # Stop before actually doing the thing
+            return PatchResult(outcome=PatchOutcome.PATCH_DOES_NOT_APPLY,
+                               details="Package not present, no need to bump")
+        version = packages[self.package_target]
+        if version == self.package_version:
+            return PatchResult(outcome=PatchOutcome.ALREADY_PATCHED)
         set_package_version(packages, self.package_target, self.package_version)
-        return True  # Repo changes were indeed needed + done
+        return PatchResult(outcome=PatchOutcome.PATCHED_OK)
 ```
 
 This class is now a valid Driver, but we need to package it to make it visible
