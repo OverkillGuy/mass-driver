@@ -57,7 +57,6 @@ def process_repo(
     """Process a repo with Mass Driver"""
     repo = clone_if_remote(repo_path, cache_path)
     repo_as_path = Path(repo.working_dir)
-    print(f"Detecting '{repo_path}' before patching...")
     result = migration.driver.run(repo_as_path)
     print(result.outcome.value)
     if dry_run:
