@@ -24,7 +24,7 @@ def clone_if_remote(repo_path: str, cache_folder: Path) -> Repo:
         print("Given a URL for we cloned already: no cloning")
         return Repo(clone_target)
     print("Given a URL, cache miss: cloning")
-    cloned = Repo().clone_from(
+    cloned = Repo.clone_from(
         url=repo_path,
         to_path=clone_target,
         multi_options=["--depth=1"],

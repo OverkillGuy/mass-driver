@@ -6,6 +6,8 @@ The project uses semantic versioning (see [semver](https://semver.org)).
 
 ## [Unreleased]
 
+### Fixed
+- Incorrect Repo creation causing silent cloning errors on some devices
 
 ## v0.5.0 - 2023-01-24
 
