@@ -6,6 +6,10 @@ The project uses semantic versioning (see [semver](https://semver.org)).
 
 ## [Unreleased]
 
+### Added
+- Forges now discovered via setuptools
+- New GithubForge implemented
+
 ### Fixed
 - Incorrect Repo creation causing silent cloning errors on some devices
 

@@ -1,12 +1,21 @@
-"""The core classes for creating Patches across Repositories"""
+"""Base definition of Forge, applying changes across git Repositories"""
 
-from pathlib import Path
+BranchName = str
+"""A git branch name, assumed to exist remotely on the Forge"""
 
 
 class Forge:
     """Base class for git Forges like Github"""
 
-    def create_pr(self, forge_repo: str, repo_path: Path, branch: str, msg: str):
+    def create_pr(
+        self,
+        forge_repo: str,
+        base_branch: BranchName,
+        head_branch: BranchName,
+        pr_title: str,
+        pr_body: str,
+        draft: bool,
+    ):
         """Send a PR, with msg body, to forge_repo for given branch of repo_path"""
         raise NotImplementedError("Forge base class can't create PR, use derived")
 

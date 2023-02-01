@@ -3,9 +3,9 @@
 from pathlib import Path
 from tempfile import mkdtemp
 
+from mass_driver.forge import Forge
 from mass_driver.forges import GithubForge
 from mass_driver.migration import Migration, MigrationFile, load_driver
-from mass_driver.model import Forge
 from mass_driver.patchdriver import PatchOutcome, PatchResult
 from mass_driver.repo import clone_if_remote, commit
 

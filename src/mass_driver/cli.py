@@ -60,6 +60,14 @@ def subparsers(parser: ArgumentParser) -> ArgumentParser:
         help="Dry run, no actual commit, no pushing (default)",
     )
     run.set_defaults(dry_run=True, func=commands.run_command)
+    forges = subparser.add_parser(
+        "forge",
+        aliases=["forges"],
+        help="Inspect or use forges (Plugins)",
+    )
+    forges.add_argument("--list", action="store_true", help="List available forges")
+    forges.add_argument("--info", help="Show docs of a specific forge")
+    forges.set_defaults(func=commands.forges_command)
     repolist_group = run.add_mutually_exclusive_group(required=True)
     repolist_group.add_argument(
         "--repo-path",
