@@ -39,3 +39,9 @@ def commit(repo: Repo, migration: Migration):
     branch.checkout()
     repo.git.add(A=True)
     repo.git.commit(m=migration.commit_message)
+
+
+def push(repo: Repo, branch_name: str):
+    """Push a branch of the repo to a remote"""
+    remote = repo.remote()
+    remote.push(refspec=branch_name)

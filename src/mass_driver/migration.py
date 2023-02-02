@@ -3,7 +3,8 @@
 from pydantic import BaseModel
 from tomlkit import loads
 
-from mass_driver.discovery import get_driver
+from mass_driver.discovery import get_driver, get_forge
+from mass_driver.forge import BranchName, Forge
 from mass_driver.patchdriver import PatchDriver
 
 TOML_PROJECTKEY = "mass-driver"
@@ -73,4 +74,70 @@ def load_driver(config: MigrationFile) -> Migration:
         commit_message=config.commit_message,
         branch_name=branch_name,
         driver=driver,
+    )
+
+
+class ForgeFileBase(BaseModel):
+    """The basis of a ForgeFile, regardless of it Forge is loaded or not"""
+
+    base_branch: BranchName
+    """The base branch from which to create PR from (e.g. master or main)"""
+    head_branch: BranchName
+    """The head branch from which to create PR from (e.g. bugfix1)"""
+    draft_pr: bool
+    """Is the PR to be created a Draft?"""
+    pr_title: str
+    """The title of the PR to create"""
+    pr_body: str
+    """The body of the PR to create (multiline)"""
+
+
+class ForgeFilePreload(ForgeFileBase):
+    """The config file describing a forge, before we load the Forge class"""
+
+    forge: str
+    """The name of the forge to create PRs with, as plugin name"""
+
+
+class ForgeFile(ForgeFileBase):
+    """The config file describing a forge, before we load the Forge class"""
+
+    forge: Forge
+    """The instantiated forge to create PRs with"""
+
+    @classmethod
+    def from_config(cls, config_toml: str, auth_token: str):
+        """Get a loaded forge from config contents"""
+        config_noforge = load_forge_toml(config_toml)
+        return load_forge(config_noforge, auth_token)
+
+
+def load_forge_toml(forge_config: str) -> ForgeFilePreload:
+    """Load up a TOML config of a forge into memory"""
+    forge_dict = loads(forge_config)
+    if TOML_PROJECTKEY not in forge_dict:
+        raise ValueError(
+            "Config file given invalid: " f"Missing top-level '{TOML_PROJECTKEY}' key"
+        )
+    return ForgeFilePreload.parse_obj(forge_dict[TOML_PROJECTKEY])
+
+
+def forge_from_config(config: ForgeFilePreload, auth_token: str) -> Forge:
+    """Create Forge instance from config file (TOML)"""
+    forge_class = get_forge(config.forge)
+    breakpoint()
+    return forge_class(auth_token=auth_token)
+
+
+def load_forge(config: str, auth_token: str) -> ForgeFile:
+    """Look up driver and validate configuration (de-opaquify)"""
+    forge = load_forge_toml(config)
+    forge_obj = forge_from_config(forge, auth_token)
+    return ForgeFile(
+        forge=forge_obj,
+        base_branch=forge.base_branch,
+        head_branch=forge.head_branch,
+        draft_pr=forge.draft_pr,
+        pr_title=forge.pr_title,
+        pr_body=forge.pr_body,
     )

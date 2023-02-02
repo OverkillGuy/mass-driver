@@ -3,8 +3,6 @@
 from pathlib import Path
 from tempfile import mkdtemp
 
-from mass_driver.forge import Forge
-from mass_driver.forges import GithubForge
 from mass_driver.migration import Migration, MigrationFile, load_driver
 from mass_driver.patchdriver import PatchOutcome, PatchResult
 from mass_driver.repo import clone_if_remote, commit
@@ -21,7 +19,7 @@ def main(
 ):
     """Run the program's main command"""
     migration = load_driver(config)
-    forge = GithubForge(auth_token)
+    # forge = GithubForge(auth_token)
     repo_count = len(repo_paths)
     cache_folder = DEFAULT_CACHE
     if not cache:
@@ -33,7 +31,7 @@ def main(
         try:
             print(f"[{repo_index:03d}/{repo_count:03d}] Processing {repo_path}...")
             result = process_repo(
-                repo_path, migration, dry_run, forge, cache_path=cache_folder
+                repo_path, migration, dry_run, cache_path=cache_folder
             )
             patch_results[repo_path] = result
         except Exception as e:
@@ -51,7 +49,7 @@ def process_repo(
     repo_path: str,
     migration: Migration,
     dry_run: bool,
-    forge: Forge,
+    # forge: Forge,
     cache_path: Path,
 ) -> PatchResult:
     """Process a repo with Mass Driver"""
