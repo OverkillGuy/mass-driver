@@ -6,6 +6,12 @@ The project uses semantic versioning (see [semver](https://semver.org)).
 
 ## [Unreleased]
 
+### Added
+- Forges now discovered via setuptools
+- New "run-forge" subcommand for creating PRs for on-disk branches
+- Implemented GithubForge for PR creation on Github
+- New "Stamper" `PatchDriver` for "stamping" new files on repos
+
 ### Fixed
 - Incorrect Repo creation causing silent cloning errors on some devices
 

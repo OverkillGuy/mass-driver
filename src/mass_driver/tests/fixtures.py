@@ -35,7 +35,7 @@ def massdrive(repo_path: Path, migration_configfilepath: Path):
     repoize(repo_path)
     result_dict = massdriver_cli(
         [
-            "run",
+            "run-migration",
             str(migration_configfilepath),
             "--really-commit-changes",
             "--repo-path",

@@ -79,3 +79,7 @@ python_version = "3.10"
 counter = 'mass_driver.drivers.counter:Counter'
 precommit = 'mass_driver.drivers.precommit:PrecommitAutoupdate'
 shell = 'mass_driver.drivers.shell:ShellDriver'
+stamper = 'mass_driver.drivers.stamper:Stamper'
+
+[tool.poetry.plugins.'massdriver.forges']
+github = 'mass_driver.forges.github:GithubForge'
