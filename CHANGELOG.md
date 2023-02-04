@@ -6,6 +6,9 @@ The project uses semantic versioning (see [semver](https://semver.org)).
 
 ## [Unreleased]
 
+
+## v0.6.0 - 2023-02-04
+
 ### Added
 - Forges now discovered via setuptools
 - New "run-forge" subcommand for creating PRs for on-disk branches
