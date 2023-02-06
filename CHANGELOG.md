@@ -6,6 +6,9 @@ The project uses semantic versioning (see [semver](https://semver.org)).
 
 ## [Unreleased]
 
+### Added
+- Upgrade pre-commit dependencies + poetry in Dockerfile
+- Update pyproject.toml for release to Pypi
 
 ## v0.6.0 - 2023-02-04
 
@@ -29,7 +32,7 @@ The project uses semantic versioning (see [semver](https://semver.org)).
 
 ### Changed
 - `PatchDriver` now inherits Pydantic BaseModel (allows serialization)
-- `PatchDriver` func prototype: `run(repo: Path) -> OutcomeOrResult`
+- `PatchDriver` func prototype: `run(repo: Path) -> PatchResult`
 
 
 ### Removed
