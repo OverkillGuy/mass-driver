@@ -5,6 +5,13 @@ description = "Send bulk repo change requests"
 authors = ["Jb Doyon <jb@jiby.tech>"]
 readme = "README.md"
 license = "GPL-3.0-or-later"
+documentation = "https://jiby.tech/mass-driver"
+repository = "https://github.com/OverkillGuy/mass-driver"
+keywords = ["repo-automation"]
+classifiers = [
+    "Topic :: Software Development :: Code Generators",
+    "Development Status :: 3 - Alpha",
+]
 
 [tool.poetry.scripts]
 mass-driver = "mass_driver.cli:cli"
