@@ -6,6 +6,9 @@ The project uses semantic versioning (see [semver](https://semver.org)).
 
 ## [Unreleased]
 
+
+## v0.6.1 - 2023-02-06
+
 ### Added
 - Upgrade pre-commit dependencies + poetry in Dockerfile
 - Update pyproject.toml for release to Pypi
