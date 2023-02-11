@@ -4,7 +4,7 @@ Send bulk repo change requests.
 
 This repository is on Github: [Overkillguy/mass-driver](https://github.com/OverkillGuy/mass-driver/).
 
-Requires Python 3.10
+Requires Python 3.11
 ## Usage
 
 See the docs at [jiby.tech/mass-driver/](https://jiby.tech/mass-driver/)
@@ -32,7 +32,7 @@ Then inside the virtual environment, launch the command:
 
 ### Python setup
 
-This repository uses Python3.10, using
+This repository uses Python3.11, using
 [Poetry](https://python-poetry.org) as package manager to define a
 Python package inside `src/mass_driver/`.
 

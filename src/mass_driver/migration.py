@@ -1,7 +1,8 @@
 """Migration definitions, as map of PatchDriver over Sequence of Repos"""
 
+from tomllib import loads
+
 from pydantic import BaseModel
-from tomlkit import loads
 
 from mass_driver.discovery import get_driver, get_forge
 from mass_driver.forge import BranchName, Forge

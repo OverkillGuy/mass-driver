@@ -17,13 +17,11 @@ classifiers = [
 mass-driver = "mass_driver.cli:cli"
 
 [tool.poetry.dependencies]
-python = "^3.10"
+python = "^3.11"
 # Manipulate git repos: Clone, diff, commit patches...
 GitPython = "*"
 # Github Forge support
 PyGithub = "*"
-# TOML = Driver config files
-tomlkit = "*"
 # Mass-driver settings
 pydantic = "*"
 
@@ -80,7 +78,7 @@ addopts = """-vv \
       --junit-xml=test_results/results.xml"""
 
 [tool.mypy]
-python_version = "3.10"
+python_version = "3.11"
 
 [tool.poetry.plugins.'massdriver.drivers']
 counter = 'mass_driver.drivers.counter:Counter'
