@@ -12,6 +12,7 @@ The project uses semantic versioning (see [semver](https://semver.org)).
 
 ### Fixed
 - Migrations, once loaded from TOML, are now proper dict again
+- `PatchDriver` instance now independent across repos
 
 
 ## v0.6.1 - 2023-02-06

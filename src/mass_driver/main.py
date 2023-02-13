@@ -1,5 +1,6 @@
 """Principal launchpoint for Mass-Driver"""
 
+from copy import deepcopy
 from pathlib import Path
 from tempfile import mkdtemp
 
@@ -30,8 +31,10 @@ def main(
     for repo_index, repo_path in enumerate(repo_paths, start=1):
         try:
             print(f"[{repo_index:03d}/{repo_count:03d}] Processing {repo_path}...")
+            # Ensure no driver persistence between repos
+            migration_copy = deepcopy(migration)
             result = process_repo(
-                repo_path, migration, dry_run, cache_path=cache_folder
+                repo_path, migration_copy, dry_run, cache_path=cache_folder
             )
             patch_results[repo_path] = result
         except Exception as e:
