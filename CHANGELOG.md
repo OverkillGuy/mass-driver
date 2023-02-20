@@ -6,6 +6,9 @@ The project uses semantic versioning (see [semver](https://semver.org)).
 
 ## [Unreleased]
 
+### Added
+- New `ROADMAP.md` to clarify The Plan.
+
 ### Changed
 - Upgrade minimum Python version to 3.11 to use `tomllib`
 - Replace `tomlkit` with stdlib `tomllib`

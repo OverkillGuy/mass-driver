@@ -12,6 +12,7 @@ root of the code repository.
 
    usage
    drivers
+   Roadmap <roadmap>
    development
    objectives
    architecture
