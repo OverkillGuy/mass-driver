@@ -4,12 +4,12 @@ from enum import Enum
 from git import Repo
 from pydantic import BaseModel
 
-from mass_driver.migration import ForgeFile
+from mass_driver.migration import ForgeLoaded
 from mass_driver.repo import push
 
 
 def main(
-    config: ForgeFile,
+    config: ForgeLoaded,
     repo_paths: list[str],
 ):
     """Process repo_paths with the given Forge"""
@@ -33,14 +33,23 @@ def main(
 
 
 def process_repo(
-    config: ForgeFile,
+    config: ForgeLoaded,
     repo_path: str,
 ):
     """Process a single repo"""
     git_repo = Repo(path=repo_path)
-    push(git_repo, config.head_branch)
+    if config.git_push_first:
+        push(git_repo, config.head_branch)
     # Grab the repo's remote URL to feed it to the forge for ID
-    (forge_remote_url,) = list(git_repo.remote().urls)
+    try:
+        (forge_remote_url,) = list(git_repo.remote().urls)
+    except ValueError:
+        if not config.git_push_first:
+            # No remote exists for repo and we didn't wanna push anyway
+            # FIXME: What to do with local URLs like in tests?
+            forge_remote_url = (
+                f"unix://{repo_path}"  # Pretending to have one and move on for tests
+            )
     pr = config.forge.create_pr(
         forge_repo_url=forge_remote_url,
         base_branch=config.base_branch,

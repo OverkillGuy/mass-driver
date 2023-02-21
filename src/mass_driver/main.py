@@ -4,7 +4,7 @@ from copy import deepcopy
 from pathlib import Path
 from tempfile import mkdtemp
 
-from mass_driver.migration import Migration, MigrationFile, load_driver
+from mass_driver.migration import MigrationFile, MigrationLoaded, load_driver
 from mass_driver.patchdriver import PatchOutcome, PatchResult
 from mass_driver.repo import clone_if_remote, commit
 
@@ -50,7 +50,7 @@ def main(
 
 def process_repo(
     repo_path: str,
-    migration: Migration,
+    migration: MigrationLoaded,
     dry_run: bool,
     # forge: Forge,
     cache_path: Path,
