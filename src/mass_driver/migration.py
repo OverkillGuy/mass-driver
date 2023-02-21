@@ -25,7 +25,7 @@ class MigrationFile(MigrationBase):
 
     branch_name: str | None
     """The branch name, if any, to use when committing the PatchDriver"""
-    driver: str
+    driver_name: str
     """The plugin-name of the PatchDriver to use, via plugin discovery"""
     driver_config: dict
     """The (opaque) configuration of the PatchDriver. Validated once driver loaded"""
@@ -58,7 +58,7 @@ def load_migration(migration_config: str) -> MigrationFile:
 
 def driver_from_config(config: MigrationFile) -> PatchDriver:
     """Create PatchDriver instance from config file (TOML)"""
-    driver_class = get_driver(config.driver)
+    driver_class = get_driver(config.driver_name)
     return driver_class.parse_obj(config.driver_config)
 
 
@@ -96,7 +96,7 @@ class ForgeFileBase(BaseModel):
 class ForgeFilePreload(ForgeFileBase):
     """The config file describing a forge, before we load the Forge class"""
 
-    forge: str
+    forge_name: str
     """The name of the forge to create PRs with, as plugin name"""
 
 
@@ -125,7 +125,7 @@ def load_forge_toml(forge_config: str) -> ForgeFilePreload:
 
 def forge_from_config(config: ForgeFilePreload, auth_token: str) -> Forge:
     """Create Forge instance from config file (TOML)"""
-    forge_class = get_forge(config.forge)
+    forge_class = get_forge(config.forge_name)
     breakpoint()
     return forge_class(auth_token=auth_token)
 

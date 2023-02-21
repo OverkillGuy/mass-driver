@@ -1,4 +1,7 @@
-"""Simplest Patch Driver: increments a file counter"""
+"""Dummy Patch Driver: increments a file counter
+
+Simplest code we could implement that demonstrates PatchDriver capabilities.
+"""
 
 from pathlib import Path
 

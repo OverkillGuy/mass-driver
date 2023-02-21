@@ -32,7 +32,7 @@ class GithubForge(Forge):
         return pr.html_url
 
     def get_pr(self, forge_repo: str, pr_id: str):
-        """Send a PR with msg on upstream of repo at repo_path, for given branch"""
+        """Get the PR by ID on forge_repo"""
         api = Github(self.auth_token)
         repo = api.get_repo(forge_repo)
         return repo.get_pull(int(pr_id))

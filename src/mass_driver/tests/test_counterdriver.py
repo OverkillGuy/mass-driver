@@ -31,12 +31,14 @@ from mass_driver.tests.fixtures import copy_folder, massdrive
         ("counter_config2.toml", PatchOutcome.PATCHED_OK),
     ],
 )
-def test_counter_bumped(tmp_path, datadir, configfilename, expected_outcome):
+def test_counter_bumped(
+    tmp_path, datadir, shared_datadir, configfilename, expected_outcome
+):
     """Scenario: Counter file bumped properly"""
     # Given a sample repo to mass-drive
     # And sample repo has counter at value 1
     repo_path = Path(tmp_path / "test_repo/")
-    copy_folder(Path(datadir / "sample_repo"), repo_path)
+    copy_folder(Path(shared_datadir / "sample_repo"), repo_path)
     config_filepath = datadir / configfilename
     migration = Migration.from_config(config_filepath.read_text())
     # When I run mass-driver
@@ -56,12 +58,13 @@ def test_counter_bumped(tmp_path, datadir, configfilename, expected_outcome):
 def test_counter_borked(
     tmp_path,
     datadir,
+    shared_datadir,
 ):
     """Scenario: Counter not an integer crashes"""
     # Given a sample repo to mass-drive
     # But counter is not digits
     repo_path = Path(tmp_path / "test_repo/")
-    copy_folder(Path(datadir / "sample_repo"), repo_path)
+    copy_folder(Path(shared_datadir / "sample_repo"), repo_path)
     config_fullpath = datadir / "counter_config2.toml"
     migration = Migration.from_config(config_fullpath.read_text())
     with open(repo_path / migration.driver.counter_file, "w") as counter_fd:
