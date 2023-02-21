@@ -1,3 +1,6 @@
+# Mass-driver tool uses this path to store/cache data
+.mass_driver/
+
 # Poetry.lock is an exact version pinning tool (down to SHA256 of libs)
 # If writing a (reusable) library, exact versions don't matter that much so it
 # may make sense to gitignore that file, uncommenting the following line:
@@ -8,6 +11,7 @@ poetry.lock
 
 test_results/
 
+## ----------------------------------------------------------------------------
 ## Python gitignore from github/gitignored#14f8a8b
 ## See https://raw.githubusercontent.com/github/gitignore/14f8a8b4c51ecc00b18905a95c117954e6c77b9d/Python.gitignore
 
