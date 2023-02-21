@@ -1,3 +1,0 @@
-[driver.counter]
-counter_file = "counter.txt"
-target_count = 1
