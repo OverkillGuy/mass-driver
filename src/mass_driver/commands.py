@@ -75,6 +75,7 @@ def run_command(args: Namespace):
         missing_token_exit()
     if activity.migration is None:
         print("No migration section: skipping migration")
+        migration_result = None
     else:
         migration_result = migration_main(
             activity.migration,

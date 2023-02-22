@@ -22,9 +22,9 @@ import pytest
 
 from mass_driver.forge_run import PROutcome
 from mass_driver.forges.dummy import DUMMY_PR_URL
-from mass_driver.models.migration import MigrationLoaded
+from mass_driver.models.activity import load_activity_toml
 from mass_driver.models.patchdriver import PatchOutcome
-from mass_driver.tests.fixtures import copy_folder, massdrive, massdrive_and_forge
+from mass_driver.tests.fixtures import copy_folder, massdrive
 
 
 @pytest.mark.parametrize(
@@ -43,18 +43,21 @@ def test_counter_bumped(
     repo_path = Path(tmp_path / "test_repo/")
     copy_folder(Path(shared_datadir / "sample_repo"), repo_path)
     config_filepath = datadir / configfilename
-    migration = MigrationLoaded.from_config(config_filepath.read_text())
+    activity = load_activity_toml(config_filepath.read_text())
+    migration = activity.migration
     # When I run mass-driver
-    result = massdrive(
+    migration_result, forge_result = massdrive(
         repo_path,
         config_filepath,
     )
-    assert result.outcome == expected_outcome, "Wrong outcome from patching"
-    counter_text_post = (repo_path / migration.driver.counter_file).read_text()
+    assert migration_result.outcome == expected_outcome, "Wrong outcome from patching"
+    counter_text_post = (
+        repo_path / migration.driver_config["counter_file"]
+    ).read_text()
     # Then the counter is bumped to config value
     # Note: Different configfilename set the target_count to different value
     assert (
-        int(counter_text_post) == migration.driver.target_count
+        int(counter_text_post) == migration.driver_config["target_count"]
     ), "Counter not updated properly"
 
 
@@ -95,9 +98,7 @@ def test_forge_cli(tmp_path, datadir, shared_datadir, mocker):
     # And a pretend token
     mocker.patch.dict(os.environ, {"FORGE_TOKEN": "ghp_supersecrettoken"})
     # When I run mass-driver
-    migration_result, forge_result = massdrive_and_forge(
-        repo_path, activityconfig_filepath
-    )
+    migration_result, forge_result = massdrive(repo_path, activityconfig_filepath)
     assert (
         migration_result.outcome == PatchOutcome.PATCHED_OK
     ), "Wrong outcome from patching"

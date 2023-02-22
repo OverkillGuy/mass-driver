@@ -18,7 +18,7 @@ driver_config = { counter_file = "counter.txt", target_count = 2}
 [mass-driver.forge]
 forge_name = "dummy"
 
-base_branch = "master"
+base_branch = "main"
 # Branch name for migrations defaults to used PatchDriver's plugin name
 head_branch = "counter"
 draft_pr = true
