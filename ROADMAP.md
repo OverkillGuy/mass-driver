@@ -21,6 +21,7 @@ Before anything, polish the usecase of one-shot PR generation as CLI.
 - Create cookiecutter template (including tests) for each plugin type
 
 
+- Publish JSON Schema of the `Activity` model, to enable validation/IDE completion
 - Create RepoSource plugin for fetching list of repos (with sample "RepoList" = NOOP)
 - Per-repo migration/forge config overrides (enabled by RepoSource)
 
