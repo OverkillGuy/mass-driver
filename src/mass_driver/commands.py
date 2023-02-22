@@ -13,7 +13,6 @@ from mass_driver.discovery import (
 from mass_driver.forge_run import main as forge_main
 from mass_driver.migration_run import main as migration_main
 from mass_driver.models.activity import ActivityLoaded
-from mass_driver.models.migration import load_driver, load_forge, load_migration
 
 
 def drivers_command(args: Namespace):
@@ -94,35 +93,6 @@ def run_command(args: Namespace):
         pause_until_ok("Type y/yes/continue to run the Forge")
     forge_result = forge_main(activity.forge, args.repo_path)
     return (migration_result, forge_result)
-
-
-def run_migration_command(args: Namespace):
-    """Process the CLI for 'run-migration' subcommand"""
-    print("Migration-run mode!")
-    if args.repo_filelist:
-        args.repo_path = args.repo_filelist.read().strip().split("\n")
-    migration_config_str = args.migration_file.read()
-    migration_file = load_migration(migration_config_str)
-    migration = load_driver(migration_file)
-    return migration_main(
-        migration,
-        args.repo_path,
-        args.dry_run,
-        not args.no_cache,
-    )
-
-
-def run_forge_command(args: Namespace):
-    """Process the CLI for 'run-forge' subcommand"""
-    print("Forge-run mode!")
-    if args.repo_filelist:
-        args.repo_path = args.repo_filelist.read().strip().split("\n")
-    token = get_token()
-    if token is None:
-        return missing_token_exit()
-    forge_config_str = args.forge_file.read()
-    forge = load_forge(forge_config_str, token)
-    return forge_main(forge, args.repo_path)
 
 
 def get_token() -> str | None:

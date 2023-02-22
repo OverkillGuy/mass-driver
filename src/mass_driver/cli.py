@@ -46,39 +46,6 @@ def driver_subparser(subparser):
     drivers.set_defaults(func=commands.drivers_command)
 
 
-def runmig_subparser(subparser):
-    """Injecet the run-migration subparser"""
-    run_mig = subparser.add_parser(
-        "run-migration",
-        help="Run a mass-driver migration over multiple repos",
-    )
-    run_mig.add_argument(
-        "migration_file",
-        help="Filepath of migration-config to apply (TOML file)",
-        type=FileType("r"),
-    )
-    run_mig.add_argument(
-        "--no-cache",
-        help="Disable any repo caching",
-        action="store_true",
-    )
-    detect_group = run_mig.add_mutually_exclusive_group()
-    detect_group.add_argument(
-        "--really-commit-changes",
-        dest="dry_run",
-        action="store_false",
-        help="Really commit changes (locally, no pushing)",
-    )
-    detect_group.add_argument(
-        "--dry-run",
-        action="store_true",
-        dest="dry_run",
-        help="Dry run, no actual commit, no pushing (default)",
-    )
-    repo_list_group(run_mig)
-    run_mig.set_defaults(dry_run=True, func=commands.run_migration_command)
-
-
 def run_subparser(subparser):
     """Inject the run subparser"""
     run = subparser.add_parser(
@@ -117,22 +84,6 @@ def run_subparser(subparser):
     run.set_defaults(dry_run=True, func=commands.run_command)
 
 
-def runforge_subparser(subparser):
-    """Inject run-forge specific subpasrser"""
-    run_forge = subparser.add_parser(
-        "run-forge",
-        help="Run a mass-driver forge over multiple repos",
-        epilog="Forge API token require envvar FORGE_TOKEN",
-    )
-    run_forge.add_argument(
-        "forge_file",
-        help="Filepath of forge-config to apply (TOML file)",
-        type=FileType("r"),
-    )
-    repo_list_group(run_forge)
-    run_forge.set_defaults(dry_run=True, func=commands.run_forge_command)
-
-
 def forge_subparser(subparser):
     """Inject the forge-listing subparser"""
     forges = subparser.add_parser(
@@ -150,9 +101,7 @@ def subparsers(parser: ArgumentParser) -> ArgumentParser:
     subparser = parser.add_subparsers(dest="cmd", title="Commands")
     subparser.required = True
     driver_subparser(subparser)
-    runmig_subparser(subparser)
     run_subparser(subparser)
-    runforge_subparser(subparser)
     forge_subparser(subparser)
     return parser
 
