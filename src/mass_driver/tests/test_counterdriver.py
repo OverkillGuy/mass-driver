@@ -81,7 +81,7 @@ def test_forge_cli(tmp_path, datadir, shared_datadir, mocker):
     """Feature: Validate the Forge CLI
 
          As the mass-driver dev
-         I need to ensure run-forge command works
+         I need to ensure run command works (migration then forge)
          To avoid regressions of the overall CLI
 
     Note that this is NOT a test of the specific Forge, as we intentionally
@@ -90,16 +90,18 @@ def test_forge_cli(tmp_path, datadir, shared_datadir, mocker):
     """
     repo_path = Path(tmp_path / "test_repo/")
     copy_folder(Path(shared_datadir / "sample_repo"), repo_path)
-    migrationconfig_fullpath = datadir / "counter_config2.toml"
-    forgeconfig_filepath = datadir / "forge_config.toml"
+    activityconfig_filepath = datadir / "activity.toml"
     # forge = ForgeLoaded.from_config(forgeconfig_filepath.read_text())
     # And a pretend token
     mocker.patch.dict(os.environ, {"FORGE_TOKEN": "ghp_supersecrettoken"})
     # When I run mass-driver
-    result = massdrive_and_forge(
-        repo_path,
-        migrationconfig_fullpath,
-        forgeconfig_filepath,
+    migration_result, forge_result = massdrive_and_forge(
+        repo_path, activityconfig_filepath
     )
-    assert result.outcome == PROutcome.PR_CREATED, "Should succeed creating PR"
-    assert result.pr_html_url == DUMMY_PR_URL, "Should have returned correct PR URL"
+    assert (
+        migration_result.outcome == PatchOutcome.PATCHED_OK
+    ), "Wrong outcome from patching"
+    assert forge_result.outcome == PROutcome.PR_CREATED, "Should succeed creating PR"
+    assert (
+        forge_result.pr_html_url == DUMMY_PR_URL
+    ), "Should have returned correct PR URL"

@@ -4,7 +4,7 @@ from copy import deepcopy
 from pathlib import Path
 from tempfile import mkdtemp
 
-from mass_driver.models.migration import MigrationFile, MigrationLoaded, load_driver
+from mass_driver.models.migration import MigrationLoaded
 from mass_driver.models.patchdriver import PatchOutcome, PatchResult
 from mass_driver.repo import clone_if_remote, commit
 
@@ -12,13 +12,12 @@ DEFAULT_CACHE = Path(".mass_driver/repos/")
 
 
 def main(
-    config: MigrationFile,
+    migration: MigrationLoaded,
     repo_paths: list[str],
     dry_run: bool,
     cache: bool,
 ):
     """Run the program's main command"""
-    migration = load_driver(config)
     repo_count = len(repo_paths)
     cache_folder = DEFAULT_CACHE
     if not cache:

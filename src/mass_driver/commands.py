@@ -11,9 +11,9 @@ from mass_driver.discovery import (
     get_forge_entrypoint,
 )
 from mass_driver.forge_run import main as forge_main
-from mass_driver.main import main
+from mass_driver.migration_run import main as migration_main
 from mass_driver.models.activity import ActivityLoaded
-from mass_driver.models.migration import load_forge, load_migration
+from mass_driver.models.migration import load_driver, load_forge, load_migration
 
 
 def drivers_command(args: Namespace):
@@ -76,7 +76,7 @@ def run_command(args: Namespace):
     if activity.migration is None:
         print("No migration section: skipping migration")
     else:
-        migration_result = main(
+        migration_result = migration_main(
             activity.migration,
             args.repo_path,
             args.dry_run,
@@ -101,8 +101,9 @@ def run_migration_command(args: Namespace):
     if args.repo_filelist:
         args.repo_path = args.repo_filelist.read().strip().split("\n")
     migration_config_str = args.migration_file.read()
-    migration = load_migration(migration_config_str)
-    return main(
+    migration_file = load_migration(migration_config_str)
+    migration = load_driver(migration_file)
+    return migration_main(
         migration,
         args.repo_path,
         args.dry_run,

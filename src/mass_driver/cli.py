@@ -151,6 +151,7 @@ def subparsers(parser: ArgumentParser) -> ArgumentParser:
     subparser.required = True
     driver_subparser(subparser)
     runmig_subparser(subparser)
+    run_subparser(subparser)
     runforge_subparser(subparser)
     forge_subparser(subparser)
     return parser

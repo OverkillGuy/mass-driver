@@ -6,7 +6,6 @@ from pathlib import Path
 from git import Repo
 
 from mass_driver.cli import cli as massdriver_cli
-from mass_driver.models.patchdriver import PatchOutcome
 
 
 def repoize(path: Path):
@@ -47,19 +46,18 @@ def massdrive(repo_path: Path, migration_configfilepath: Path):
 
 
 def massdrive_and_forge(
-    repo_path: Path, migration_configfilepath: Path, forge_configfilepath: Path
+    repo_path: Path,
+    activity_configfilepath: Path,
 ):
     """Apply a forge after mass-driver run-migration"""
-    massdrive_result = massdrive(repo_path, migration_configfilepath)
-    assert (
-        massdrive_result.outcome == PatchOutcome.PATCHED_OK
-    ), "Should Patch OK before running Forge test"
-    result_dict = massdriver_cli(
+    repoize(repo_path)
+    migration_result, forge_result = massdriver_cli(
         [
-            "run-forge",
-            str(forge_configfilepath),
+            "run",
+            str(activity_configfilepath),
             "--repo-path",
             str(repo_path),
+            "--no-pause",
         ]
     )
-    return result_dict[str(repo_path)]
+    return migration_result[str(repo_path)], forge_result[str(repo_path)]
