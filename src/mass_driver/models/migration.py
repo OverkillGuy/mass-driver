@@ -5,8 +5,8 @@ from tomllib import loads
 from pydantic import BaseModel
 
 from mass_driver.discovery import get_driver, get_forge
-from mass_driver.forge import BranchName, Forge
-from mass_driver.patchdriver import PatchDriver
+from mass_driver.models.forge import BranchName, Forge
+from mass_driver.models.patchdriver import PatchDriver
 
 TOML_PROJECTKEY = "mass-driver"
 
@@ -113,14 +113,14 @@ def load_forge_toml(forge_config: str) -> ForgeFile:
 def forge_from_config(config: ForgeFile, auth_token: str) -> ForgeLoaded:
     """Create Forge instance from config file (TOML)"""
     forge_class = get_forge(config.forge_name)
-    return forge_class(auth_token=auth_token)
-
-
-def load_forge(config: str, auth_token: str) -> ForgeFile:
-    """Look up driver and validate configuration (de-opaquify)"""
-    forge = load_forge_toml(config)
-    forge_obj = forge_from_config(forge, auth_token)
+    forge_obj = forge_class(auth_token=auth_token)
     return ForgeLoaded(
         forge=forge_obj,
-        **(forge.dict()),
+        **(config.dict()),
     )
+
+
+def load_forge(config: str, auth_token: str) -> ForgeLoaded:
+    """Look up driver and validate configuration (de-opaquify)"""
+    forge_file = load_forge_toml(config)
+    return forge_from_config(forge_file, auth_token)

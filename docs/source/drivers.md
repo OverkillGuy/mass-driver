@@ -27,11 +27,11 @@ But if you want to do something more elaborate, you'll want your own
 ### Defining a PatchDriver
 
 Simply create a class that inherits from
-{py:class}`mass_driver.patchdriver.PatchDriver`, storing any kind of configuration as
+{py:class}`mass_driver.models.patchdriver.PatchDriver`, storing any kind of configuration as
 slots, and exposing a single `run` method:
 
 ```python
-from mass_driver.patchdriver import PatchDriver, PatchResult, PatchOutcome
+from mass_driver.models.patchdriver import PatchDriver, PatchResult, PatchOutcome
 
 class PerlPackageBumper(PatchDriver):
     """Bump version of Perl packages"""

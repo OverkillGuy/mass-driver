@@ -1,6 +1,6 @@
 """Dummy Forge, does not do anything meaningful"""
 
-from mass_driver.forge import BranchName, Forge
+from mass_driver.models.forge import BranchName, Forge
 
 DUMMY_PR_URL = "https://github.com/OverkillGuy/sphinx-needs-tests/pull/1"
 """A random but real PR to use as dummy value"""

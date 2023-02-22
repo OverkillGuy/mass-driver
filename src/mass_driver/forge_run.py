@@ -4,7 +4,7 @@ from enum import Enum
 from git import Repo
 from pydantic import BaseModel
 
-from mass_driver.migration import ForgeLoaded
+from mass_driver.models.migration import ForgeLoaded
 from mass_driver.repo import push
 
 

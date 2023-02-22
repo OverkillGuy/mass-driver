@@ -5,7 +5,7 @@ Simplest code we could implement that demonstrates PatchDriver capabilities.
 
 from pathlib import Path
 
-from mass_driver.patchdriver import PatchDriver, PatchOutcome, PatchResult
+from mass_driver.models.patchdriver import PatchDriver, PatchOutcome, PatchResult
 
 
 class Counter(PatchDriver):

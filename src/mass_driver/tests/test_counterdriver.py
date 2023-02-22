@@ -22,8 +22,8 @@ import pytest
 
 from mass_driver.forge_run import PROutcome
 from mass_driver.forges.dummy import DUMMY_PR_URL
-from mass_driver.migration import MigrationLoaded
-from mass_driver.patchdriver import PatchOutcome
+from mass_driver.models.migration import MigrationLoaded
+from mass_driver.models.patchdriver import PatchOutcome
 from mass_driver.tests.fixtures import copy_folder, massdrive, massdrive_and_forge
 
 

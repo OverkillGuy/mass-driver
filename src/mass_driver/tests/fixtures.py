@@ -6,7 +6,7 @@ from pathlib import Path
 from git import Repo
 
 from mass_driver.cli import cli as massdriver_cli
-from mass_driver.patchdriver import PatchOutcome
+from mass_driver.models.patchdriver import PatchOutcome
 
 
 def repoize(path: Path):

@@ -12,7 +12,7 @@ from mass_driver.discovery import (
 )
 from mass_driver.forge_run import main as forge_main
 from mass_driver.main import main
-from mass_driver.migration import load_forge, load_migration
+from mass_driver.models.migration import load_forge, load_migration
 
 
 def drivers_command(args: Namespace):

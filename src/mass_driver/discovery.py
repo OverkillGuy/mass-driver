@@ -2,8 +2,8 @@
 
 import sys
 
-from mass_driver.forge import Forge
-from mass_driver.patchdriver import PatchDriver
+from mass_driver.models.forge import Forge
+from mass_driver.models.patchdriver import PatchDriver
 
 if sys.version_info < (3, 10):
     from importlib_metadata import EntryPoint, EntryPoints, entry_points

@@ -4,7 +4,7 @@ from pathlib import Path
 
 from git import Repo
 
-from mass_driver.migration import MigrationLoaded
+from mass_driver.models.migration import MigrationLoaded
 
 
 def clone_if_remote(repo_path: str, cache_folder: Path) -> Repo:

@@ -4,8 +4,8 @@ from copy import deepcopy
 from pathlib import Path
 from tempfile import mkdtemp
 
-from mass_driver.migration import MigrationFile, MigrationLoaded, load_driver
-from mass_driver.patchdriver import PatchOutcome, PatchResult
+from mass_driver.models.migration import MigrationFile, MigrationLoaded, load_driver
+from mass_driver.models.patchdriver import PatchOutcome, PatchResult
 from mass_driver.repo import clone_if_remote, commit
 
 DEFAULT_CACHE = Path(".mass_driver/repos/")

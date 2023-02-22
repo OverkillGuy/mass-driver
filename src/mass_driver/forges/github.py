@@ -2,7 +2,7 @@
 
 from github import Github
 
-from mass_driver.forge import BranchName, Forge
+from mass_driver.models.forge import BranchName, Forge
 
 
 class GithubForge(Forge):
