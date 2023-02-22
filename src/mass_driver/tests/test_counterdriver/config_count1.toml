@@ -1,5 +1,5 @@
 [mass-driver.migration]
-# Common name to remember the change by across all repos
+
 migration_name = "[JIRA-123] Bump counter.txt to 1"
 commit_message = """Bump counter to 1
 
@@ -8,11 +8,12 @@ Upgrade counter to one, as part of change number blablabla
 See JIRA-123, where we document the need for counter to go up.
 """
 
+branch_name = "my-branch"
+
 # PatchDriver class to use.
 # Selected via plugin name, from "massdriver.drivers" entrypoint
 driver_name = "counter"
 
-# The dict will be loaded verbatim into the relevant PatchDriver
-[mass-driver.migration.driver_config]
-counter_file = "counter.txt"
-target_count = 1
+driver_config = { counter_file = "counter.txt", target_count = 1 }
+
+# Note: No "forge" section = no forge activity to pursue (no PR)

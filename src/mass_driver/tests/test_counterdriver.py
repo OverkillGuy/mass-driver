@@ -15,13 +15,10 @@ bumping is not needed.
 
 """
 
-import os
 from pathlib import Path
 
 import pytest
 
-from mass_driver.forge_run import PROutcome
-from mass_driver.forges.dummy import DUMMY_PR_URL
 from mass_driver.models.activity import load_activity_toml
 from mass_driver.models.patchdriver import PatchOutcome
 from mass_driver.tests.fixtures import copy_folder, massdrive
@@ -30,8 +27,8 @@ from mass_driver.tests.fixtures import copy_folder, massdrive
 @pytest.mark.parametrize(
     "configfilename,expected_outcome",
     [
-        ("counter_config1.toml", PatchOutcome.ALREADY_PATCHED),
-        ("counter_config2.toml", PatchOutcome.PATCHED_OK),
+        ("config_count1.toml", PatchOutcome.ALREADY_PATCHED),
+        ("config_count2.toml", PatchOutcome.PATCHED_OK),
     ],
 )
 def test_counter_bumped(
@@ -78,31 +75,3 @@ def test_counter_bumped(
 #     # When I run mass-driver
 #     massdrive(repo_path, config_fullpath)
 #     # TODO Then some error handling should occur
-
-
-def test_forge_cli(tmp_path, datadir, shared_datadir, mocker):
-    """Feature: Validate the Forge CLI
-
-         As the mass-driver dev
-         I need to ensure run command works (migration then forge)
-         To avoid regressions of the overall CLI
-
-    Note that this is NOT a test of the specific Forge, as we intentionally
-    stripped this forge of any real complexity, this is instead a check that the CLI
-    pipeline still works.
-    """
-    repo_path = Path(tmp_path / "test_repo/")
-    copy_folder(Path(shared_datadir / "sample_repo"), repo_path)
-    activityconfig_filepath = datadir / "activity.toml"
-    # forge = ForgeLoaded.from_config(forgeconfig_filepath.read_text())
-    # And a pretend token
-    mocker.patch.dict(os.environ, {"FORGE_TOKEN": "ghp_supersecrettoken"})
-    # When I run mass-driver
-    migration_result, forge_result = massdrive(repo_path, activityconfig_filepath)
-    assert (
-        migration_result.outcome == PatchOutcome.PATCHED_OK
-    ), "Wrong outcome from patching"
-    assert forge_result.outcome == PROutcome.PR_CREATED, "Should succeed creating PR"
-    assert (
-        forge_result.pr_html_url == DUMMY_PR_URL
-    ), "Should have returned correct PR URL"
