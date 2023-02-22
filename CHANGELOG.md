@@ -6,6 +6,9 @@ The project uses semantic versioning (see [semver](https://semver.org)).
 
 ## [Unreleased]
 
+
+## v0.7.0 - 2023-02-22
+
 ### Added
 - New `ROADMAP.md` to clarify The Plan.
 
