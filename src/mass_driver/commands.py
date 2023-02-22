@@ -79,7 +79,6 @@ def run_command(args: Namespace):
         migration_result = migration_main(
             activity.migration,
             args.repo_path,
-            args.dry_run,
             not args.no_cache,
         )
     print("Migration complete!")

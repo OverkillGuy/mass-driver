@@ -67,19 +67,19 @@ def run_subparser(subparser):
         help="Disable the interactive pause between Migration and Forge",
         action="store_true",
     )
-    detect_group = run.add_mutually_exclusive_group()
-    detect_group.add_argument(
-        "--really-commit-changes",
-        dest="dry_run",
-        action="store_false",
-        help="Really commit changes (locally, no pushing)",
-    )
-    detect_group.add_argument(
-        "--dry-run",
-        action="store_true",
-        dest="dry_run",
-        help="Dry run, no actual commit, no pushing (default)",
-    )
+    # detect_group = run.add_mutually_exclusive_group()
+    # detect_group.add_argument(
+    #     "--really-commit-changes",
+    #     dest="dry_run",
+    #     action="store_false",
+    #     help="Really commit changes (locally, no pushing)",
+    # )
+    # detect_group.add_argument(
+    #     "--dry-run",
+    #     action="store_true",
+    #     dest="dry_run",
+    #     help="Dry run, no actual commit, no pushing (default)",
+    # )
     repo_list_group(run)
     run.set_defaults(dry_run=True, func=commands.run_command)
 

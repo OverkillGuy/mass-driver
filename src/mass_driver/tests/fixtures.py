@@ -37,7 +37,6 @@ def massdrive(repo_path: Path, activity_configfilepath: Path):
         [
             "run",
             str(activity_configfilepath),
-            "--really-commit-changes",
             "--repo-path",
             str(repo_path),
             "--no-pause",

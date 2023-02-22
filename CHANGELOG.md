@@ -14,8 +14,11 @@ The project uses semantic versioning (see [semver](https://semver.org)).
 ### Changed
 - Replace commands `run-migration` + `run-forge` by new `run`, using the
   `Activity` file type with optionals.
-- Internals refactored: all Pydantic objects now under `mass_driver.models` (`PatchDriver`, `Forge`)
+- Internals refactored: all Pydantic objects now under `mass_driver.models`
+  (`PatchDriver`, `Forge`, `Activity`)
 
+### Removed
+- Options `--really-commit-changes` and `--dry-run`
 
 ## v0.7.0 - 2023-02-22
 

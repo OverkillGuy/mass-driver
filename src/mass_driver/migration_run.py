@@ -14,7 +14,6 @@ DEFAULT_CACHE = Path(".mass_driver/repos/")
 def main(
     migration: MigrationLoaded,
     repo_paths: list[str],
-    dry_run: bool,
     cache: bool,
 ):
     """Run the program's main command"""
@@ -30,9 +29,7 @@ def main(
             print(f"[{repo_index:03d}/{repo_count:03d}] Processing {repo_path}...")
             # Ensure no driver persistence between repos
             migration_copy = deepcopy(migration)
-            result = process_repo(
-                repo_path, migration_copy, dry_run, cache_path=cache_folder
-            )
+            result = process_repo(repo_path, migration_copy, cache_path=cache_folder)
             patch_results[repo_path] = result
         except Exception as e:
             print(f"Error processing repo '{repo_path}'\nError was: {e}")
@@ -48,8 +45,6 @@ def main(
 def process_repo(
     repo_path: str,
     migration: MigrationLoaded,
-    dry_run: bool,
-    # forge: Forge,
     cache_path: Path,
 ) -> PatchResult:
     """Process a repo with Mass Driver"""
@@ -57,9 +52,6 @@ def process_repo(
     repo_as_path = Path(repo.working_dir)
     result = migration.driver.run(repo_as_path)
     print(result.outcome.value)
-    if dry_run:
-        print("Dry-run completed")
-        return result
     if result.outcome != PatchOutcome.PATCHED_OK:
         print("Patch wasn't OK: skip commit")
         return result
