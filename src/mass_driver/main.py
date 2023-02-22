@@ -15,12 +15,10 @@ def main(
     config: MigrationFile,
     repo_paths: list[str],
     dry_run: bool,
-    auth_token: str,
     cache: bool,
 ):
     """Run the program's main command"""
     migration = load_driver(config)
-    # forge = GithubForge(auth_token)
     repo_count = len(repo_paths)
     cache_folder = DEFAULT_CACHE
     if not cache:

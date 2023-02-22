@@ -12,6 +12,7 @@ from mass_driver.discovery import (
 )
 from mass_driver.forge_run import main as forge_main
 from mass_driver.main import main
+from mass_driver.models.activity import ActivityLoaded
 from mass_driver.models.migration import load_forge, load_migration
 
 
@@ -61,19 +62,50 @@ def forges_command(args: Namespace):
     return
 
 
+def run_command(args: Namespace):
+    """Process the CLI for 'run'"""
+    print("Run mode!")
+    if args.repo_filelist:
+        args.repo_path = args.repo_filelist.read().strip().split("\n")
+    token = get_token()
+    activity_str = args.activity_file.read()
+    try:
+        activity = ActivityLoaded.from_config(activity_str, token)
+    except ValueError:
+        missing_token_exit()
+    if activity.migration is None:
+        print("No migration section: skipping migration")
+    else:
+        migration_result = main(
+            activity.migration,
+            args.repo_path,
+            args.dry_run,
+            not args.no_cache,
+        )
+    print("Migration complete!")
+    if activity.forge is None:
+        # Nothing else to do, just print completion and exit
+        print("No Forge available: end")
+        return (migration_result, None)
+    # Now guaranteed to have a Forge: pause + forge
+    if not args.no_pause:
+        print("Review the commits now.")
+        pause_until_ok("Type y/yes/continue to run the Forge")
+    forge_result = forge_main(activity.forge, args.repo_path)
+    return (migration_result, forge_result)
+
+
 def run_migration_command(args: Namespace):
     """Process the CLI for 'run-migration' subcommand"""
     print("Migration-run mode!")
     if args.repo_filelist:
         args.repo_path = args.repo_filelist.read().strip().split("\n")
-    notatoken = ""  # get_token(args)
     migration_config_str = args.migration_file.read()
     migration = load_migration(migration_config_str)
     return main(
         migration,
         args.repo_path,
         args.dry_run,
-        notatoken,
         not args.no_cache,
     )
 
@@ -84,18 +116,31 @@ def run_forge_command(args: Namespace):
     if args.repo_filelist:
         args.repo_path = args.repo_filelist.read().strip().split("\n")
     token = get_token()
+    if token is None:
+        return missing_token_exit()
     forge_config_str = args.forge_file.read()
     forge = load_forge(forge_config_str, token)
     return forge_main(forge, args.repo_path)
 
 
-def get_token() -> str:
-    """Grab the Forge API Token"""
-    token = os.getenv("FORGE_TOKEN")
-    if token is None:
-        print(
-            "Missing API token: set FORGE_TOKEN envvar",
-            file=sys.stderr,
-        )
-        exit(2)  # Simulate the argparse behaviour of exiting on bad args
-    return token
+def get_token() -> str | None:
+    """Grab the Forge API Token if any"""
+    return os.getenv("FORGE_TOKEN")
+
+
+def missing_token_exit():
+    """Exit in case of bad token"""
+    print(
+        "Missing API token: set FORGE_TOKEN envvar",
+        file=sys.stderr,
+    )
+    exit(2)  # Simulate the argparse behaviour of exiting on bad args
+
+
+def pause_until_ok(message: str):
+    """Halt until keyboard input is a variant of YES"""
+    continue_asking = True
+    while continue_asking:
+        typed_text = input(message)
+        if typed_text.lower() in ["y", "yes", "ok", "c", "continue"]:
+            continue_asking = False

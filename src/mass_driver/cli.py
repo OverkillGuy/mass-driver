@@ -79,6 +79,44 @@ def runmig_subparser(subparser):
     run_mig.set_defaults(dry_run=True, func=commands.run_migration_command)
 
 
+def run_subparser(subparser):
+    """Inject the run subparser"""
+    run = subparser.add_parser(
+        "run",
+        help="Run a mass-driver migration then forge over multiple repos",
+    )
+    run.add_argument(
+        "activity_file",
+        help="Filepath of activity to apply (TOML file)",
+        type=FileType("r"),
+    )
+    run.add_argument(
+        "--no-cache",
+        help="Disable any repo caching",
+        action="store_true",
+    )
+    run.add_argument(
+        "--no-pause",
+        help="Disable the interactive pause between Migration and Forge",
+        action="store_true",
+    )
+    detect_group = run.add_mutually_exclusive_group()
+    detect_group.add_argument(
+        "--really-commit-changes",
+        dest="dry_run",
+        action="store_false",
+        help="Really commit changes (locally, no pushing)",
+    )
+    detect_group.add_argument(
+        "--dry-run",
+        action="store_true",
+        dest="dry_run",
+        help="Dry run, no actual commit, no pushing (default)",
+    )
+    repo_list_group(run)
+    run.set_defaults(dry_run=True, func=commands.run_command)
+
+
 def runforge_subparser(subparser):
     """Inject run-forge specific subpasrser"""
     run_forge = subparser.add_parser(
