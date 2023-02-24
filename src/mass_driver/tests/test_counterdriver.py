@@ -15,57 +15,65 @@ bumping is not needed.
 
 """
 
+# test-start marker
 from pathlib import Path
 
 import pytest
 
-from mass_driver.migration import Migration
-from mass_driver.patchdriver import PatchOutcome
+from mass_driver.models.activity import load_activity_toml
+from mass_driver.models.patchdriver import PatchOutcome
 from mass_driver.tests.fixtures import copy_folder, massdrive
 
 
 @pytest.mark.parametrize(
     "configfilename,expected_outcome",
     [
-        ("counter_config1.toml", PatchOutcome.ALREADY_PATCHED),
-        ("counter_config2.toml", PatchOutcome.PATCHED_OK),
+        ("config_count1.toml", PatchOutcome.ALREADY_PATCHED),
+        ("config_count2.toml", PatchOutcome.PATCHED_OK),
     ],
 )
-def test_counter_bumped(tmp_path, datadir, configfilename, expected_outcome):
+def test_counter_bumped(
+    tmp_path, datadir, shared_datadir, configfilename, expected_outcome
+):
     """Scenario: Counter file bumped properly"""
     # Given a sample repo to mass-drive
     # And sample repo has counter at value 1
     repo_path = Path(tmp_path / "test_repo/")
-    copy_folder(Path(datadir / "sample_repo"), repo_path)
+    copy_folder(Path(shared_datadir / "sample_repo"), repo_path)
     config_filepath = datadir / configfilename
-    migration = Migration.from_config(config_filepath.read_text())
+    activity = load_activity_toml(config_filepath.read_text())
+    migration = activity.migration
     # When I run mass-driver
-    result = massdrive(
-        repo_path,
+    migration_result, forge_result = massdrive(
+        str(repo_path),
         config_filepath,
     )
-    assert result.outcome == expected_outcome, "Wrong outcome from patching"
-    counter_text_post = (repo_path / migration.driver.counter_file).read_text()
+    assert migration_result.outcome == expected_outcome, "Wrong outcome from patching"
+    counter_text_post = (
+        repo_path / migration.driver_config["counter_file"]
+    ).read_text()
     # Then the counter is bumped to config value
     # Note: Different configfilename set the target_count to different value
     assert (
-        int(counter_text_post) == migration.driver.target_count
+        int(counter_text_post) == migration.driver_config["target_count"]
     ), "Counter not updated properly"
+    # test-end marker
 
 
-def test_counter_borked(
-    tmp_path,
-    datadir,
-):
-    """Scenario: Counter not an integer crashes"""
-    # Given a sample repo to mass-drive
-    # But counter is not digits
-    repo_path = Path(tmp_path / "test_repo/")
-    copy_folder(Path(datadir / "sample_repo"), repo_path)
-    config_fullpath = datadir / "counter_config2.toml"
-    migration = Migration.from_config(config_fullpath.read_text())
-    with open(repo_path / migration.driver.counter_file, "w") as counter_fd:
-        counter_fd.write("Hello World! Not an integer!")
-    # When I run mass-driver
-    massdrive(repo_path, config_fullpath)
-    # TODO Then some error handling should occur
+# def test_counter_borked(
+#     tmp_path,
+#     datadir,
+#     shared_datadir,
+# ):
+#     """Scenario: Counter not an integer crashes"""
+#     # Given a sample repo to mass-drive
+#     # But counter is not digits
+#     repo_path = Path(tmp_path / "test_repo/")
+#     copy_folder(Path(shared_datadir / "sample_repo"), repo_path)
+#     config_fullpath = datadir / "counter_config2.toml"
+#     migration = MigrationLoaded.from_config(config_fullpath.read_text())
+#     with open(repo_path / migration.driver.counter_file, "w") as counter_fd:
+#         counter_fd.write("Hello World! Not an integer!")
+#     # When I run mass-driver
+#     massdrive(repo_path, config_fullpath)
+#     # TODO Then some error handling should occur

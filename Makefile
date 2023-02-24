@@ -31,7 +31,7 @@ run:  # Remember to export GITHUB_API_TOKEN beforehand
 
 .PHONY: docs
 docs: clean-docs
-	cd docs && make html man
+	cd docs && make html
 
 .PHONY: clean-docs
 clean-docs:

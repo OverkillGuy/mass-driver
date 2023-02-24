@@ -6,6 +6,20 @@ The project uses semantic versioning (see [semver](https://semver.org)).
 
 ## [Unreleased]
 
+### Added
+- New file type `Activity` combines `Migration` and `Forge`
+- New `Forge` named `dummy` for testing purposes
+- New `git_push_first` boolean param in Forge to disable git pushing.
+- New `ActivityOutcome` to capture the full result of a migration/forge sequence
+
+### Changed
+- Replace commands `run-migration` + `run-forge` by new `run`, using the
+  `Activity` file type with optionals.
+- Internals refactored: all Pydantic objects now under `mass_driver.models`
+  (`PatchDriver`, `Forge`, `Activity`)
+
+### Removed
+- Options `--really-commit-changes` and `--dry-run`
 
 ## v0.7.0 - 2023-02-22
 

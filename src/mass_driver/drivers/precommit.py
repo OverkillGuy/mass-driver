@@ -3,7 +3,7 @@
 import subprocess
 from pathlib import Path
 
-from mass_driver.patchdriver import PatchDriver, PatchOutcome, PatchResult
+from mass_driver.models.patchdriver import PatchDriver, PatchOutcome, PatchResult
 
 
 class PrecommitAutoupdate(PatchDriver):

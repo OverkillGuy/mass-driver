@@ -87,4 +87,5 @@ shell = 'mass_driver.drivers.shell:ShellDriver'
 stamper = 'mass_driver.drivers.stamper:Stamper'
 
 [tool.poetry.plugins.'massdriver.forges']
+dummy = 'mass_driver.forges.dummy:DummyForge'
 github = 'mass_driver.forges.github:GithubForge'
