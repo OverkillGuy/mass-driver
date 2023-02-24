@@ -13,10 +13,7 @@ These sections are in rough order in which they'll be pursued.
 
 Before anything, polish the usecase of one-shot PR generation as CLI.
 
-- Define & version the file interfaces (single file for both migration + forge)
-- Update the commands of CLI to match that file (pause between activities)
-- Create dummy `PatchDriver` and `Forge` for testing
-- Set up enough testing to guarantee system
+- Better CLI output for summarizing the conclusion of an activity
 - Add optional output file to JSON (currently Pydantic objects = JSON castable)
 - Create cookiecutter template (including tests) for each plugin type
 
