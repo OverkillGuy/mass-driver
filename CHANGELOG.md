@@ -6,6 +6,9 @@ The project uses semantic versioning (see [semver](https://semver.org)).
 
 ## [Unreleased]
 
+
+## v0.8.0 - 2023-02-24
+
 ### Added
 - New file type `Activity` combines `Migration` and `Forge`
 - New `Forge` named `dummy` for testing purposes
