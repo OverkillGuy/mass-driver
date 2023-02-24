@@ -44,7 +44,7 @@ def test_counter_bumped(
     migration = activity.migration
     # When I run mass-driver
     migration_result, forge_result = massdrive(
-        repo_path,
+        str(repo_path),
         config_filepath,
     )
     assert migration_result.outcome == expected_outcome, "Wrong outcome from patching"

@@ -3,6 +3,7 @@
 import os
 import sys
 from argparse import Namespace
+from pathlib import Path
 
 from mass_driver.discovery import (
     discover_drivers,
@@ -12,7 +13,7 @@ from mass_driver.discovery import (
 )
 from mass_driver.forge_run import main as forge_main
 from mass_driver.migration_run import main as migration_main
-from mass_driver.models.activity import ActivityLoaded
+from mass_driver.models.activity import ActivityLoaded, ActivityOutcome
 
 
 def drivers_command(args: Namespace):
@@ -61,7 +62,7 @@ def forges_command(args: Namespace):
     return
 
 
-def run_command(args: Namespace):
+def run_command(args: Namespace) -> ActivityOutcome:
     """Process the CLI for 'run'"""
     print("Run mode!")
     if args.repo_filelist:
@@ -74,7 +75,10 @@ def run_command(args: Namespace):
         missing_token_exit()
     if activity.migration is None:
         print("No migration section: skipping migration")
-        migration_result = None
+        migration_result = ActivityOutcome(
+            repos_input=args.repo_path,
+            local_repos_path={r: Path(r) for r in args.repo_path},
+        )
     else:
         migration_result = migration_main(
             activity.migration,
@@ -85,13 +89,13 @@ def run_command(args: Namespace):
     if activity.forge is None:
         # Nothing else to do, just print completion and exit
         print("No Forge available: end")
-        return (migration_result, None)
+        return migration_result
     # Now guaranteed to have a Forge: pause + forge
     if not args.no_pause:
         print("Review the commits now.")
         pause_until_ok("Type y/yes/continue to run the Forge")
-    forge_result = forge_main(activity.forge, args.repo_path)
-    return (migration_result, forge_result)
+    forge_result = forge_main(activity.forge, migration_result)
+    return forge_result
 
 
 def get_token() -> str | None:

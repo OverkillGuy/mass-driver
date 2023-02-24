@@ -3,10 +3,12 @@
 Encompasses both Migrations and Forge activities.
 """
 
+from pathlib import Path
 from tomllib import loads
 
 from pydantic import BaseModel
 
+from mass_driver.models.forge import PRResult
 from mass_driver.models.migration import (  # Forge,
     TOML_PROJECTKEY,
     ForgeFile,
@@ -16,6 +18,19 @@ from mass_driver.models.migration import (  # Forge,
     forge_from_config,
     load_driver,
 )
+from mass_driver.models.patchdriver import PatchResult
+
+RepoUrl = str
+"""A repo's clone URL, either git@github.com format or local filesystem path"""
+
+IndexedPatchResult = dict[RepoUrl, PatchResult]
+"""A set of PatchResults, indexed by original repo URL given as input"""
+
+IndexedPRResult = dict[RepoUrl, PRResult]
+"""A set of PRResults, indexed by original repo URL given as input"""
+
+RepoPathLookup = dict[RepoUrl, Path]
+"""A lookup table for the local cloned repo path, given its remote equivalent (or filesystem path)"""
 
 
 class ActivityFile(BaseModel):
@@ -37,6 +52,19 @@ class ActivityLoaded(BaseModel):
         """Get a loaded migration from config contents"""
         activity_file = load_activity_toml(config_toml)
         return load_activity(activity_file, auth_token)
+
+
+class ActivityOutcome(BaseModel):
+    """The outcome of running activities"""
+
+    repos_input: list[RepoUrl]
+    """The initial input we were iterating over"""
+    local_repos_path: RepoPathLookup
+    """A lookup table for the on-disk cloned filepath of each repo, indexed by repos_input url"""
+    migration_result: IndexedPatchResult | None = None
+    """A lookup table of the results of a Migration, indexed by repos_input url"""
+    forge_result: IndexedPRResult | None = None
+    """A lookup table of the results of a Forge, indexed by repos_input url"""
 
 
 def load_activity_toml(migration_config: str) -> ActivityFile:

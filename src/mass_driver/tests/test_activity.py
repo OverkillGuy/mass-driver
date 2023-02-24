@@ -30,7 +30,40 @@ def test_migration_and_forge(tmp_path, shared_datadir, mocker):
     # And a pretend token
     mocker.patch.dict(os.environ, {"FORGE_TOKEN": "ghp_supersecrettoken"})
     # When I run mass-driver
-    migration_result, forge_result = massdrive(repo_path, activityconfig_filepath)
+    migration_result, forge_result = massdrive(str(repo_path), activityconfig_filepath)
+    # Then I get OK outcome on migration
+    assert (
+        migration_result.outcome == PatchOutcome.PATCHED_OK
+    ), "Wrong outcome from patching"
+    # And PR creation is OK
+    assert forge_result.outcome == PROutcome.PR_CREATED, "Should succeed creating PR"
+    # And I get the PR URL I want
+    assert (
+        forge_result.pr_html_url == DUMMY_PR_URL
+    ), "Should have returned correct PR URL"
+
+
+def test_migration_and_forge_interneturl(tmp_path, shared_datadir, mocker):
+    """Scenario: Check a Migration + Forge activity still works with github clone URL
+
+    Targets an early bug where the Forge step _required_ a local Path, which the
+    Migrations would NOT provide when given an internet URL, causing potential
+    crashes.
+
+    """
+    # Guaranteed to have a counter file for PATCHED_OK
+    repo_url = "git@github.com:OverkillGuy/sphinx-needs-test.git"
+    activityconfig_filepath = shared_datadir / "activity.toml"
+    # And a pretend token
+    mocker.patch.dict(os.environ, {"FORGE_TOKEN": "ghp_supersecrettoken"})
+    # When I run mass-driver
+    prev_cwd = os.getcwd()
+    os.chdir(tmp_path)  # Ensure .mass_driver/ cache folder is disposable
+    # Only applicable to the internet clone test since only it creates new folder
+    migration_result, forge_result = massdrive(
+        repo_url, activityconfig_filepath, repo_is_path=False
+    )
+    os.chdir(prev_cwd)
     # Then I get OK outcome on migration
     assert (
         migration_result.outcome == PatchOutcome.PATCHED_OK
