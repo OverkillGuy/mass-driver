@@ -15,6 +15,7 @@ bumping is not needed.
 
 """
 
+# test-start marker
 from pathlib import Path
 
 import pytest
@@ -56,6 +57,7 @@ def test_counter_bumped(
     assert (
         int(counter_text_post) == migration.driver_config["target_count"]
     ), "Counter not updated properly"
+    # test-end marker
 
 
 # def test_counter_borked(

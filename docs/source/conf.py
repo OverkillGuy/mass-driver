@@ -73,9 +73,9 @@ autosectionlabel_prefix_document = True
 myst_heading_anchors = 2
 myst_enable_extensions = ["substitution"]
 
-man_pages = [
-    ("manpage", "mass-driver", "Send pull-requests to many repos, monitor PRs adoption", author, "1")
-]
+# man_pages = [
+#     # ("manpage", "mass-driver", "Send pull-requests to many repos, monitor PRs adoption", author, "1")
+# ]
 
 # Sphinx-jinja:
 

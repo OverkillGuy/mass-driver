@@ -1,6 +1,15 @@
 # Developing mass-driver
 
-Read the project's ["Development" section of the README](index) for guidance on development.
+Read below the project's "Development" section of the README for guidance on development.
+
+
+```{include} ../../README.md
+---
+start-after: "## Development"
+end-before: "## License"
+---
+```
+
 
 
 ## Makefile

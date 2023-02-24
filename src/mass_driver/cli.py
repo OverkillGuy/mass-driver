@@ -46,11 +46,23 @@ def driver_subparser(subparser):
     drivers.set_defaults(func=commands.drivers_command)
 
 
+def forge_subparser(subparser):
+    """Inject the forge-listing subparser"""
+    forges = subparser.add_parser(
+        "forges",
+        aliases=["forge"],
+        help="Inspect forges (Plugins)",
+    )
+    forges.add_argument("--list", action="store_true", help="List available forges")
+    forges.add_argument("--info", help="Show docs of a specific forge")
+    forges.set_defaults(func=commands.forges_command)
+
+
 def run_subparser(subparser):
     """Inject the run subparser"""
     run = subparser.add_parser(
         "run",
-        help="Run a mass-driver migration then forge over multiple repos",
+        help="Run mass-driver, migration/forge activity across repos",
     )
     run.add_argument(
         "activity_file",
@@ -67,33 +79,8 @@ def run_subparser(subparser):
         help="Disable the interactive pause between Migration and Forge",
         action="store_true",
     )
-    # detect_group = run.add_mutually_exclusive_group()
-    # detect_group.add_argument(
-    #     "--really-commit-changes",
-    #     dest="dry_run",
-    #     action="store_false",
-    #     help="Really commit changes (locally, no pushing)",
-    # )
-    # detect_group.add_argument(
-    #     "--dry-run",
-    #     action="store_true",
-    #     dest="dry_run",
-    #     help="Dry run, no actual commit, no pushing (default)",
-    # )
     repo_list_group(run)
     run.set_defaults(dry_run=True, func=commands.run_command)
-
-
-def forge_subparser(subparser):
-    """Inject the forge-listing subparser"""
-    forges = subparser.add_parser(
-        "forge",
-        aliases=["forges"],
-        help="Inspect or use forges (Plugins)",
-    )
-    forges.add_argument("--list", action="store_true", help="List available forges")
-    forges.add_argument("--info", help="Show docs of a specific forge")
-    forges.set_defaults(func=commands.forges_command)
 
 
 def subparsers(parser: ArgumentParser) -> ArgumentParser:
@@ -101,8 +88,8 @@ def subparsers(parser: ArgumentParser) -> ArgumentParser:
     subparser = parser.add_subparsers(dest="cmd", title="Commands")
     subparser.required = True
     driver_subparser(subparser)
-    run_subparser(subparser)
     forge_subparser(subparser)
+    run_subparser(subparser)
     return parser
 
 
