@@ -1,0 +1,49 @@
+name: CI
+on:
+  push:
+    branches: [main]
+  pull_request:
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+jobs:
+  tests:
+    defaults:
+      run:
+        shell: bash
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: ["ubuntu-latest"]
+        python-version: ["3.11", "3.12.0-alpha.6"]
+        include:
+          - os: "windows-latest"
+            python-version: "3.11"
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Set Up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Poetry setup
+        uses: Gr1N/setup-poetry@v7
+      - run: poetry install --with=test
+      - name: Run the tests
+        run: make test
+
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Set Up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+      - name: Poetry setup
+        uses: Gr1N/setup-poetry@v7
+      - run: poetry install --with=test
+      - name: Run the linters
+        uses: pre-commit/action@v3.0.0
