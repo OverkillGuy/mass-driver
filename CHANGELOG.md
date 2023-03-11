@@ -7,8 +7,10 @@ The project uses semantic versioning (see [semver](https://semver.org)).
 ## [Unreleased]
 
 
-## v0.13.2 - 2023-06-03
+### Added
+- CI (pytest, pre-commit) set up via Github Actions: [PR #1](https://github.com/mass-driver/pull/1)
 
+## v0.13.2 - 2023-06-03
 
 ### Added
 - New `file_ownership` parameter for `stamper`, defaulting to `0664`.
