@@ -22,6 +22,11 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+      - name: Install git
+        uses: awalsh128/cache-apt-pkgs-action@latest
+        with:
+          packages: git
+          version: "@latest"
       - name: Set Up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v4
         with:
@@ -29,6 +34,10 @@ jobs:
       - name: Poetry setup
         uses: Gr1N/setup-poetry@v7
       - run: poetry install --with=test
+      - name: Configure Git user (for tests)
+        run: |
+          git config --global user.name "Github Actions CI user"
+          git config --global user.email "nosuchmail@example.com"
       - name: Run the tests
         run: make test
 
