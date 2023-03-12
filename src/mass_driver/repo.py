@@ -11,7 +11,8 @@ def clone_if_remote(repo_path: str, cache_folder: Path) -> Repo:
     """Build a git Repo; If repo_path isn't a directory, clone it"""
     if Path(repo_path).is_dir():
         print("Given an existing (local) repo: no cloning")
-        return Repo(path=repo_path)
+        # Clone it into cache anyway
+        return Repo(path=repo_path)  # FIXME: Actually clone-move the repo on the way.
     # SSH clone URL e.g: git@github.com:OverkillGuy/python-template
     if ":" in repo_path:  # Presence of : is proxy for SSH clone URL
         *_junk, repo_blurb = repo_path.split(":")
@@ -38,7 +39,12 @@ def commit(repo: Repo, migration: MigrationLoaded):
     branch = repo.create_head(migration.branch_name)
     branch.checkout()
     repo.git.add(A=True)
-    repo.git.commit(m=migration.commit_message)
+    author = None  # If stays None, git uses default commit author
+    if migration.commit_author_email or migration.commit_author_name:
+        name, email = migration.commit_author_name, migration.commit_author_email
+        author = f"{name} <{email}>"  # Actor(name=migration.commit_author_name,
+        #       email=migration.commit_author_email)
+    repo.git.commit(m=migration.commit_message, author=author)
 
 
 def push(repo: Repo, branch_name: str):

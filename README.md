@@ -61,6 +61,10 @@ See JIRA-123[1].
 [1]: https://example.com/tickets/JIRA-123
 """
 
+# Override the local git commit author
+commit_author_name = "John Smith"
+commit_author_email = "smith@example.com"
+
 branch_name = "fix-team-name"
 
 # PatchDriver class to use.
@@ -163,6 +167,10 @@ See JIRA-123[1].
 
 [1]: https://example.com/tickets/JIRA-123
 """
+
+# Override the local git commit author
+commit_author_name = "John Smith"
+commit_author_email = "smith@example.com"
 
 branch_name = "fix-team-name"
 

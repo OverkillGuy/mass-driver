@@ -18,6 +18,10 @@ class MigrationFile(BaseModel):
     """The short name of the migration, <50char for summarizing"""
     commit_message: str
     """The git commit message body to use when committing the migration"""
+    commit_author_name: str | None
+    """Override the default (global) git commit author name"""
+    commit_author_email: str | None
+    """Override the default (global) git commit author email"""
     branch_name: str | None
     """The branch name, if any, to use when committing the PatchDriver"""
     driver_name: str

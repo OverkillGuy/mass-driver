@@ -1,12 +1,18 @@
 [mass-driver.migration]
 # Common name to remember the change by across all repos
 migration_name = "[JIRA-123] Bump counter.txt to 2"
+
 commit_message = """Bump counter to 2
 
 Upgrade counter to two, as part of change number blablabla
 
 See JIRA-123, where we document the need for counter to go up.
 """
+
+# Override the local git commit author
+commit_author_name = "John Smith"
+commit_author_email = "smith@example.com"
+
 
 # PatchDriver class to use.
 # Selected via plugin name, from "massdriver.drivers" entrypoint
