@@ -6,6 +6,9 @@ The project uses semantic versioning (see [semver](https://semver.org)).
 
 ## [Unreleased]
 
+
+## v0.9.0 - 2023-03-12
+
 ### Added
 - New optional Migration params: `commit_author_name` + `commit_author_email`,
   used to override the git commit author.
