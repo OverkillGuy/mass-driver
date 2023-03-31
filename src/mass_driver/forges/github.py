@@ -8,6 +8,9 @@ from mass_driver.models.forge import BranchName, Forge
 class GithubForge(Forge):
     """Github API wrapper, capable of creating/getting PRs"""
 
+    token: str
+    """Github personal access token"""
+
     def create_pr(
         self,
         forge_repo_url: str,
@@ -19,7 +22,7 @@ class GithubForge(Forge):
     ):
         """Send a PR, with msg body, to forge_repo for given branch of repo_path"""
         repo_name = detect_github_repo(forge_repo_url)
-        api = Github(self.auth_token)
+        api = Github(self.token)
         repo = api.get_repo(repo_name)
         breakpoint()
         pr = repo.create_pull(
@@ -33,7 +36,7 @@ class GithubForge(Forge):
 
     def get_pr(self, forge_repo: str, pr_id: str):
         """Get the PR by ID on forge_repo"""
-        api = Github(self.auth_token)
+        api = Github(self.token)
         repo = api.get_repo(forge_repo)
         return repo.get_pull(int(pr_id))
 

@@ -1,9 +1,10 @@
 """The different main commands of the mass-driver tool"""
 
-import os
 import sys
 from argparse import Namespace
 from pathlib import Path
+
+from pydantic import ValidationError
 
 from mass_driver.discovery import (
     discover_drivers,
@@ -67,12 +68,11 @@ def run_command(args: Namespace) -> ActivityOutcome:
     print("Run mode!")
     if args.repo_filelist:
         args.repo_path = args.repo_filelist.read().strip().split("\n")
-    token = get_token()
     activity_str = args.activity_file.read()
     try:
-        activity = ActivityLoaded.from_config(activity_str, token)
-    except ValueError:
-        missing_token_exit()
+        activity = ActivityLoaded.from_config(activity_str)
+    except ValidationError as e:
+        forge_config_error_exit(e)
     if activity.migration is None:
         print("No migration section: skipping migration")
         migration_result = ActivityOutcome(
@@ -98,18 +98,21 @@ def run_command(args: Namespace) -> ActivityOutcome:
     return forge_result
 
 
-def get_token() -> str | None:
-    """Grab the Forge API Token if any"""
-    return os.getenv("FORGE_TOKEN")
-
-
-def missing_token_exit():
-    """Exit in case of bad token"""
-    print(
-        "Missing API token: set FORGE_TOKEN envvar",
-        file=sys.stderr,
-    )
-    exit(2)  # Simulate the argparse behaviour of exiting on bad args
+def forge_config_error_exit(e: ValidationError):
+    """Exit in case of bad forge config"""
+    for error in e.errors():
+        if error["type"] == "value_error.missing":
+            envvars = ["FORGE_" + var.upper() for var in error["loc"]]
+            print(
+                f"Missing Forge config: Set envvar(s) {', '.join(envvars)}",
+                file=sys.stderr,
+            )
+        else:
+            print(
+                f"Forge config validation error: {error}",
+                file=sys.stderr,
+            )
+    raise e  # exit code = Simulate the argparse behaviour of exiting on bad args
 
 
 def pause_until_ok(message: str):

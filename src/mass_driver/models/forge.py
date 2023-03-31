@@ -2,16 +2,14 @@
 
 from enum import Enum
 
-from pydantic import BaseModel
+from pydantic import BaseModel, BaseSettings
 
 BranchName = str
 """A git branch name, assumed to exist remotely on the Forge"""
 
 
-class Forge(BaseModel):
+class Forge(BaseSettings):
     """Base class for git Forges like Github"""
-
-    auth_token: str
 
     def create_pr(
         self,
@@ -34,6 +32,7 @@ class Forge(BaseModel):
 
         underscore_attrs_are_private = True
         """Ensure that _api is treated private"""
+        env_prefix = "FORGE_"
 
 
 class PROutcome(str, Enum):

@@ -98,10 +98,10 @@ class ForgeLoaded(ForgeFile):
     """Forge loaded (with validated configuration)"""
 
     @classmethod
-    def from_config(cls, config_toml: str, auth_token: str):
+    def from_config(cls, config_toml: str):
         """Get a loaded forge from config contents"""
         config_noforge = load_forge_toml(config_toml)
-        return load_forge(config_noforge, auth_token)
+        return load_forge(config_noforge)
 
 
 def load_forge_toml(forge_config: str) -> ForgeFile:
@@ -114,17 +114,17 @@ def load_forge_toml(forge_config: str) -> ForgeFile:
     return ForgeFile.parse_obj(forge_dict[TOML_PROJECTKEY])
 
 
-def forge_from_config(config: ForgeFile, auth_token: str) -> ForgeLoaded:
+def forge_from_config(config: ForgeFile) -> ForgeLoaded:
     """Create Forge instance from config file (TOML)"""
     forge_class = get_forge(config.forge_name)
-    forge_obj = forge_class(auth_token=auth_token)
+    forge_obj = forge_class()
     return ForgeLoaded(
         forge=forge_obj,
         **(config.dict()),
     )
 
 
-def load_forge(config: str, auth_token: str) -> ForgeLoaded:
+def load_forge(config: str) -> ForgeLoaded:
     """Look up driver and validate configuration (de-opaquify)"""
     forge_file = load_forge_toml(config)
-    return forge_from_config(forge_file, auth_token)
+    return forge_from_config(forge_file)

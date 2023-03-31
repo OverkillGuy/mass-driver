@@ -48,10 +48,10 @@ class ActivityLoaded(BaseModel):
     forge: ForgeLoaded | None = None
 
     @classmethod
-    def from_config(cls, config_toml: str, auth_token: str | None):
+    def from_config(cls, config_toml: str):
         """Get a loaded migration from config contents"""
         activity_file = load_activity_toml(config_toml)
-        return load_activity(activity_file, auth_token)
+        return load_activity(activity_file)
 
 
 class ActivityOutcome(BaseModel):
@@ -77,14 +77,12 @@ def load_activity_toml(migration_config: str) -> ActivityFile:
     return ActivityFile.parse_obj(migration_dict[TOML_PROJECTKEY])
 
 
-def load_activity(activity: ActivityFile, auth_token: str | None) -> ActivityLoaded:
+def load_activity(activity: ActivityFile) -> ActivityLoaded:
     """Load up all plugins of an Activity"""
     if activity.migration is not None:
         migration_loaded = load_driver(activity.migration)
     if activity.forge is not None:
-        if auth_token is None:
-            raise ValueError("Missing auth token")
-        forge_loaded = forge_from_config(activity.forge, auth_token)
+        forge_loaded = forge_from_config(activity.forge)
     return ActivityLoaded(
         migration=migration_loaded if activity.migration is not None else None,
         forge=forge_loaded if activity.forge is not None else None,
