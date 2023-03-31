@@ -14,8 +14,6 @@ TOML_PROJECTKEY = "mass-driver"
 class MigrationFile(BaseModel):
     """The config file describing a migration, as transcribed before driver lookup"""
 
-    migration_name: str
-    """The short name of the migration, <50char for summarizing"""
     commit_message: str
     """The git commit message body to use when committing the migration"""
     commit_author_name: str | None

@@ -6,6 +6,10 @@ The project uses semantic versioning (see [semver](https://semver.org)).
 
 ## [Unreleased]
 
+
+### Removed
+- Unused `migration_name` field of Migration now removed
+
 ### Added
 - `Forge` subclasses can now grab config via envvars prefixed `FORGE_`. Observe
   that `Forge` now derives from `pydantic.BaseSettings`, see [BaseSettings

@@ -1,7 +1,5 @@
 [mass-driver.migration]
 # Common name to remember the change by across all repos
-migration_name = "[JIRA-123] Bump counter.txt to 2"
-
 commit_message = """Bump counter to 2
 
 Upgrade counter to two, as part of change number blablabla

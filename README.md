@@ -50,8 +50,6 @@ Once you've got a driver, you should create a Migration file, in TOML:
 ``` toml
 # Saved as "fix_teamname.toml"
 [mass-driver.migration]
-migration_name = "Fix team name"
-
 # As seen in 'git log':
 commit_message = """Change team name
 
@@ -157,8 +155,6 @@ The Activity file can contain both sections:
 ``` toml
 # An activity made up of first a Migration, then a Forge
 [mass-driver.migration]
-migration_name = "Fix team name"
-
 # As seen in 'git log':
 commit_message = """Change team name
 

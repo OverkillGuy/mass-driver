@@ -1,6 +1,4 @@
 [mass-driver.migration]
-
-migration_name = "[JIRA-123] Bump counter.txt to 1"
 commit_message = """Bump counter to 1
 
 Upgrade counter to one, as part of change number blablabla
