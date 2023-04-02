@@ -68,7 +68,7 @@ release:
 	sed -i \
 		"s/\(## \[Unreleased\]\)/\1\n\n\n## v${NEW_VERSION} - $(shell date -I)/" \
 		CHANGELOG.md
-	git add -A
+	git add CHANGELOG.md pyproject.toml
 	git commit -m "Bump to version v${NEW_VERSION}"
 	git tag -a v${NEW_VERSION} \
 		-m "Release v${NEW_VERSION}"
