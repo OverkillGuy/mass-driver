@@ -20,8 +20,11 @@ mass-driver = "mass_driver.cli:cli"
 python = "^3.11"
 # Manipulate git repos: Clone, diff, commit patches...
 GitPython = "*"
-# Github Forge support
-PyGithub = "*"
+# Github Forge support.
+# Pinned exactly to follow advice from maintainer around
+# unstable semantic versioning[1]
+# [1]: https://github.com/PyGithub/PyGithub/issues/2472#issuecomment-1482378022
+PyGithub = "==1.58.0"
 # Mass-driver settings
 pydantic = "*"
 
@@ -88,5 +91,5 @@ stamper = 'mass_driver.drivers.stamper:Stamper'
 
 [tool.poetry.plugins.'massdriver.forges']
 dummy = 'mass_driver.forges.dummy:DummyForge'
-github = 'mass_driver.forges.github:GithubForge'
-# github-app = 'mass_driver.forges.github:GithubAppForge'
+github = 'mass_driver.forges.github:GithubPersonalForge'
+github-app = 'mass_driver.forges.github:GithubAppForge'
