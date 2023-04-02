@@ -6,6 +6,9 @@ The project uses semantic versioning (see [semver](https://semver.org)).
 
 ## [Unreleased]
 
+
+## v0.11.0 - 2023-04-02
+
 ### Added
 - New `github-app` forge plugin for creating PRs on Github when running
   mass-driver as a Github App
