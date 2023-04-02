@@ -15,48 +15,28 @@ bumping is not needed.
 
 """
 
+
 # test-start marker
 from pathlib import Path
 
 import pytest
 
-from mass_driver.models.activity import load_activity_toml
-from mass_driver.models.patchdriver import PatchOutcome
-from mass_driver.tests.fixtures import copy_folder, massdrive
+from mass_driver.tests.fixtures import copy_folder, massdrive_check_file
+
+# Go from this filename.py to folder:
+# ./test_counterdriver.py -> ./test_counterdriver/
+TESTS_FOLDER = Path(__file__).with_suffix("")
 
 
 @pytest.mark.parametrize(
-    "configfilename,expected_outcome",
-    [
-        ("config_count1.toml", PatchOutcome.ALREADY_PATCHED),
-        ("config_count2.toml", PatchOutcome.PATCHED_OK),
-    ],
+    "test_folder", [f.name for f in TESTS_FOLDER.iterdir() if f.is_dir()]
 )
-def test_counter_bumped(
-    tmp_path, datadir, shared_datadir, configfilename, expected_outcome
-):
-    """Scenario: Counter file bumped properly"""
-    # Given a sample repo to mass-drive
-    # And sample repo has counter at value 1
-    repo_path = Path(tmp_path / "test_repo/")
-    copy_folder(Path(shared_datadir / "sample_repo"), repo_path)
-    config_filepath = datadir / configfilename
-    activity = load_activity_toml(config_filepath.read_text())
-    migration = activity.migration
-    # When I run mass-driver
-    migration_result, forge_result = massdrive(
-        str(repo_path),
-        config_filepath,
-    )
-    assert migration_result.outcome == expected_outcome, "Wrong outcome from patching"
-    counter_text_post = (
-        repo_path / migration.driver_config["counter_file"]
-    ).read_text()
-    # Then the counter is bumped to config value
-    # Note: Different configfilename set the target_count to different value
-    assert (
-        int(counter_text_post) == migration.driver_config["target_count"]
-    ), "Counter not updated properly"
+def test_driver_one(test_folder: Path, tmp_path):
+    """Check a single pattern"""
+    absolute_reference = TESTS_FOLDER / test_folder
+    workdir = tmp_path / "repo"
+    copy_folder(absolute_reference, workdir)
+    massdrive_check_file(workdir)
     # test-end marker
 
 

@@ -14,6 +14,7 @@ The project uses semantic versioning (see [semver](https://semver.org)).
 - `Forge` subclasses can now grab config via envvars prefixed `FORGE_`. Observe
   that `Forge` now derives from `pydantic.BaseSettings`, see [BaseSettings
   docs](https://docs.pydantic.dev/usage/settings/).
+- New, simpler testing fixture `massdrive_check_file` for PatchDriver that affect single files
 
 
 ## v0.9.0 - 2023-03-12

@@ -1,11 +1,13 @@
 """Reusable fixtures for mass-driver testing"""
 
 import shutil
+import sys
 from pathlib import Path
 
 from git import Repo
 
 from mass_driver.cli import cli as massdriver_cli
+from mass_driver.models.patchdriver import PatchOutcome
 
 
 def repoize(path: Path):
@@ -58,3 +60,34 @@ def massdrive(repo_url: str, activity_configfilepath: Path, repo_is_path: bool =
         result.forge_result[str(repo_url)] if result.forge_result is not None else None
     )
     return mig_result, for_result
+
+
+def massdrive_check_file(workdir: Path):
+    """Run mass-driver migration.toml over input.yaml and check the output.yaml matches"""
+    config_file = workdir / "migration.toml"
+    input_file = workdir / "input.txt"
+    reference_file = workdir / "output.txt"
+    outcome_file = workdir / "outcome.txt"
+    details_file = workdir / "details.txt"
+    try:
+        migration_result, _forge_result = massdrive(
+            str(workdir),
+            config_file,
+        )
+    except Exception as e:
+        print("Error during mass-driver run", file=sys.stderr)
+        raise e
+    if outcome_file.exists():
+        assert migration_result.outcome == PatchOutcome(
+            outcome_file.read_text().strip()
+        ), "Should patch"
+        if details_file.exists():
+            assert (
+                details_file.read_text().casefold()
+                in migration_result.details.casefold()
+            ), "Details should match up"
+    else:
+        assert migration_result.outcome == PatchOutcome.PATCHED_OK, "Should patch OK"
+        assert (
+            input_file.read_text() == reference_file.read_text()
+        ), "Result of mass-driver should match reference"

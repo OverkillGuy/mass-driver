@@ -81,7 +81,32 @@ Obviously, we don't recommend testing a mass-PR tool in production by cloning hu
 
 We've set up some unit-level tests for PatchDriver, to be able to validate offline that a driver is working.
 
-First off, use `pytest` to define a test file, like so:
+These tests focus on individual file transformation, which is a very common usecase.
+
+Here's the layout of the `tests/` folder we'll be using:
+```
+├── test_counterdriver
+│   ├── count_to_1
+│   │   ├── input.txt
+│   │   ├── migration.toml
+│   │   └── outcome.txt
+│   └── count_to_2
+│       ├── input.txt
+│       ├── migration.toml
+│       └── output.txt
+└── test_counterdriver.py
+```
+
+Note that the actual `pytest` test is `test_counterdriver.py`, with a similarly named folder `test_counterdriver/` containing 2 folders.
+
+The pattern of testing we use here is to try transforming `input.txt` via mass-driver (configured by `migration.toml`), checking patching is successful (`PatchOutcome.PATCHED_OK`), and comparing the resulting file to `output.txt`, flagging any differences as test failures.
+
+Optionally, presence of an `outcome.txt` will be used to check what outcome to expect instead (from the `PatchOutcome` Enum).
+
+Similarly, the presence of a `details.txt` will be used to check the
+`PatchResult.details` field, with the check: `details_txt in result.details`.
+
+As for the test code in `pytest` to trigger all this:
 
 ```{literalinclude} ../../src/mass_driver/tests/test_counterdriver.py
 ---
@@ -90,39 +115,13 @@ end-before: "# test-end marker"
 ---
 ```
 
-This test case uses two different activity files that define only a migration, and try to run them using {py:func}`mass_driver.tests.fixtures.massdrive`, a test fixture that runs mass-driver CLI in a prepackaged way, returning just {py:class}`mass_driver.models.activity.MigrationOutcome` + {py:class}`mass_driver.models.activity.ForgeResult` (if any forge defined).
+The key here is use of the test fixture {py:func}`mass_driver.tests.fixtures.massdrive_check_file`, which takes a folder with these text files, and runs mass-driver over it.
 
-Here's the layout of the `tests/` folder, which relies on `pytest-datadir` for global `datadir` and `shared_datadir` alike.
-```
-tests
-├── data
-│   └── sample_repo
-│       ├── counter.txt
-│       └── README.md
-├── fixtures.py
-├── test_counterdriver
-│   ├── config_count1.toml
-│   └── config_count2.toml
-└─── test_counterdriver.py
-```
-
-Here's a look at the activity file:
-
-```{literalinclude} ../../src/mass_driver/tests/test_counterdriver/config_count1.toml
----
-language: toml
----
-```
-
-and finally, here's the simplest driver, `Counter`:
-
-```{literalinclude} ../../src/mass_driver/drivers/counter.py
----
-language: python
----
-```
-
-
+For more granular, custom testing, the fixture
+{py:func}`mass_driver.tests.fixtures.massdrive`, can run mass-driver CLI in a
+prepackaged way, returning just
+{py:class}`mass_driver.models.activity.MigrationOutcome` +
+{py:class}`mass_driver.models.activity.ForgeResult` (if any forge defined).
 
 ## Available drivers
 (available-drivers)=

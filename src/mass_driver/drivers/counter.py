@@ -34,7 +34,7 @@ class Counter(PatchDriver):
             f"Measured: {counter_number}, target: {self.target_count}. Different? {counter_is_different}"
         )
         if counter_is_different:
-            counter_filepath_abs.write_text(str(self.target_count))
+            counter_filepath_abs.write_text(str(self.target_count) + "\n")
             return PatchResult(outcome=PatchOutcome.PATCHED_OK)
         # COUNTER already same value
         return PatchResult(outcome=PatchOutcome.ALREADY_PATCHED)

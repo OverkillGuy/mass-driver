@@ -1,10 +1,5 @@
 [mass-driver.migration]
-commit_message = """Bump counter to 1
-
-Upgrade counter to one, as part of change number blablabla
-
-See JIRA-123, where we document the need for counter to go up.
-"""
+commit_message = """Bump counter to 1"""
 
 branch_name = "my-branch"
 
@@ -12,6 +7,6 @@ branch_name = "my-branch"
 # Selected via plugin name, from "massdriver.drivers" entrypoint
 driver_name = "counter"
 
-driver_config = { counter_file = "counter.txt", target_count = 1 }
+driver_config = { counter_file = "input.txt", target_count = 1 }
 
 # Note: No "forge" section = no forge activity to pursue (no PR)
