@@ -89,6 +89,8 @@ class ForgeFile(BaseModel):
     """The body of the PR to create (multiline)"""
     forge_name: str
     """The name of the forge to create PRs with, as plugin name"""
+    forge_config: dict = {}
+    """Forge config vars. Overrides FORGE_ envvars: use for non-secrets"""
 
 
 class ForgeLoaded(ForgeFile):
@@ -117,7 +119,7 @@ def load_forge_toml(forge_config: str) -> ForgeFile:
 def forge_from_config(config: ForgeFile) -> ForgeLoaded:
     """Create Forge instance from config file (TOML)"""
     forge_class = get_forge(config.forge_name)
-    forge_obj = forge_class()
+    forge_obj = forge_class(**config.forge_config)
     return ForgeLoaded(
         forge=forge_obj,
         **(config.dict()),

@@ -7,6 +7,8 @@ The project uses semantic versioning (see [semver](https://semver.org)).
 ## [Unreleased]
 
 ### Added
+- New `forge_config` dict, for Forge-specific non-sensitive config to keep in
+  config file, complementing envvars. Similar to `driver_config` for Migration.
 - New Forge param: `interactive_pause_every` for blocking the Forge, pausing for
   confirmation interactively every few PRs generated. Disabled by default, set
   to 1 to block every PR, or 5 every 5...

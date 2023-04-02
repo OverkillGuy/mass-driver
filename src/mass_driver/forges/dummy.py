@@ -12,6 +12,9 @@ class DummyForge(Forge):
     PR_URL: str = DUMMY_PR_URL
     """The PR's URL, for ease of access in tests"""
 
+    some_param_for_forgeconfig: str
+    """A parameter to set via forgeconfig, for tests"""
+
     def create_pr(
         self,
         forge_repo_url: str,
