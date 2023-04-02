@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "mass_driver"
-version = "0.9.0"
+version = "0.10.0"
 description = "Send bulk repo change requests"
 authors = ["Jb Doyon <jb@jiby.tech>"]
 readme = "README.md"
@@ -89,3 +89,4 @@ stamper = 'mass_driver.drivers.stamper:Stamper'
 [tool.poetry.plugins.'massdriver.forges']
 dummy = 'mass_driver.forges.dummy:DummyForge'
 github = 'mass_driver.forges.github:GithubForge'
+# github-app = 'mass_driver.forges.github:GithubAppForge'

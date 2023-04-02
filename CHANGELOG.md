@@ -7,6 +7,9 @@ The project uses semantic versioning (see [semver](https://semver.org)).
 ## [Unreleased]
 
 
+## v0.10.0 - 2023-04-02
+
+
 ### Removed
 - Unused `migration_name` field of Migration now removed
 
