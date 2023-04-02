@@ -19,6 +19,9 @@ def main(
     print(f"Processing {repo_count} with Forge...")
     pr_results: IndexedPRResult = {}
     for repo_index, repo_url in enumerate(progress.repos_input, start=1):
+        pause_every = config.interactive_pause_every
+        if pause_every is not None and repo_index % pause_every == 0:
+            pause_until_ok(f"Reached {pause_every} actions. Continue?\n")
         repo_local_path = progress.local_repos_path[repo_url]
         try:
             print(
@@ -65,3 +68,12 @@ def process_repo(
         draft=config.draft_pr,
     )
     return PRResult(outcome=PROutcome.PR_CREATED, pr_html_url=pr)
+
+
+def pause_until_ok(message: str):
+    """Halt until keyboard input is a variant of YES"""
+    continue_asking = True
+    while continue_asking:
+        typed_text = input(message)
+        if typed_text.lower() in ["y", "yes", "ok", "c", "continue"]:
+            continue_asking = False

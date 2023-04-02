@@ -13,6 +13,7 @@ from mass_driver.discovery import (
     get_forge_entrypoint,
 )
 from mass_driver.forge_run import main as forge_main
+from mass_driver.forge_run import pause_until_ok
 from mass_driver.migration_run import main as migration_main
 from mass_driver.models.activity import ActivityLoaded, ActivityOutcome
 
@@ -93,7 +94,7 @@ def run_command(args: Namespace) -> ActivityOutcome:
     # Now guaranteed to have a Forge: pause + forge
     if not args.no_pause:
         print("Review the commits now.")
-        pause_until_ok("Type y/yes/continue to run the Forge")
+        pause_until_ok("Type y/yes/continue to run the Forge\n")
     forge_result = forge_main(activity.forge, migration_result)
     return forge_result
 
@@ -113,12 +114,3 @@ def forge_config_error_exit(e: ValidationError):
                 file=sys.stderr,
             )
     raise e  # exit code = Simulate the argparse behaviour of exiting on bad args
-
-
-def pause_until_ok(message: str):
-    """Halt until keyboard input is a variant of YES"""
-    continue_asking = True
-    while continue_asking:
-        typed_text = input(message)
-        if typed_text.lower() in ["y", "yes", "ok", "c", "continue"]:
-            continue_asking = False

@@ -79,6 +79,8 @@ class ForgeFile(BaseModel):
     """The head branch from which to create PR from (e.g. bugfix1)"""
     git_push_first: bool = True
     """Do we need to push that branch before forging a PR?"""
+    interactive_pause_every: int | None = None
+    """How many forge action before pausing interactively, wait for OK (rate-limit)"""
     draft_pr: bool
     """Is the PR to be created a Draft?"""
     pr_title: str
