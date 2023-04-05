@@ -59,15 +59,31 @@ def process_repo(
             forge_remote_url = (
                 f"unix://{repo_path}"  # Pretending to have one and move on for tests
             )
+    base_branch = (
+        get_default_branch(git_repo)
+        if config.base_branch is None
+        else config.base_branch
+    )
     pr = config.forge.create_pr(
         forge_repo_url=forge_remote_url,
-        base_branch=config.base_branch,
+        base_branch=base_branch,
         head_branch=config.head_branch,
         pr_title=config.pr_title,
         pr_body=config.pr_body,
         draft=config.draft_pr,
     )
     return PRResult(outcome=PROutcome.PR_CREATED, pr_html_url=pr)
+
+
+def get_default_branch(r: Repo) -> str:
+    """Get the default branch of a repository"""
+    # From https://github.com/gitpython-developers/GitPython/discussions/1364#discussioncomment-1530384
+    try:
+        return r.remotes.origin.refs.HEAD.ref.remote_head
+    except Exception:
+        raise ValueError(
+            "base_branch param could not be autodetected: no git remote available"
+        )
 
 
 def pause_until_ok(message: str):

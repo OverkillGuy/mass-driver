@@ -73,7 +73,7 @@ def load_driver(config: MigrationFile) -> MigrationLoaded:
 class ForgeFile(BaseModel):
     """The config file describing a forge, before we load the Forge class"""
 
-    base_branch: BranchName
+    base_branch: BranchName | None = None
     """The base branch from which to create PR from (e.g. master or main)"""
     head_branch: BranchName
     """The head branch from which to create PR from (e.g. bugfix1)"""
