@@ -21,7 +21,6 @@ class GithubBaseForge(Forge):
     ):
         """Send a PR, with msg body, to forge_repo for given branch of repo_path"""
         repo_name = detect_github_repo(forge_repo_url)
-        breakpoint()
         repo = self._github_api.get_repo(repo_name)
         pr = repo.create_pull(
             title=pr_title,
@@ -35,7 +34,6 @@ class GithubBaseForge(Forge):
     def get_pr(self, forge_repo: str, pr_id: str):
         """Get the PR by ID on forge_repo"""
         repo = self._github_api.get_repo(forge_repo)
-        breakpoint()
         return repo.get_pull(int(pr_id))
 
 
