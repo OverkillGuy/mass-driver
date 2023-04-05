@@ -6,6 +6,9 @@ The project uses semantic versioning (see [semver](https://semver.org)).
 
 ## [Unreleased]
 
+
+## v0.12.0 - 2023-04-05
+
 ### Added
 - Auto-detect repo's base branch for Forge: parameter `base_branch` now
   optional, defaulting to repo's default branch
