@@ -34,6 +34,15 @@ def repo_list_group(subparser: ArgumentParser):
     )
 
 
+def cache_arg(subparser: ArgumentParser):
+    """Add the cache/no-cache arguments"""
+    subparser.add_argument(
+        "--no-cache",
+        help="Disable any repo caching",
+        action="store_true",
+    )
+
+
 def driver_subparser(subparser):
     """Inject the drivers-listing argument subparser"""
     drivers = subparser.add_parser(
@@ -70,15 +79,11 @@ def run_subparser(subparser):
         type=FileType("r"),
     )
     run.add_argument(
-        "--no-cache",
-        help="Disable any repo caching",
-        action="store_true",
-    )
-    run.add_argument(
         "--no-pause",
         help="Disable the interactive pause between Migration and Forge",
         action="store_true",
     )
+    cache_arg(run)
     repo_list_group(run)
     run.set_defaults(dry_run=True, func=commands.run_command)
 
