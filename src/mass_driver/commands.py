@@ -67,8 +67,7 @@ def forges_command(args: Namespace):
 def run_command(args: Namespace) -> ActivityOutcome:
     """Process the CLI for 'run'"""
     print("Run mode!")
-    if args.repo_filelist:
-        args.repo_path = args.repo_filelist.read().strip().split("\n")
+    repos = read_repolist(args)
     activity_str = args.activity_file.read()
     try:
         activity = ActivityLoaded.from_config(activity_str)
@@ -77,13 +76,13 @@ def run_command(args: Namespace) -> ActivityOutcome:
     if activity.migration is None:
         print("No migration section: skipping migration")
         migration_result = ActivityOutcome(
-            repos_input=args.repo_path,
-            local_repos_path={r: Path(r) for r in args.repo_path},
+            repos_input=repos,
+            local_repos_path={r: Path(r) for r in repos},
         )
     else:
         migration_result = migration_main(
             activity.migration,
-            args.repo_path,
+            repos,
             not args.no_cache,
         )
     print("Migration complete!")
@@ -114,3 +113,11 @@ def forge_config_error_exit(e: ValidationError):
                 file=sys.stderr,
             )
     raise e  # exit code = Simulate the argparse behaviour of exiting on bad args
+
+
+def read_repolist(args) -> list[str]:
+    """Read the repo-list or repo-path arg"""
+    repos = args.repo_path
+    if args.repo_filelist:
+        repos = args.repo_filelist.read().strip().split("\n")
+    return repos
