@@ -1,10 +1,13 @@
 """Cloning remote repos (repos not using local path)"""
 
 from pathlib import Path
+from tempfile import mkdtemp
 
 from git import Repo
 
 from mass_driver.models.migration import MigrationLoaded
+
+DEFAULT_CACHE = Path(".mass_driver/repos/")
 
 
 def clone_if_remote(repo_path: str, cache_folder: Path) -> Repo:
@@ -31,6 +34,15 @@ def clone_if_remote(repo_path: str, cache_folder: Path) -> Repo:
         multi_options=["--depth=1"],
     )
     return cloned
+
+
+def get_cache_folder(cache: bool) -> Path:
+    """Create a cache folder, either locally or in temp"""
+    cache_folder = DEFAULT_CACHE
+    if not cache:
+        cache_folder = Path(mkdtemp(suffix=".cache"))
+        print(f"Using repo cache folder: {cache_folder}/ (Won't wipe it on exit!)")
+    return cache_folder
 
 
 def commit(repo: Repo, migration: MigrationLoaded):
