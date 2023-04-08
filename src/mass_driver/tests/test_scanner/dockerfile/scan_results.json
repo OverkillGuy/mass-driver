@@ -1,0 +1,8 @@
+{
+  "dockerfile-from": {
+    "dockerfile_exists": true,
+    "dockerfile_from_lines": [
+      "FROM python:3.11-bullseye"
+    ]
+  }
+}

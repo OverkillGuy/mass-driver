@@ -36,7 +36,8 @@ def test_driver_one(test_folder: Path, tmp_path):
     absolute_reference = TESTS_FOLDER / test_folder
     workdir = tmp_path / "repo"
     copy_folder(absolute_reference, workdir)
-    massdrive_check_file(workdir)
+    result, reference = massdrive_check_file(workdir)
+    assert result == reference, "Massdriver result should match reference"
     # test-end marker
 
 

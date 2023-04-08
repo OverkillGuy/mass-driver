@@ -15,7 +15,6 @@ Before anything, polish the usecase of one-shot PR generation as CLI.
 
 - Scanners polishing:
   - Save scanner report to JSON file
-  - Fixture `massdrive_scan_test` for repo + `scanresult.json`
   - Add JSON file output to migration + forge activities too
   - Scan-info: scanner-invariant info about the scan event: timestamp,
     scan_uid... (repo-specific can get auto-scanned)

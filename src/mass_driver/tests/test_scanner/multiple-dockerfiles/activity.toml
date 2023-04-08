@@ -1,0 +1,2 @@
+[mass-driver.scan]
+scanner_names = ["dockerfile-from"]
