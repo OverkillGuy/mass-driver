@@ -20,10 +20,7 @@ end-before: "### Preparing a change"
 ```{program-output} poetry run mass-driver --help
 ```
 
-Inspecting drivers (forges have same menus) via `mass-driver drivers --help`:
-
-```{program-output} poetry run mass-driver drivers --help
-```
+Inspecting drivers (forges and scanners have similar menus) via `mass-driver drivers --help`.
 
 And about running the actual mass driver run-command `mass-driver run --help`:
 

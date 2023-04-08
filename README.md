@@ -201,6 +201,26 @@ git_push_first = true
 
 
 
+### Using the scanners
+Before doing any actual migration, we might want to explore existing repositories to see what kind of change is required.
+
+Mass-driver provides for this usecase via the scanners plugin system, enabling a simple python function to be run against many repos, with the purpose of gathering information.
+
+<!-- scanner-activity -->
+Let's define an Activity file specifying a list of scanners to run:
+
+``` toml
+# An Activity file for scanning
+[mass-driver.scan]
+scanner_names = ["root-files", "root-dirs"]
+```
+This can be run similarly to migration:
+
+``` shell
+mass-driver scan scan.toml --repo-filelist repos.txt
+```
+
+
 ## Development
 
 ### Python setup

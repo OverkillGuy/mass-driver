@@ -7,10 +7,11 @@ The project uses semantic versioning (see [semver](https://semver.org)).
 ## [Unreleased]
 
 ### Added
-- New `scan` feature for scanning repos with arbitrary python functions
+- New `scan` feature for scanning repos with arbitrary python functions. See
+  new "Scanning" docs:
   - Scanners are plugins declared under `mass-driver.scanners`, linking to
     functions like `my_scanner(repo: Path) -> dict[str, Any]`
-  - Alternative`scanners` command to list out available scanners
+  - Alternative`scanners` command to list out detected, available scanners
   - New TOML file entry `[mass-driver.scan]`, with subkey `scanner_names` used
     to select which scanner plugins to enable.
   - Simple scanners `root-files` and `root-dirs` provided for reference
