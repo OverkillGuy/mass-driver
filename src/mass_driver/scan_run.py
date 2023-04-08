@@ -10,23 +10,23 @@ from mass_driver.models.activity import (
     RepoUrl,
     ScanResult,
 )
-from mass_driver.models.scan import Scanner
+from mass_driver.models.scan import ScanLoaded
 from mass_driver.repo import clone_if_remote, get_cache_folder
 
 
 def scan_main(
-    scanners: list[Scanner], repo_urls: list[RepoUrl], cache: bool
+    config: ScanLoaded, repo_urls: list[RepoUrl], cache: bool
 ) -> ActivityOutcome:
     """Apply the scanners over the repos"""
     repo_count = len(repo_urls)
     cache_folder = get_cache_folder(cache)
-    print(f"Processing {repo_count} repos with {len(scanners)} scanners")
+    print(f"Processing {repo_count} repos with {len(config.scanners)} scanners")
     scan_results: IndexedScanResult = {}
     repo_local_paths: RepoPathLookup = {}
     for repo_index, repo_url in enumerate(repo_urls, start=1):
         print(f"[{repo_index:03d}/{repo_count:03d}] Processing {repo_url}...")
         scan, repo_local_path = scan_repo(
-            scanners,
+            config,
             repo_url,
             cache_path=cache_folder,
         )
@@ -40,13 +40,13 @@ def scan_main(
 
 
 def scan_repo(
-    scanners: list[Scanner], repo_url: RepoUrl, cache_path: Path
+    config: ScanLoaded, repo_url: RepoUrl, cache_path: Path
 ) -> tuple[ScanResult, Path]:
     """Apply all Scanners on a single repo"""
     scan_result: ScanResult = {}
     repo_gitobj = clone_if_remote(repo_url, cache_path)
     repo_local_path = Path(repo_gitobj.working_dir)
-    for scanner in scanners:
+    for scanner in config.scanners:
         try:
             scan_result[scanner.name] = scanner.func(repo_local_path)
         except Exception as e:

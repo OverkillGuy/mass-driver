@@ -91,3 +91,20 @@ def massdrive_check_file(workdir: Path):
         assert (
             input_file.read_text() == reference_file.read_text()
         ), "Result of mass-driver should match reference"
+
+
+def massdrive_scan(
+    repo_url: str, activity_configfilepath: Path, repo_is_path: bool = True
+):
+    """Run mass-driver scan over a given local repo"""
+    if repo_is_path:
+        repoize(Path(repo_url))
+    result = massdriver_cli(
+        [
+            "scan",
+            str(activity_configfilepath),
+            "--repo-path",
+            repo_url,
+        ]
+    )
+    return result.scan_result[str(repo_url)] if result.scan_result is not None else None

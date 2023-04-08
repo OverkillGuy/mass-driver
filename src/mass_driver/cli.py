@@ -43,6 +43,15 @@ def cache_arg(subparser: ArgumentParser):
     )
 
 
+def activity_arg(subparser: ArgumentParser):
+    """Add the Activity file selector argument"""
+    subparser.add_argument(
+        "activity_file",
+        help="Filepath of activity to apply (TOML file)",
+        type=FileType("r"),
+    )
+
+
 def driver_subparser(subparser):
     """Inject the drivers-listing argument subparser"""
     drivers = subparser.add_parser(
@@ -73,11 +82,7 @@ def run_subparser(subparser):
         "run",
         help="Run mass-driver, migration/forge activity across repos",
     )
-    run.add_argument(
-        "activity_file",
-        help="Filepath of activity to apply (TOML file)",
-        type=FileType("r"),
-    )
+    activity_arg(run)
     run.add_argument(
         "--no-pause",
         help="Disable the interactive pause between Migration and Forge",
@@ -103,7 +108,7 @@ def scan_subparser(subparser):
         "scan",
         help="Scan repositories using all available scans",
     )
-    scan.add_argument("--list", action="store_true", help="List available scanners")
+    activity_arg(scan)
     repo_list_group(scan)
     cache_arg(scan)
     scan.set_defaults(func=commands.scan_command)

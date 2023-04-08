@@ -10,7 +10,7 @@ from pathlib import Path
 from mass_driver.forge_run import PROutcome
 from mass_driver.forges.dummy import DUMMY_PR_URL
 from mass_driver.models.patchdriver import PatchOutcome
-from mass_driver.tests.fixtures import copy_folder, massdrive
+from mass_driver.tests.fixtures import copy_folder, massdrive, massdrive_scan
 
 
 def test_migration_and_forge(tmp_path, shared_datadir, mocker):
@@ -27,8 +27,6 @@ def test_migration_and_forge(tmp_path, shared_datadir, mocker):
     repo_path = Path(tmp_path / "test_repo/")
     copy_folder(Path(shared_datadir / "sample_repo"), repo_path)
     activityconfig_filepath = shared_datadir / "activity.toml"
-    # And a pretend token
-    mocker.patch.dict(os.environ, {"FORGE_TOKEN": "ghp_supersecrettoken"})
     # When I run mass-driver
     migration_result, forge_result = massdrive(str(repo_path), activityconfig_filepath)
     # Then I get OK outcome on migration
@@ -54,8 +52,6 @@ def test_migration_and_forge_interneturl(tmp_path, shared_datadir, mocker):
     # Guaranteed to have a counter file for PATCHED_OK
     repo_url = "git@github.com:OverkillGuy/sphinx-needs-test.git"
     activityconfig_filepath = shared_datadir / "activity.toml"
-    # And a pretend token
-    mocker.patch.dict(os.environ, {"FORGE_TOKEN": "ghp_supersecrettoken"})
     # When I run mass-driver
     prev_cwd = os.getcwd()
     os.chdir(tmp_path)  # Ensure .mass_driver/ cache folder is disposable
@@ -74,3 +70,24 @@ def test_migration_and_forge_interneturl(tmp_path, shared_datadir, mocker):
     assert (
         forge_result.pr_html_url == DUMMY_PR_URL
     ), "Should have returned correct PR URL"
+
+
+def test_scan(tmp_path, shared_datadir, mocker):
+    """Feature: Scan repositories
+
+    As a mass-driver user
+    I need to scan repo contents
+    To discover what migration need to be prepared
+    """
+    repo_path = Path(tmp_path / "test_repo/")
+    copy_folder(Path(shared_datadir / "sample_repo"), repo_path)
+    activityconfig_filepath = shared_datadir / "activity.toml"
+    # When I run a mass-driver scan
+    scan_result = massdrive_scan(str(repo_path), activityconfig_filepath)
+    # Then I get scan results
+    assert isinstance(scan_result, dict), "Should return dict scan result"
+    # And scan result is correct
+    assert "root-files" in scan_result.keys(), "Should have 'root-files' Scanner"
+    assert scan_result["root-files"][
+        "readme_md"
+    ], "Should have discovered README.md in sample repo"

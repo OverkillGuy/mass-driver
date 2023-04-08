@@ -1,3 +1,6 @@
+[mass-driver.scan]
+scanner_names =["root-files", "root-dirs"]
+
 [mass-driver.migration]
 # Common name to remember the change by across all repos
 commit_message = """Bump counter to 2

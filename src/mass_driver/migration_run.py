@@ -53,7 +53,7 @@ def main(
 
 
 def process_repo(
-    repo_url: str,
+    repo_url: RepoUrl,
     migration: MigrationLoaded,
     cache_path: Path,
 ) -> tuple[PatchResult, Path, Exception | None]:

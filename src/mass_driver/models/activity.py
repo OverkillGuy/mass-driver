@@ -8,6 +8,7 @@ from tomllib import loads
 
 from pydantic import BaseModel
 
+from mass_driver.discovery import get_scanners
 from mass_driver.models.forge import PRResult
 from mass_driver.models.migration import (  # Forge,
     TOML_PROJECTKEY,
@@ -19,6 +20,7 @@ from mass_driver.models.migration import (  # Forge,
     load_driver,
 )
 from mass_driver.models.patchdriver import PatchResult
+from mass_driver.models.scan import ScanFile, ScanLoaded, Scanner
 
 RepoUrl = str
 """A repo's clone URL, either git@github.com format or local filesystem path"""
@@ -42,6 +44,7 @@ IndexedScanResult = dict[RepoUrl, ScanResult]
 class ActivityFile(BaseModel):
     """Top-level object for migration + forge, proxy for TOML file, pre-class-load"""
 
+    scan: ScanFile | None = None
     migration: MigrationFile | None = None
     forge: ForgeFile | None = None
     # TODO: Add RepoSource here
@@ -50,6 +53,7 @@ class ActivityFile(BaseModel):
 class ActivityLoaded(BaseModel):
     """Top-level object for migration + forge, proxy for TOML file, post-load"""
 
+    scan: ScanLoaded | None = None
     migration: MigrationLoaded | None = None
     forge: ForgeLoaded | None = None
 
@@ -75,23 +79,37 @@ class ActivityOutcome(BaseModel):
     """A lookup table of the scan results, indexed by repos_input url"""
 
 
-def load_activity_toml(migration_config: str) -> ActivityFile:
+def load_activity_toml(activity_config: str) -> ActivityFile:
     """Load up a TOML config of activity into memory"""
-    migration_dict = loads(migration_config)
-    if TOML_PROJECTKEY not in migration_dict:
+    activity_dict = loads(activity_config)
+    if TOML_PROJECTKEY not in activity_dict:
         raise ValueError(
             "Config given invalid: " f"Missing top-level '{TOML_PROJECTKEY}' key"
         )
-    return ActivityFile.parse_obj(migration_dict[TOML_PROJECTKEY])
+    return ActivityFile.parse_obj(activity_dict[TOML_PROJECTKEY])
 
 
 def load_activity(activity: ActivityFile) -> ActivityLoaded:
     """Load up all plugins of an Activity"""
+    if activity.scan is not None:
+        scan_loaded = load_scan(activity.scan)
     if activity.migration is not None:
         migration_loaded = load_driver(activity.migration)
     if activity.forge is not None:
         forge_loaded = forge_from_config(activity.forge)
     return ActivityLoaded(
+        scan=scan_loaded if activity.scan is not None else None,
         migration=migration_loaded if activity.migration is not None else None,
         forge=forge_loaded if activity.forge is not None else None,
     )
+
+
+def load_scan(s: ScanFile):
+    """Load the ScanFile, discovering drivers"""
+    all_scanners = get_scanners()
+    scanners_by_name = {scanner.name: scanner for scanner in all_scanners}
+    selected_scanners: list[Scanner] = []
+    for selected_name in s.scanner_names:
+        if selected_name in scanners_by_name:
+            selected_scanners.append(scanners_by_name[selected_name])
+    return ScanLoaded(scanner_names=s.scanner_names, scanners=selected_scanners)

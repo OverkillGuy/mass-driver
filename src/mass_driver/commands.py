@@ -112,10 +112,11 @@ def scanners_command(args: Namespace):
 def scan_command(args: Namespace) -> ActivityOutcome:
     """Process the CLI for 'scan'"""
     print("Scan mode!")
-    scanners = get_scanners()
     repos = read_repolist(args)
+    activity_str = args.activity_file.read()
+    activity = ActivityLoaded.from_config(activity_str)
     return scan_main(
-        scanners,
+        activity.scan,
         repo_urls=repos,
         cache=not args.no_cache,
     )
