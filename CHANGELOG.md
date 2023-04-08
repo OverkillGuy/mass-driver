@@ -14,7 +14,7 @@ The project uses semantic versioning (see [semver](https://semver.org)).
   - Alternative`scanners` command to list out detected, available scanners
   - New TOML file entry `[mass-driver.scan]`, with subkey `scanner_names` used
     to select which scanner plugins to enable.
-  - Simple scanners `root-files` and `root-dirs` provided for reference
+  - Simple scanners `root-files` and `dockerfile-from` provided for reference
   - New fixture `massdriver_scan` for testing scanners
 
 

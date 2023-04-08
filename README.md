@@ -212,7 +212,7 @@ Let's define an Activity file specifying a list of scanners to run:
 ``` toml
 # An Activity file for scanning
 [mass-driver.scan]
-scanner_names = ["root-files", "root-dirs"]
+scanner_names = ["root-files", "dockerfile-from"]
 ```
 This can be run similarly to migration:
 

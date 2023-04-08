@@ -26,10 +26,12 @@ def rootlevel_files(repo: Path) -> dict[str, Any]:
     }
 
 
-def rootlevel_folders(repo: Path) -> dict[str, Any]:
-    """Detect some folders at the root of the repo"""
-    return {
-        "src": has_dir(repo, "src/"),
-        "tests": has_dir(repo, "tests/"),
-        "docs": has_dir(repo, "docs/"),
-    }
+def dockerfile_from_scanner(repo: Path) -> dict[str, Any]:
+    """Report the repo's Dockerfile's FROM line(s)"""
+    dockerfile_path = repo / "Dockerfile"
+    dockerfile_exists = dockerfile_path.is_file()
+    if not dockerfile_exists:
+        return {"dockerfile_exists": False, "dockerfile_from": None}
+    dkr_lines = dockerfile_path.read_text().splitlines()
+    dkr_from_lines = [line for line in dkr_lines if line.startswith("FROM")]
+    return {"dockerfile_exists": True, "dockerfile_from_lines": dkr_from_lines}

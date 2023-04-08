@@ -1,5 +1,5 @@
 [mass-driver.scan]
-scanner_names = ["root-files", "root-dirs"]
+scanner_names = ["root-files", "dockerfile-from"]
 
 [mass-driver.migration]
 # Common name to remember the change by across all repos

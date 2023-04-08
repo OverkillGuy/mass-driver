@@ -96,4 +96,4 @@ github-app = 'mass_driver.forges.github:GithubAppForge'
 
 [tool.poetry.plugins.'massdriver.scanners']
 root-files = 'mass_driver.scanners.basic_scanners:rootlevel_files'
-root-dirs = 'mass_driver.scanners.basic_scanners:rootlevel_folders'
+dockerfile-from = 'mass_driver.scanners.basic_scanners:dockerfile_from_scanner'

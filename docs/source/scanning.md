@@ -59,7 +59,6 @@ Prove it is available via `mass-driver scanners`:
 ```
 Available scanners:
 root-files
-root-dirs
 dockerfile-from
 ```
 
