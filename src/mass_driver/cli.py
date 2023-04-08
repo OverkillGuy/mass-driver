@@ -88,13 +88,36 @@ def run_subparser(subparser):
     run.set_defaults(dry_run=True, func=commands.run_command)
 
 
+def scanners_subparser(subparser):
+    """Inject the scanners subparser"""
+    scan = subparser.add_parser(
+        "scanners",
+        help="List available scanners",
+    )
+    scan.set_defaults(func=commands.scanners_command)
+
+
+def scan_subparser(subparser):
+    """Inject the scan subparser"""
+    scan = subparser.add_parser(
+        "scan",
+        help="Scan repositories using all available scans",
+    )
+    scan.add_argument("--list", action="store_true", help="List available scanners")
+    repo_list_group(scan)
+    cache_arg(scan)
+    scan.set_defaults(func=commands.scan_command)
+
+
 def subparsers(parser: ArgumentParser) -> ArgumentParser:
-    """Add subparsers for driver selection"""
+    """Add the subparsers for all commands"""
     subparser = parser.add_subparsers(dest="cmd", title="Commands")
     subparser.required = True
     driver_subparser(subparser)
     forge_subparser(subparser)
     run_subparser(subparser)
+    scanners_subparser(subparser)
+    scan_subparser(subparser)
     return parser
 
 

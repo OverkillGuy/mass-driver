@@ -31,6 +31,12 @@ IndexedPRResult = dict[RepoUrl, PRResult]
 
 RepoPathLookup = dict[RepoUrl, Path]
 """A lookup table for the local cloned repo path, given its remote equivalent (or filesystem path)"""
+ScanResult = dict[str, dict]
+"""The output of one or more scanner(s) on a single repo, indexed by scanner-name"""
+
+
+IndexedScanResult = dict[RepoUrl, ScanResult]
+"""A set of results of N scanners over multiple repos, indexed by original repo URL"""
 
 
 class ActivityFile(BaseModel):
@@ -65,6 +71,8 @@ class ActivityOutcome(BaseModel):
     """A lookup table of the results of a Migration, indexed by repos_input url"""
     forge_result: IndexedPRResult | None = None
     """A lookup table of the results of a Forge, indexed by repos_input url"""
+    scan_result: IndexedScanResult | None = None
+    """A lookup table of the scan results, indexed by repos_input url"""
 
 
 def load_activity_toml(migration_config: str) -> ActivityFile:

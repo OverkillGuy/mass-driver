@@ -6,6 +6,13 @@ The project uses semantic versioning (see [semver](https://semver.org)).
 
 ## [Unreleased]
 
+### Added
+- New `scan` command for scanning repos with functions, returning arbitrary
+  dict. Scanners are plugins declared under `mass-driver.scanners`, linking to
+  functions like `def my_scanner(repo: Path) -> dict[str, Any]`.
+- New `scanners` command to list out available scanners
+- Basic scanners `root-files` and `root-dirs` provided for reference
+
 
 ## v0.12.0 - 2023-04-05
 

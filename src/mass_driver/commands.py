@@ -11,11 +11,13 @@ from mass_driver.discovery import (
     discover_forges,
     get_driver_entrypoint,
     get_forge_entrypoint,
+    get_scanners,
 )
 from mass_driver.forge_run import main as forge_main
 from mass_driver.forge_run import pause_until_ok
 from mass_driver.migration_run import main as migration_main
 from mass_driver.models.activity import ActivityLoaded, ActivityOutcome
+from mass_driver.scan_run import scan_main
 
 
 def drivers_command(args: Namespace):
@@ -96,6 +98,27 @@ def run_command(args: Namespace) -> ActivityOutcome:
         pause_until_ok("Type y/yes/continue to run the Forge\n")
     forge_result = forge_main(activity.forge, migration_result)
     return forge_result
+
+
+def scanners_command(args: Namespace):
+    """Process the CLI for 'scan'"""
+    print("Available scanners:")
+    scanners = get_scanners()
+    for scanner in scanners:
+        print(scanner.name)
+    exit(0)
+
+
+def scan_command(args: Namespace) -> ActivityOutcome:
+    """Process the CLI for 'scan'"""
+    print("Scan mode!")
+    scanners = get_scanners()
+    repos = read_repolist(args)
+    return scan_main(
+        scanners,
+        repo_urls=repos,
+        cache=not args.no_cache,
+    )
 
 
 def forge_config_error_exit(e: ValidationError):
