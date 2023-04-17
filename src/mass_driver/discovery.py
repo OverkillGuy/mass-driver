@@ -4,6 +4,7 @@ import sys
 
 from mass_driver.models.forge import Forge
 from mass_driver.models.patchdriver import PatchDriver
+from mass_driver.models.scan import Scanner
 
 if sys.version_info < (3, 10):
     from importlib_metadata import EntryPoint, EntryPoints, entry_points
@@ -16,6 +17,8 @@ DRIVER_ENTRYPOINT = f"{ENTRYPOINT}.drivers"
 """The specific entrypoint for drivers discovery"""
 FORGE_ENTRYPOINT = f"{ENTRYPOINT}.forges"
 """The specific entrypoint for Forge discovery"""
+SCANNER_ENTRYPOINT = f"{ENTRYPOINT}.scanners"
+"""The specific entrypoint for Scanner discovery"""
 
 
 def discover_drivers() -> EntryPoints:
@@ -56,3 +59,9 @@ def get_forge(forge_name: str) -> type[Forge]:
     """Get the given forge Class, by entrypoint name"""
     forge = get_forge_entrypoint(forge_name)
     return forge.load()
+
+
+def get_scanners() -> list[Scanner]:
+    """Grab all discovered scanners"""
+    scanners = entry_points(group=SCANNER_ENTRYPOINT)
+    return [Scanner(name=s.name, func=s.load()) for s in scanners]

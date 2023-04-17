@@ -2,7 +2,6 @@
 
 from copy import deepcopy
 from pathlib import Path
-from tempfile import mkdtemp
 
 from mass_driver.models.activity import (
     ActivityOutcome,
@@ -12,9 +11,7 @@ from mass_driver.models.activity import (
 )
 from mass_driver.models.migration import MigrationLoaded
 from mass_driver.models.patchdriver import PatchOutcome, PatchResult
-from mass_driver.repo import clone_if_remote, commit
-
-DEFAULT_CACHE = Path(".mass_driver/repos/")
+from mass_driver.repo import clone_if_remote, commit, get_cache_folder
 
 
 def main(
@@ -24,10 +21,7 @@ def main(
 ) -> ActivityOutcome:
     """Run the program's main command"""
     repo_count = len(repo_urls)
-    cache_folder = DEFAULT_CACHE
-    if not cache:
-        cache_folder = Path(mkdtemp(suffix=".cache"))
-        print(f"Using repo cache folder: {cache_folder}/ (Won't wipe it on exit!)")
+    cache_folder = get_cache_folder(cache)
     print(f"Processing {repo_count} with {migration.driver=}")
     patch_results: IndexedPatchResult = {}
     repo_local_paths: RepoPathLookup = {}
@@ -59,7 +53,7 @@ def main(
 
 
 def process_repo(
-    repo_url: str,
+    repo_url: RepoUrl,
     migration: MigrationLoaded,
     cache_path: Path,
 ) -> tuple[PatchResult, Path, Exception | None]:

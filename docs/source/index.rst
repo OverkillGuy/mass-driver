@@ -7,6 +7,7 @@ Mass Driver
    :maxdepth: 2
 
    usage
+   scanning
    objectives
    Roadmap <roadmap>
    drivers

@@ -1,5 +1,6 @@
 """Reusable fixtures for mass-driver testing"""
 
+import json
 import shutil
 import sys
 from pathlib import Path
@@ -86,8 +87,42 @@ def massdrive_check_file(workdir: Path):
                 details_file.read_text().casefold()
                 in migration_result.details.casefold()
             ), "Details should match up"
+        return None, None  # Return empties for assert equals checks
     else:
         assert migration_result.outcome == PatchOutcome.PATCHED_OK, "Should patch OK"
-        assert (
-            input_file.read_text() == reference_file.read_text()
-        ), "Result of mass-driver should match reference"
+        mutated = input_file.read_text()
+        reference = reference_file.read_text()
+        return mutated, reference
+
+
+def massdrive_scan(
+    repo_url: str, activity_configfilepath: Path, repo_is_path: bool = True
+):
+    """Run mass-driver scan over a given local repo"""
+    if repo_is_path:
+        repoize(Path(repo_url))
+    result = massdriver_cli(
+        [
+            "scan",
+            str(activity_configfilepath),
+            "--repo-path",
+            repo_url,
+        ]
+    )
+    return result.scan_result[str(repo_url)] if result.scan_result is not None else None
+
+
+def massdrive_scan_check(workdir: Path):
+    """Scan mass-driver over workdir and check the scan_results.json matches"""
+    reference_results_file = workdir / "scan_results.json"
+    config_file = workdir / "activity.toml"
+    try:
+        scan_results = massdrive_scan(
+            str(workdir),
+            config_file,
+        )
+    except Exception as e:
+        print("Error during mass-driver scan", file=sys.stderr)
+        raise e
+    reference_results = json.loads(reference_results_file.read_text())
+    return scan_results, reference_results

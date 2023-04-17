@@ -34,6 +34,33 @@ def repo_list_group(subparser: ArgumentParser):
     )
 
 
+def cache_arg(subparser: ArgumentParser):
+    """Add the cache/no-cache arguments"""
+    subparser.add_argument(
+        "--no-cache",
+        help="Disable any repo caching",
+        action="store_true",
+    )
+
+
+def activity_arg(subparser: ArgumentParser):
+    """Add the Activity file selector argument"""
+    subparser.add_argument(
+        "activity_file",
+        help="Filepath of activity to apply (TOML file)",
+        type=FileType("r"),
+    )
+
+
+def jsonout_args(subparser: ArgumentParser):
+    """Add the output files argument"""
+    subparser.add_argument(
+        "--json-outfile",
+        help="If set, store the output to JSON file with this name",
+        type=FileType("w"),
+    )
+
+
 def driver_subparser(subparser):
     """Inject the drivers-listing argument subparser"""
     drivers = subparser.add_parser(
@@ -64,32 +91,49 @@ def run_subparser(subparser):
         "run",
         help="Run mass-driver, migration/forge activity across repos",
     )
-    run.add_argument(
-        "activity_file",
-        help="Filepath of activity to apply (TOML file)",
-        type=FileType("r"),
-    )
-    run.add_argument(
-        "--no-cache",
-        help="Disable any repo caching",
-        action="store_true",
-    )
+    activity_arg(run)
+    jsonout_args(run)
     run.add_argument(
         "--no-pause",
         help="Disable the interactive pause between Migration and Forge",
         action="store_true",
     )
+    cache_arg(run)
     repo_list_group(run)
     run.set_defaults(dry_run=True, func=commands.run_command)
 
 
+def scanners_subparser(subparser):
+    """Inject the scanners subparser"""
+    scan = subparser.add_parser(
+        "scanners",
+        help="List available scanners",
+    )
+    scan.set_defaults(func=commands.scanners_command)
+
+
+def scan_subparser(subparser):
+    """Inject the scan subparser"""
+    scan = subparser.add_parser(
+        "scan",
+        help="Scan repositories using all available scans",
+    )
+    activity_arg(scan)
+    jsonout_args(scan)
+    repo_list_group(scan)
+    cache_arg(scan)
+    scan.set_defaults(func=commands.scan_command)
+
+
 def subparsers(parser: ArgumentParser) -> ArgumentParser:
-    """Add subparsers for driver selection"""
+    """Add the subparsers for all commands"""
     subparser = parser.add_subparsers(dest="cmd", title="Commands")
     subparser.required = True
     driver_subparser(subparser)
     forge_subparser(subparser)
     run_subparser(subparser)
+    scanners_subparser(subparser)
+    scan_subparser(subparser)
     return parser
 
 

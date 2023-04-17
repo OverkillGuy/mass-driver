@@ -93,3 +93,7 @@ stamper = 'mass_driver.drivers.stamper:Stamper'
 dummy = 'mass_driver.forges.dummy:DummyForge'
 github = 'mass_driver.forges.github:GithubPersonalForge'
 github-app = 'mass_driver.forges.github:GithubAppForge'
+
+[tool.poetry.plugins.'massdriver.scanners']
+root-files = 'mass_driver.scanners.basic_scanners:rootlevel_files'
+dockerfile-from = 'mass_driver.scanners.basic_scanners:dockerfile_from_scanner'

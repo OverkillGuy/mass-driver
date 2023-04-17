@@ -6,6 +6,32 @@ The project uses semantic versioning (see [semver](https://semver.org)).
 
 ## [Unreleased]
 
+### Added
+- New `scan` feature for scanning repos with arbitrary python functions. See
+  new "Scanning" docs:
+  - Scanners are plugins declared under `mass-driver.scanners`, linking to
+    functions like `my_scanner(repo: Path) -> dict[str, Any]`
+  - Alternative `scanners` command to list out detected, available scanners
+  - New TOML file entry `[mass-driver.scan]`, with subkey `scanner_names` used
+    to select which scanner plugins to enable.
+  - Simple scanners `root-files` and `dockerfile-from` provided for reference
+  - New fixture `massdriver_scan` and `massdriver_scan_check` for testing scanners
+- New optional CLI parameter `--json-outfile` for `run` and `scan`, to save the
+  activity outcome to JSON files for analysis
+
+### Changed
+- Test fixture `massdrive_check_file` now returns unchecked `result` and
+  `reference` blobs for equality assertion (`assert result == reference`) to be
+  done by the caller. This enables plugins like `pytest-clarity` to show
+  colorful diff. Users of `massdrive_check_file` need to change (on pain of lack
+  of test assertion):
+
+```diff
+- massdrive_check_file(workdir)
++ result, reference = massdrive_check_file(workdir)
++ assert result == reference, "Massdriver result should match reference"
+```
+
 
 ## v0.12.0 - 2023-04-05
 

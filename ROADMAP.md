@@ -13,6 +13,12 @@ These sections are in rough order in which they'll be pursued.
 
 Before anything, polish the usecase of one-shot PR generation as CLI.
 
+- Scanners polishing:
+  - Save scanner report to JSON file
+  - Add JSON file output to migration + forge activities too
+  - Scan-info: scanner-invariant info about the scan event: timestamp,
+    scan_uid... (repo-specific can get auto-scanned)
+
 - Better CLI output for summarizing the conclusion of an activity
 - Add optional output file to JSON (currently Pydantic objects = JSON castable)
 - Create cookiecutter template (including tests) for each plugin type
