@@ -72,26 +72,49 @@ scanner_names = ["dockerfile-from", "root-files"]
 Now let's generate the scan reports:
 
 ```shell
-mass-driver scan dockerfile_scan.toml
+mass-driver scan dockerfile_scan.toml --repo-filelist repos.txt
 ```
 
 
 ### Testing the scanner
 
-TODO
+Before running it across many many repos, let's test it with sample data. For
+this, we have a couple handy test fixtures available that turn testing into a
+trivial matter.
 
-`massdrive_scan` fixture.
+So let's start by writing a new empty file `tests/test_scanner.py`, and a folder
+structure like this:
 
-### Running the scanner
+```
+tests/
+├── test_scanner/
+│   ├── dockerfile/
+│   │   ├── activity.toml
+│   │   ├── Dockerfile
+│   │   └── scan_results.json
+│   └── multiple-dockerfiles/
+│       ├── activity.toml
+│       ├── Dockerfile
+│       └── scan_results.json
+└── test_scanner.py
+```
 
-TODO
+The intent is for each subfolder under `tests/test_scanner/` to be pretend
+repos, with an `activity.toml` selecting the scanners, and a `scan_results.json`
+to report on the repo's scan.
 
-`mass-driver scan scan.toml --repo-filelist repos.txt`
+As for the test file, here is the contents:
+
+```{literalinclude} ../../src/mass_driver/tests/test_scanner.py
+---
+language: python
+---
+```
+
+Note how the test relies on the `massdrive_scan_check` fixture to run scan
+against specific folder. This wraps around the `massdrive_scan` fixture.
 
 
-### Scanner exceptions
-
-TODO
-
-Uses `scannerror` key to define two things: `exception: str`, and `backtrace:
-list[str]`.
+```{note}
+The scanner subsystem will swallow exceptions, using the `scannerror` key to define two things: `exception: str`, and `backtrace: list[str]`.
+```
