@@ -6,6 +6,8 @@ The project uses semantic versioning (see [semver](https://semver.org)).
 
 ## [Unreleased]
 
+### Fixed
+- `scan` command now uses `--json-outfile` as expected
 
 ## v0.13.0 - 2023-04-17
 

@@ -117,11 +117,13 @@ def scan_command(args: Namespace) -> ActivityOutcome:
     repos = read_repolist(args)
     activity_str = args.activity_file.read()
     activity = ActivityLoaded.from_config(activity_str)
-    return scan_main(
+    result = scan_main(
         activity.scan,
         repo_urls=repos,
         cache=not args.no_cache,
     )
+    maybe_save_outcome(args, result)
+    return result
 
 
 def forge_config_error_exit(e: ValidationError):
