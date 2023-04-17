@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "mass_driver"
-version = "0.12.0"
+version = "0.13.0"
 description = "Send bulk repo change requests"
 authors = ["Jb Doyon <jb@jiby.tech>"]
 readme = "README.md"

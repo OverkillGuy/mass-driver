@@ -6,6 +6,9 @@ The project uses semantic versioning (see [semver](https://semver.org)).
 
 ## [Unreleased]
 
+
+## v0.13.0 - 2023-04-17
+
 ### Added
 - New `scan` feature for scanning repos with arbitrary python functions. See
   new "Scanning" docs:
