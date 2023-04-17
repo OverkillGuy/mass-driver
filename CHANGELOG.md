@@ -16,6 +16,8 @@ The project uses semantic versioning (see [semver](https://semver.org)).
     to select which scanner plugins to enable.
   - Simple scanners `root-files` and `dockerfile-from` provided for reference
   - New fixture `massdriver_scan` and `massdriver_scan_check` for testing scanners
+- New optional CLI parameter `--json-outfile` for `run` and `scan`, to save the
+  activity outcome to JSON files for analysis
 
 ### Changed
 - Test fixture `massdrive_check_file` now returns unchecked `result` and

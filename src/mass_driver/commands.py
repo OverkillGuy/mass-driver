@@ -91,12 +91,14 @@ def run_command(args: Namespace) -> ActivityOutcome:
     if activity.forge is None:
         # Nothing else to do, just print completion and exit
         print("No Forge available: end")
+        maybe_save_outcome(args, migration_result)
         return migration_result
     # Now guaranteed to have a Forge: pause + forge
     if not args.no_pause:
         print("Review the commits now.")
         pause_until_ok("Type y/yes/continue to run the Forge\n")
     forge_result = forge_main(activity.forge, migration_result)
+    maybe_save_outcome(args, forge_result)
     return forge_result
 
 
@@ -145,3 +147,17 @@ def read_repolist(args) -> list[str]:
     if args.repo_filelist:
         repos = args.repo_filelist.read().strip().split("\n")
     return repos
+
+
+def maybe_save_outcome(args: Namespace, outcome: ActivityOutcome):
+    """Consider saving the outcome"""
+    if not args.json_outfile:
+        return
+    save_outcome(outcome, args.json_outfile)
+    print("Saved outcome to given JSON file")
+
+
+def save_outcome(outcome: ActivityOutcome, out_file):
+    """Save the output to given JSON file handle"""
+    out_file.write(outcome.json(indent=2))
+    out_file.write("\n")

@@ -52,6 +52,15 @@ def activity_arg(subparser: ArgumentParser):
     )
 
 
+def jsonout_args(subparser: ArgumentParser):
+    """Add the output files argument"""
+    subparser.add_argument(
+        "--json-outfile",
+        help="If set, store the output to JSON file with this name",
+        type=FileType("w"),
+    )
+
+
 def driver_subparser(subparser):
     """Inject the drivers-listing argument subparser"""
     drivers = subparser.add_parser(
@@ -83,6 +92,7 @@ def run_subparser(subparser):
         help="Run mass-driver, migration/forge activity across repos",
     )
     activity_arg(run)
+    jsonout_args(run)
     run.add_argument(
         "--no-pause",
         help="Disable the interactive pause between Migration and Forge",
@@ -109,6 +119,7 @@ def scan_subparser(subparser):
         help="Scan repositories using all available scans",
     )
     activity_arg(scan)
+    jsonout_args(scan)
     repo_list_group(scan)
     cache_arg(scan)
     scan.set_defaults(func=commands.scan_command)
