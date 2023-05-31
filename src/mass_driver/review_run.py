@@ -37,7 +37,7 @@ def review(pr_list: list[str]):
             pr_objs[pr_url] = pr_obj
         except Exception as e:
             print(
-                f"Issue when fetching PR info for {repo=}, {pr_id=}" f"Issue was: {e}",
+                f"Issue when fetching PR info for {repo=}, {pr_id=}. Issue was: {e}",
                 file=sys.stderr,
             )
             continue
@@ -59,7 +59,8 @@ def review(pr_list: list[str]):
         for pr_url, pr_detail in pr_details.items()
         if pr_detail["state"] == "closed"
     ]
-    count_closed = len(closed)
+    closed_not_merged = list(set(closed) - set(merged))
+    count_closed = len(closed_not_merged)
     mergeable = [
         pr_url for pr_url, pr_detail in pr_details.items() if pr_detail["mergeable"]
     ]
@@ -79,7 +80,6 @@ def review(pr_list: list[str]):
     for pr_url in merged:
         print(pr_url)
 
-    closed_not_merged = list(set(closed) - set(merged))
     print("Closed (but not merged):")
     if not closed_not_merged:
         print("None!")
