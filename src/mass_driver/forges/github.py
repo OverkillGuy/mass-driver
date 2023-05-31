@@ -95,7 +95,7 @@ def detect_pr_info(pr_url: str) -> tuple[str, str, str]:
     ('OverkillGuy', 'sphinx-needs-test', '1')
     """
     GITHUB_PR_REGEX = re.compile(
-        r"""https://github.com/([a-zA-ZZ_\.-]+)/([a-zA-Z_\.-]+)/pull/([0-9]+)"""
+        r"""https://github.com/([a-zA-Z0-9Z_\.-]+)/([a-zA-Z0-9_\.-]+)/pull/([0-9]+)"""
     )
     match = re.fullmatch(GITHUB_PR_REGEX, pr_url)
     if not match:
