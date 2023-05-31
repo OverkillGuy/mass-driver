@@ -108,7 +108,6 @@ def reviewpr_subparser(subparser):
         "view-pr",
         help="Check status of given pull requests",
     )
-    jsonout_args(run)
     prlist_group = run.add_mutually_exclusive_group(required=True)
     prlist_group.add_argument(
         "--pr",

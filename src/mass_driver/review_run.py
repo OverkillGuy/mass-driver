@@ -41,10 +41,6 @@ def review(pr_list: list[str]):
                 file=sys.stderr,
             )
             continue
-    print(
-        f"Received {len(pr_list)} URLs, {len(pr_infos)} valid PR URLs, "
-        f"{len(pr_objs)} actual PRs"
-    )
     for pr_url, pr in pr_objs.items():
         pr_details[pr_url]["merged"] = pr.merged
         pr_details[pr_url]["state"] = pr.state
@@ -65,30 +61,43 @@ def review(pr_list: list[str]):
         pr_url for pr_url, pr_detail in pr_details.items() if pr_detail["mergeable"]
     ]
     count_mergeable = len(mergeable)
+    non_mergeable = set(pr_objs.keys()) - set(closed) - set(mergeable)
+    count_non_mergeable = len(non_mergeable)
 
-    print(
-        f"Of which: {count_merged} merged, {count_closed} closed "
-        f"{count_mergeable} mergeable"
-    )
-    print(
-        "Note that the Github API docs makes it hard to know if 'closed' includes merged etc"
-    )
-
+    print()
     print("Merged:")
     if not merged:
         print("None!")
     for pr_url in merged:
         print(pr_url)
-
+    print()
     print("Closed (but not merged):")
     if not closed_not_merged:
         print("None!")
     for pr_url in closed_not_merged:
         print(pr_url)
-
-    print("Mergeable:")
+    print()
+    print("Mergeable (no conflict):")
     if not mergeable:
         print("None!")
     for pr_url in mergeable:
         print(pr_url)
+    print()
+    print("Non-mergeable (conflicts):")
+    if not non_mergeable:
+        print("None!")
+    for pr_url in non_mergeable:
+        print(pr_url)
+    print()
+    print(
+        f"Received {len(pr_list)} URLs, "
+        f"{len(pr_infos)} valid PR URLs, "
+        f"{len(pr_objs)} actual PRs"
+    )
+    print(
+        f"Of which: {count_merged} merged, "
+        f"{count_closed} closed, "
+        f"{count_mergeable} mergeable, "
+        f"{count_non_mergeable} have conflicts"
+    )
     # TODO Explore more of the PR states to make this response more useful
