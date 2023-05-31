@@ -1,5 +1,7 @@
 """Githubas Forge. Using the github lib if available"""
 
+import re
+
 from github import AppAuthentication, Github
 from pydantic import SecretStr
 
@@ -72,9 +74,6 @@ class GithubAppForge(GithubBaseForge):
         self._github_api = Github(app_auth=auth)
 
 
-# FIXME: Github App login blocked by "no such module JWT.encode"
-
-
 def detect_github_repo(remote_url: str):
     """Find the github remote from a cloneable URL
 
@@ -87,3 +86,19 @@ def detect_github_repo(remote_url: str):
         )
     _junk, gh_name = remote_url.split(":")
     return gh_name.removesuffix(".git")
+
+
+def detect_pr_info(pr_url: str) -> tuple[str, str, str]:
+    """Detect a PR's repo and number
+
+    >>> detect_pr_info("https://github.com/OverkillGuy/sphinx-needs-test/pull/1")
+    ('OverkillGuy', 'sphinx-needs-test', '1')
+    """
+    GITHUB_PR_REGEX = re.compile(
+        r"""https://github.com/([a-zA-ZZ_\.-]+)/([a-zA-Z_\.-]+)/pull/([0-9]+)"""
+    )
+    match = re.fullmatch(GITHUB_PR_REGEX, pr_url)
+    if not match:
+        raise ValueError(f"PR URL {pr_url} doesn't map to github PR regex")
+    owner, repo, prnum = match.groups()
+    return (owner, repo, prnum)

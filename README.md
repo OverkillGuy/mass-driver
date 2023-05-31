@@ -263,7 +263,24 @@ This can be run just like a migration:
 ``` shell
 mass-driver run scan.toml --repo-filelist repos.txt
 ```
+### Reviewing bulk PR status
 
+Have a look at the `view-pr` subcommand for reviewing the status of many PRs at
+once.
+
+Note: This is currently only implemented for `forge=github` (personal access
+token-based, via `FORGE_TOKEN` envvar).
+
+``` shell
+export FORGE_TOKEN=xyz
+mass-driver view-pr --pr https://github.com/OverkillGuy/mass-driver/pull/1 https://github.com/OverkillGuy/mass-driver/pull/2
+```
+Equivalently via a file full of newline-delimited PR URLs
+
+``` shell
+export FORGE_TOKEN=xyz
+mass-driver view-pr --pr-filelist prs.txt
+```
 
 ## Development
 

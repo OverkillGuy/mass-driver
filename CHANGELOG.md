@@ -6,6 +6,9 @@ The project uses semantic versioning (see [semver](https://semver.org)).
 
 ## [Unreleased]
 
+### Added
+- Experimental `view-pr` feature for bulk reviewing the status of PRs
+
 
 ## v0.15.0 - 2023-07-05
 
