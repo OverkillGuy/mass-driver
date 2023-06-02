@@ -16,12 +16,14 @@ The project uses semantic versioning (see [semver](https://semver.org)).
   - `1` for failures during the main function
   - `2` for argument parsing errors
 - `stamper` driver now creates any missing parent folder to the target
+- Remove test depending on `git clone` from Github: Faster, offline tests now
+
 
 ## v0.13.1 - 2023-04-17
 
-
 ### Fixed
 - `scan` command now uses `--json-outfile` as expected
+
 
 ## v0.13.0 - 2023-04-17
 
