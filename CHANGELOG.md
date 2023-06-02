@@ -7,7 +7,15 @@ The project uses semantic versioning (see [semver](https://semver.org)).
 ## [Unreleased]
 
 
+### Added
+- New `file_ownership` parameter for `stamper`, defaulting to `0664`.
+
+### Fixed
+- `stamper` driver now creates any missing parent folder to the target
+
+
 ## v0.13.1 - 2023-04-17
+
 
 ### Fixed
 - `scan` command now uses `--json-outfile` as expected
