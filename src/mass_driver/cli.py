@@ -1,6 +1,6 @@
 """Command line entrypoint for mass-driver"""
 import sys
-from argparse import ArgumentParser, FileType, Namespace
+from argparse import ArgumentParser, FileType
 
 from mass_driver import commands
 
@@ -137,15 +137,19 @@ def subparsers(parser: ArgumentParser) -> ArgumentParser:
     return parser
 
 
-def parse_arguments(arguments: list[str]) -> Namespace:
-    """Parse generic arguments, given as parameters"""
-    parser = subparsers(gen_parser())
-    return parser.parse_args(arguments)
-
-
-def cli(arguments: list[str] | None = None):
+def cli(arguments: list[str]):
     """Run the mass_driver cli"""
-    if arguments is None:
-        arguments = sys.argv[1:]
-    pargs = parse_arguments(arguments)
-    return pargs.func(pargs)  # Dispatch to the subcommand func (drivers/run)
+    parser = subparsers(gen_parser())
+    pargs = parser.parse_args(arguments)
+    try:
+        return pargs.func(pargs)  # Dispatch to the subcommand func (drivers/run)
+    except Exception as e:
+        print(f"Uncaught exception: {e}", file=sys.stderr)
+        return False
+
+
+def main():
+    """Run mass-driver as CLI, not from API call"""
+    arguments = sys.argv[1:]
+    main_result = cli(arguments)
+    return 0 if main_result else 1

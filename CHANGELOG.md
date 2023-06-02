@@ -11,8 +11,11 @@ The project uses semantic versioning (see [semver](https://semver.org)).
 - New `file_ownership` parameter for `stamper`, defaulting to `0664`.
 
 ### Fixed
+- Exit codes harmonized:
+  - `0` for success
+  - `1` for failures during the main function
+  - `2` for argument parsing errors
 - `stamper` driver now creates any missing parent folder to the target
-
 
 ## v0.13.1 - 2023-04-17
 

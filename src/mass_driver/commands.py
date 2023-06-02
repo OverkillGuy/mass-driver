@@ -40,7 +40,7 @@ def drivers_command(args: Namespace):
     print("Available drivers:")
     for driver in drivers:
         print(f"{driver.name}")
-    return
+    return True
 
 
 def forges_command(args: Namespace):
@@ -63,7 +63,7 @@ def forges_command(args: Namespace):
     print("Available forges:")
     for forge in forges:
         print(f"{forge.name}")
-    return
+    return True
 
 
 def run_command(args: Namespace) -> ActivityOutcome:
