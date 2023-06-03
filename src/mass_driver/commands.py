@@ -3,6 +3,7 @@
 import sys
 from argparse import Namespace
 from pathlib import Path
+from typing import Callable
 
 from pydantic import ValidationError
 
@@ -22,47 +23,37 @@ from mass_driver.scan_run import scan_main
 
 def drivers_command(args: Namespace):
     """Process the CLI for 'Drivers' subcommand"""
-    if args.info:
-        target_driver = args.info
-        try:
-            driver = get_driver_entrypoint(target_driver)
-            print(
-                f"Plugin name: {driver.name}; Import path: {driver.module}; Class: {driver.attr}"
-            )
-            print(driver.load().__doc__)
-            return
-        except ImportError as e:
-            print(str(e), file=sys.stderr)
-            print("Try `mass driver drivers --list`", file=sys.stderr)
-            return
-    # if args.list:  # Implicit
-    drivers = discover_drivers()
-    print("Available drivers:")
-    for driver in drivers:
-        print(f"{driver.name}")
-    return True
+    return plugins_command(args, "driver", get_driver_entrypoint, discover_drivers)
 
 
 def forges_command(args: Namespace):
     """Process the CLI for 'Forges' subcommand"""
+    return plugins_command(args, "forge", get_forge_entrypoint, discover_forges)
+
+
+def plugins_command(
+    args: Namespace, plugin: str, entrypoint: Callable, discover: Callable
+):
+    """Process the CLI for a generic plugin subcommand"""
     if args.info:
-        target_forge = args.info
+        target_plugin = args.info
         try:
-            forge = get_forge_entrypoint(target_forge)
+            plugin_obj = entrypoint(target_plugin)
             print(
-                f"Plugin name: {forge.name}; Import path: {forge.module}; Class: {forge.attr}"
+                f"Plugin name: {plugin_obj.name}; Import path: "
+                f"{plugin_obj.module}; Class: {plugin_obj.attr}"
             )
-            print(forge.load().__doc__)
+            print(plugin_obj.load().__doc__)
             return
         except ImportError as e:
             print(str(e), file=sys.stderr)
-            print("Try `mass driver forges --list`", file=sys.stderr)
+            print(f"Try `mass driver {plugin}s --list`", file=sys.stderr)
             return
     # if args.list:  # Implicit
-    forges = discover_forges()
-    print("Available forges:")
-    for forge in forges:
-        print(f"{forge.name}")
+    plugins = discover()
+    print("Available plugins:")
+    for plugin_obj in plugins:
+        print(plugin_obj.name)
     return True
 
 
