@@ -8,7 +8,10 @@ The project uses semantic versioning (see [semver](https://semver.org)).
 
 
 ### Added
+- New `source` feature for discovering what repos to patch/scan.
 - CI (pytest, pre-commit) set up via Github Actions: [PR #1](https://github.com/mass-driver/pull/1)
+
+
 
 ## v0.13.2 - 2023-06-03
 
