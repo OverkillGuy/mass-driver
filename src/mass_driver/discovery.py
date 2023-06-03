@@ -1,15 +1,10 @@
 """Driver discovery system via plugins"""
 
-import sys
+from importlib.metadata import EntryPoint, EntryPoints, entry_points
 
 from mass_driver.models.forge import Forge
 from mass_driver.models.patchdriver import PatchDriver
 from mass_driver.models.scan import Scanner
-
-if sys.version_info < (3, 10):
-    from importlib_metadata import EntryPoint, EntryPoints, entry_points
-else:
-    from importlib.metadata import EntryPoint, EntryPoints, entry_points
 
 ENTRYPOINT = "massdriver"
 """The entrypoint we discover all types of plugins from"""
