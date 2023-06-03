@@ -10,9 +10,11 @@ from pydantic import ValidationError
 from mass_driver.discovery import (
     discover_drivers,
     discover_forges,
+    discover_sources,
     get_driver_entrypoint,
     get_forge_entrypoint,
     get_scanners,
+    get_source_entrypoint,
 )
 from mass_driver.forge_run import main as forge_main
 from mass_driver.forge_run import pause_until_ok
@@ -29,6 +31,11 @@ def drivers_command(args: Namespace):
 def forges_command(args: Namespace):
     """Process the CLI for 'Forges' subcommand"""
     return plugins_command(args, "forge", get_forge_entrypoint, discover_forges)
+
+
+def sources_command(args: Namespace):
+    """Process the CLI for 'Sources' subcommand"""
+    return plugins_command(args, "source", get_source_entrypoint, discover_sources)
 
 
 def plugins_command(

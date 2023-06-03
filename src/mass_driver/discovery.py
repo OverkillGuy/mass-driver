@@ -6,6 +6,7 @@ from typing import Callable
 from mass_driver.models.forge import Forge
 from mass_driver.models.patchdriver import PatchDriver
 from mass_driver.models.scan import Scanner
+from mass_driver.models.source import Source
 
 ENTRYPOINT = "massdriver"
 """The entrypoint we discover all types of plugins from"""
@@ -15,6 +16,8 @@ FORGE_ENTRYPOINT = f"{ENTRYPOINT}.forges"
 """The specific entrypoint for Forge discovery"""
 SCANNER_ENTRYPOINT = f"{ENTRYPOINT}.scanners"
 """The specific entrypoint for Scanner discovery"""
+SOURCE_ENTRYPOINT = f"{ENTRYPOINT}.sources"
+"""The specific entrypoint for Source discovery"""
 
 
 def discover_drivers() -> EntryPoints:
@@ -25,6 +28,11 @@ def discover_drivers() -> EntryPoints:
 def discover_forges() -> EntryPoints:
     """Discover all Forges via plugin system"""
     return entry_points(group=FORGE_ENTRYPOINT)
+
+
+def discover_sources() -> EntryPoints:
+    """Discover all Sources via plugin system"""
+    return entry_points(group=SOURCE_ENTRYPOINT)
 
 
 def get_plugin_entrypoint(
@@ -50,6 +58,13 @@ def get_forge_entrypoint(forge_name: str) -> EntryPoint:
     return get_plugin_entrypoint("forge", forge_name, FORGE_ENTRYPOINT, discover_forges)
 
 
+def get_source_entrypoint(source_name: str) -> EntryPoint:
+    """Fetch the given source Entrypoint, by name"""
+    return get_plugin_entrypoint(
+        "source", source_name, SOURCE_ENTRYPOINT, discover_sources
+    )
+
+
 def get_driver(driver_name: str) -> type[PatchDriver]:
     """Get the given driver Class, by entrypoint name"""
     return get_driver_entrypoint(driver_name).load()
@@ -58,6 +73,11 @@ def get_driver(driver_name: str) -> type[PatchDriver]:
 def get_forge(forge_name: str) -> type[Forge]:
     """Get the given forge Class, by entrypoint name"""
     return get_forge_entrypoint(forge_name).load()
+
+
+def get_source(source_name: str) -> type[Source]:
+    """Get the given source Class, by entrypoint name"""
+    return get_source_entrypoint(source_name).load()
 
 
 def get_scanners() -> list[Scanner]:

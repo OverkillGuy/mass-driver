@@ -119,7 +119,7 @@ def subparsers(parser: ArgumentParser) -> ArgumentParser:
     subparser.required = True
     plugin_subparser(subparser, "driver", commands.drivers_command)
     plugin_subparser(subparser, "forge", commands.forges_command)
-    # plugin_subparser(subparser, "source", commands.source_command)
+    plugin_subparser(subparser, "source", commands.sources_command)
     run_subparser(subparser)
     scanners_subparser(subparser)
     scan_subparser(subparser)
