@@ -1,3 +1,10 @@
+[mass-driver.source]
+source_name = "repolist"
+source_config.repos = [
+      "."
+]
+
+
 [mass-driver.scan]
 scanner_names = ["root-files", "dockerfile-from"]
 

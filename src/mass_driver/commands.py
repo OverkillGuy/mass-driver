@@ -73,11 +73,17 @@ def run_command(args: Namespace) -> ActivityOutcome:
         activity = ActivityLoaded.from_config(activity_str)
     except ValidationError as e:
         forge_config_error_exit(e)
+    # Source discovery to know what repos to patch/forge/scan
+    source_config = activity.source
+    repos_sourced = []
+    if activity.source is not None:
+        repos_sourced = source_config.source.discover()
     if activity.migration is None:
         print("No migration section: skipping migration")
         migration_result = ActivityOutcome(
             repos_input=repos,
             local_repos_path={r: Path(r) for r in repos},
+            repos_sourced=repos_sourced,
         )
     else:
         migration_result = migration_main(
