@@ -2,6 +2,9 @@
 import sys
 from argparse import ArgumentParser, FileType
 
+# TODO: Check obsoleted-ness of Callable? See collections.abc.Callable?
+from typing import Callable
+
 from mass_driver import commands
 
 
@@ -11,11 +14,6 @@ def gen_parser() -> ArgumentParser:
         "mass-driver",
         description="Send bulk repo change requests",
     )
-    # parser.add_argument(
-    #     "--token-file",
-    #     help="File containing Github API Token",
-    #     type=argparse.FileType("r"),
-    # )
     return parser
 
 
@@ -61,28 +59,18 @@ def jsonout_args(subparser: ArgumentParser):
     )
 
 
-def driver_subparser(subparser):
-    """Inject the drivers-listing argument subparser"""
-    drivers = subparser.add_parser(
-        "drivers",
-        aliases=["driver"],
-        help="Inspect drivers (Plugins)",
+def plugin_subparser(subparser, plugin: str, func: Callable):
+    """Inject a generic subparser for listing out plugin details"""
+    plugins = subparser.add_parser(
+        f"{plugin}s",
+        aliases=[plugin],
+        help=f"Inspect {plugin}s (Plugins)",
     )
-    drivers.add_argument("--list", action="store_true", help="List available drivers")
-    drivers.add_argument("--info", help="Show docs of a specific driver")
-    drivers.set_defaults(func=commands.drivers_command)
-
-
-def forge_subparser(subparser):
-    """Inject the forge-listing subparser"""
-    forges = subparser.add_parser(
-        "forges",
-        aliases=["forge"],
-        help="Inspect forges (Plugins)",
+    plugins.add_argument(
+        "--list", action="store_true", help=f"List available {plugin}s"
     )
-    forges.add_argument("--list", action="store_true", help="List available forges")
-    forges.add_argument("--info", help="Show docs of a specific forge")
-    forges.set_defaults(func=commands.forges_command)
+    plugins.add_argument("--info", help=f"Show docs of a specific {plugin}")
+    plugins.set_defaults(func=func)
 
 
 def run_subparser(subparser):
@@ -129,8 +117,9 @@ def subparsers(parser: ArgumentParser) -> ArgumentParser:
     """Add the subparsers for all commands"""
     subparser = parser.add_subparsers(dest="cmd", title="Commands")
     subparser.required = True
-    driver_subparser(subparser)
-    forge_subparser(subparser)
+    plugin_subparser(subparser, "driver", commands.drivers_command)
+    plugin_subparser(subparser, "forge", commands.forges_command)
+    # plugin_subparser(subparser, "source", commands.source_command)
     run_subparser(subparser)
     scanners_subparser(subparser)
     scan_subparser(subparser)

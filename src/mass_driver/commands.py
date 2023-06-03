@@ -108,7 +108,7 @@ def scanners_command(args: Namespace):
     scanners = get_scanners()
     for scanner in scanners:
         print(scanner.name)
-    exit(0)
+    return True
 
 
 def scan_command(args: Namespace) -> ActivityOutcome:
