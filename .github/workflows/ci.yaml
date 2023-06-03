@@ -38,7 +38,7 @@ jobs:
         run: make test
 
   lint:
-    name: Lint
+    name: Lint (pre-commit)
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -48,7 +48,7 @@ jobs:
         with:
           python-version: "3.11"
       - name: Poetry setup
-        uses: Gr1N/setup-poetry@v7
+        uses: Gr1N/setup-poetry@v8
       - run: poetry install --with=test
       - name: Run the linters
         uses: pre-commit/action@v3.0.0
