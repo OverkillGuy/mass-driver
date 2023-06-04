@@ -36,7 +36,7 @@ def test_discover_builtin_forges(forge_name):
     assert issubclass(forge, Forge), "Discovered plugin isn't a Forge"
 
 
-@pytest.mark.parametrize("source_name", ["repolist"])
+@pytest.mark.parametrize("source_name", ["repo-list"])
 def test_discover_builtin_sources(source_name):
     """Scenario: Built-in sources are discovered"""
     # Given a built-in Source exposed as <source_name> plugin

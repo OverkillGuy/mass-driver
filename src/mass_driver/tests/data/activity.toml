@@ -1,5 +1,5 @@
 [mass-driver.source]
-source_name = "repolist"
+source_name = "repo-list"
 source_config.repos = [
       "."
 ]

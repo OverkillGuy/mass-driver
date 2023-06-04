@@ -95,7 +95,8 @@ github = 'mass_driver.forges.github:GithubPersonalForge'
 github-app = 'mass_driver.forges.github:GithubAppForge'
 
 [tool.poetry.plugins.'massdriver.sources']
-repolist = 'mass_driver.sources.dummy:RepolistSource'
+repo-list = 'mass_driver.sources.dummy:RepolistSource'
+repo-filelist = 'mass_driver.sources.dummy:RepoFilelistSource'
 
 [tool.poetry.plugins.'massdriver.scanners']
 root-files = 'mass_driver.scanners.basic_scanners:rootlevel_files'
