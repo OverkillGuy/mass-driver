@@ -3,7 +3,6 @@
 Encompasses both Migrations and Forge activities.
 """
 
-from pathlib import Path
 from tomllib import loads
 
 from pydantic import BaseModel
@@ -24,24 +23,18 @@ from mass_driver.models.migration import (  # Forge,
 )
 from mass_driver.models.patchdriver import PatchResult
 from mass_driver.models.scan import ScanFile, ScanLoaded, Scanner
-from mass_driver.models.source import Repo
+from mass_driver.models.source import IndexedRepos, RepoID
 
-RepoUrl = str
-"""A repo's clone URL, either git@github.com format or local filesystem path"""
-
-IndexedPatchResult = dict[RepoUrl, PatchResult]
+IndexedPatchResult = dict[RepoID, PatchResult]
 """A set of PatchResults, indexed by original repo URL given as input"""
 
-IndexedPRResult = dict[RepoUrl, PRResult]
+IndexedPRResult = dict[RepoID, PRResult]
 """A set of PRResults, indexed by original repo URL given as input"""
 
-RepoPathLookup = dict[RepoUrl, Path]
-"""A lookup table for the local cloned repo path, given its remote equivalent (or filesystem path)"""
 ScanResult = dict[str, dict]
 """The output of one or more scanner(s) on a single repo, indexed by scanner-name"""
 
-
-IndexedScanResult = dict[RepoUrl, ScanResult]
+IndexedScanResult = dict[RepoID, ScanResult]
 """A set of results of N scanners over multiple repos, indexed by original repo URL"""
 
 
@@ -73,12 +66,8 @@ class ActivityLoaded(BaseModel):
 class ActivityOutcome(BaseModel):
     """The outcome of running activities"""
 
-    repos_sourced: list[Repo] = []
-    """The list of repos, discovered from Source"""
-    repos_input: list[RepoUrl]
-    """The initial input we were iterating over"""
-    local_repos_path: RepoPathLookup
-    """A lookup table for the on-disk cloned filepath of each repo, indexed by repos_input url"""
+    repos_sourced: IndexedRepos = {}
+    """The repos, as discovered from Source"""
     migration_result: IndexedPatchResult | None = None
     """A lookup table of the results of a Migration, indexed by repos_input url"""
     forge_result: IndexedPRResult | None = None

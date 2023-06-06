@@ -2,8 +2,7 @@
 
 import sys
 from argparse import Namespace
-from pathlib import Path
-from typing import Callable
+from typing import Callable, Optional
 
 from pydantic import ValidationError
 
@@ -20,6 +19,7 @@ from mass_driver.forge_run import main as forge_main
 from mass_driver.forge_run import pause_until_ok
 from mass_driver.migration_run import main as migration_main
 from mass_driver.models.activity import ActivityLoaded, ActivityOutcome
+from mass_driver.models.source import IndexedRepos, Repo
 from mass_driver.scan_run import scan_main
 
 
@@ -67,7 +67,6 @@ def plugins_command(
 def run_command(args: Namespace) -> ActivityOutcome:
     """Process the CLI for 'run'"""
     print("Run mode!")
-    repos = read_repolist(args)
     activity_str = args.activity_file.read()
     try:
         activity = ActivityLoaded.from_config(activity_str)
@@ -75,20 +74,18 @@ def run_command(args: Namespace) -> ActivityOutcome:
         forge_config_error_exit(e)
     # Source discovery to know what repos to patch/forge/scan
     source_config = activity.source
-    repos_sourced = []
-    if activity.source is not None:
+    repos_sourced = source_repolist_args(args)
+    if repos_sourced is None:  # No CLI repos = call Source
         repos_sourced = source_config.source.discover()
     if activity.migration is None:
         print("No migration section: skipping migration")
         migration_result = ActivityOutcome(
-            repos_input=repos,
-            local_repos_path={r: Path(r) for r in repos},
             repos_sourced=repos_sourced,
         )
     else:
         migration_result = migration_main(
             activity.migration,
-            repos,
+            repos_sourced,
             not args.no_cache,
         )
     print("Migration complete!")
@@ -118,12 +115,16 @@ def scanners_command(args: Namespace):
 def scan_command(args: Namespace) -> ActivityOutcome:
     """Process the CLI for 'scan'"""
     print("Scan mode!")
-    repos = read_repolist(args)
     activity_str = args.activity_file.read()
     activity = ActivityLoaded.from_config(activity_str)
+    # Source discovery to know what repos to patch/forge/scan
+    source_config = activity.source
+    repos_sourced = source_repolist_args(args)
+    if repos_sourced is None:  # No CLI repos = call Source
+        repos_sourced = source_config.source.discover()
     result = scan_main(
         activity.scan,
-        repo_urls=repos,
+        repos=repos_sourced,
         cache=not args.no_cache,
     )
     maybe_save_outcome(args, result)
@@ -147,12 +148,23 @@ def forge_config_error_exit(e: ValidationError):
     raise e  # exit code = Simulate the argparse behaviour of exiting on bad args
 
 
-def read_repolist(args) -> list[str]:
-    """Read the repo-list or repo-path arg"""
-    repos = args.repo_path
+def source_repolist_args(args) -> Optional[IndexedRepos]:
+    """Read the repo from args, if any"""
+    repos = read_repolist(args)
+    if repos is not None:
+        return (
+            {url: Repo(repo_id=url, clone_url=url) for url in repos} if repos else None
+        )
+    return None
+
+
+def read_repolist(args) -> Optional[list[str]]:
+    """Read the repo-list or repo-path arg, if any"""
+    if args.repo_path:
+        return args.repo_path
     if args.repo_filelist:
-        repos = args.repo_filelist.read().strip().split("\n")
-    return repos
+        return args.repo_filelist.read().strip().split("\n")
+    return None
 
 
 def maybe_save_outcome(args: Namespace, outcome: ActivityOutcome):

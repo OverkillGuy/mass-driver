@@ -9,14 +9,16 @@ The project uses semantic versioning (see [semver](https://semver.org)).
 
 ### Added
 - New `source` feature for discovering what repos to patch/scan.
-  - `Source`s are plugins with a `discover()` method, returning many `Repo`s.
+  - `Source`s are plugins with `discover()` method, returning `Repo`s by ID.
   - Alternative `sources` subcommand to list and detail them
   - New TOML file entry `[mass-driver.source]`, with subkey `source_name` used
     to select which source plugin to enable.
   - Simple sources provided:
     - `repo-list` for in-activity-file repository list
-    - `repo-fielist` to point to a separate file listing repos
+    - `repo-filelist` to point to a separate file listing repos
     - `template-filelist` to expand a template against a file listing repos
+  - CLI args `--repo-path` and `--repo-filelist` still available, overriding any
+    source, so that `massdriver.source` is only required if lacking CLI args
 - CI (pytest, pre-commit) set up via Github Actions: [PR #1](https://github.com/mass-driver/pull/1)
 
 

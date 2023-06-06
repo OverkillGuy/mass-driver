@@ -2,7 +2,7 @@
 
 from pathlib import Path
 
-from git import Repo
+from git import Repo as GitRepo
 
 from mass_driver.models.activity import ActivityOutcome, IndexedPRResult
 from mass_driver.models.forge import PROutcome, PRResult
@@ -15,23 +15,28 @@ def main(
     progress: ActivityOutcome,
 ) -> ActivityOutcome:
     """Process repo_paths with the given Forge"""
-    repo_count = len(progress.repos_input)
+    repo_count = len(progress.repos_sourced)
     print(f"Processing {repo_count} with Forge...")
     pr_results: IndexedPRResult = {}
-    for repo_index, repo_url in enumerate(progress.repos_input, start=1):
+    for repo_index, (repo_id, repo) in enumerate(
+        progress.repos_sourced.items(), start=1
+    ):
         pause_every = config.interactive_pause_every
         if pause_every is not None and repo_index % pause_every == 0:
             pause_until_ok(f"Reached {pause_every} actions. Continue?\n")
-        repo_local_path = progress.local_repos_path[repo_url]
+        repo_local_path = repo.cloned_path
+
         try:
             print(
                 f"[{repo_index:03d}/{repo_count:03d}] Processing {repo_local_path}..."
             )
+            if repo_local_path is None:
+                raise ValueError("Repo not cloned locally, can't create PR of it")
             result = process_repo(config, repo_local_path)
-            pr_results[repo_url] = result
+            pr_results[repo_id] = result
         except Exception as e:
-            print(f"Error processing repo '{repo_url}'\nError was: {e}")
-            pr_results[repo_url] = PRResult(
+            print(f"Error processing repo '{repo_id}'\nError was: {e}")
+            pr_results[repo_id] = PRResult(
                 outcome=PROutcome.PR_FAILED,
                 details=f"Unhandled exception caught during patching. Error was: {e}",
             )
@@ -46,7 +51,7 @@ def process_repo(
     repo_path: Path,
 ) -> PRResult:
     """Process a single repo"""
-    git_repo = Repo(path=str(repo_path))
+    git_repo = GitRepo(path=str(repo_path))
     if config.git_push_first:
         push(git_repo, config.head_branch)
     # Grab the repo's remote URL to feed it to the forge for ID
@@ -75,7 +80,7 @@ def process_repo(
     return PRResult(outcome=PROutcome.PR_CREATED, pr_html_url=pr)
 
 
-def get_default_branch(r: Repo) -> str:
+def get_default_branch(r: GitRepo) -> str:
     """Get the default branch of a repository"""
     # From https://github.com/gitpython-developers/GitPython/discussions/1364#discussioncomment-1530384
     try:
