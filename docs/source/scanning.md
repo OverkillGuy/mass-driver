@@ -18,22 +18,18 @@ end-before: "## Development"
 
 ## Creating a Scanner
 
-Scanners are mass-driver plugins that map to functions. Let's create one:
+Scanners are mass-driver plugins that map to functions. Let's create one.
 
-```python3
+First some imports:
+```python
 from pathlib import Path
 from typing import Any
-
-def dockerfile_from_scanner(repo: Path) -> dict[str, Any]:
-    """Report the repo's Dockerfile's FROM line(s)"""
-    dockerfile_path = repo / "Dockerfile"
-    dockerfile_exists = dockerfile_path.is_file()
-    if not dockerfile_exists:
-        return {"dockerfile_exists": False, "dockerfile_from": None}
-    dkr_lines = dockerfile_path.read_text().splitlines()
-    dkr_from_lines = [line for line in dkr_lines if line.startswith("FROM")]
-    return {"dockerfile_exists": True,
-            "dockerfile_from_lines": dkr_from_lines}
+```
+Then the function:
+```{literalinclude} ../../src/mass_driver/scanners/basic_scanners.py
+---
+language: python
+pyobject: dockerfile_from_scanner
 ```
 
 This scanner will try to open the repo's `Dockerfile`, and if any exist, will

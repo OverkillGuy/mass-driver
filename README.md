@@ -198,7 +198,44 @@ See JIRA-123[1].
 git_push_first = true
 
 ```
+<!-- source-activity -->
+### Discovering repos using a Source
 
+
+Sometimes, the repos we want to apply patches to is a dynamic thing, coming from
+tooling, like a Github repository search, some compliance tool report, service
+catalogue, etc.
+
+To address this, mass-driver can use a Source plugin to discover repositories to
+apply activities to.
+
+``` toml
+# An Activity file with a file-list Source
+[mass-driver.source]
+source_name = "repo-list"
+# Source 'repo-list' takes a 'repos' list of cloneable URLs:
+[mass-driver.source.source_config]
+repos = [
+  "git@github.com:OverkillGuy/mass-driver.git",
+  "git@github.com:OverkillGuy/mass-driver-plugins.git",
+]
+```
+
+Because we included a `Source`, we can omit the CLI flags `--repo-path` or
+`--repo-filelist`, to instead rely on the activity's config to discover the
+repos.
+
+``` shell
+mass-driver run activity.toml
+```
+
+Smarter Sources can use more elaborate parameters, maybe even secret parameters
+like API tokens.
+
+To pass secrets safely, config parameters passed via `source_config` in file
+format can be passed as envvar, using prefix `SOURCE_`. So we could have avoided
+the `repos` entry in file, by providing a `SOURCE_REPOS` envvar instead. This
+feature works because the Source class derives from `Pydantic.BaseSettings`.
 
 
 ### Using the scanners

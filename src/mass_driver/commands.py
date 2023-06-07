@@ -58,7 +58,7 @@ def plugins_command(
             return
     # if args.list:  # Implicit
     plugins = discover()
-    print("Available plugins:")
+    print(f"Available {plugin}s:")
     for plugin_obj in plugins:
         print(plugin_obj.name)
     return True

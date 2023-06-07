@@ -2,6 +2,8 @@
 
 from pathlib import Path
 
+from pydantic import FilePath
+
 from mass_driver.models.source import IndexedRepos, Repo, RepoUrl, Source
 
 
@@ -19,7 +21,7 @@ class RepolistSource(Source):
 class RepoFilelistSource(Source):
     """A Source reads repo list from file"""
 
-    repo_file: str
+    repo_file: FilePath
     """The path to the file that holds repos to read"""
 
     def discover(self) -> IndexedRepos:
