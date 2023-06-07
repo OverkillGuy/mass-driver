@@ -55,6 +55,8 @@ sphinx-autoapi = "*"
 sphinxcontrib-programoutput = "^0.17"
 # Templated docs page like 'Drivers'
 sphinx-jinja = "*"
+# Generate Dash/Zeal "docsets" (offline dev-docs package) from HTML docs
+doc2dash = "*"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
