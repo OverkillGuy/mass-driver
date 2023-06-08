@@ -35,7 +35,7 @@ jobs:
         with:
           python-version: '3.11'
       - name: Poetry setup
-        uses: Gr1N/setup-poetry@v7
+        uses: Gr1N/setup-poetry@v8
       - run: poetry install --with=docs
       - name: Build the docs
         run: make docs
