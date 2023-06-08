@@ -23,7 +23,7 @@ The project uses semantic versioning (see [semver](https://semver.org)).
   - `github-search` and `github-app-search` Sources for Github Repository search
   - CLI args `--repo-path` and `--repo-filelist` still available, overriding any
     source, so that `massdriver.source` is only required if lacking CLI args
-- CI (pytest, pre-commit) set up via Github Actions: [PR #1](https://github.com/mass-driver/pull/1)
+- CI (pytest, pre-commit) set up via Github Actions: [PR #1](https://github.com/OverkillGuy/mass-driver/pull/1)
 
 
 
