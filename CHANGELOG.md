@@ -17,6 +17,7 @@ The project uses semantic versioning (see [semver](https://semver.org)).
     - `repo-list` for in-activity-file repository list
     - `repo-filelist` to point to a separate file listing repos
     - `template-filelist` to expand a template against a file listing repos
+  - `github-search` and `github-app-search` Sources for Github Repository search
   - CLI args `--repo-path` and `--repo-filelist` still available, overriding any
     source, so that `massdriver.source` is only required if lacking CLI args
 - CI (pytest, pre-commit) set up via Github Actions: [PR #1](https://github.com/mass-driver/pull/1)
