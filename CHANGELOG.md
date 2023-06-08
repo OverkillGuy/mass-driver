@@ -7,6 +7,9 @@ The project uses semantic versioning (see [semver](https://semver.org)).
 ## [Unreleased]
 
 
+## v0.14.0 - 2023-06-08
+
+
 ### Added
 - New `source` feature for discovering what repos to patch/scan.
   - `Source`s are plugins with `discover()` method, returning `Repo`s by ID.
