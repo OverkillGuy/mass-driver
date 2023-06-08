@@ -31,16 +31,16 @@ pyobject: RepolistSource
 ```
 
 This class, taking a parameter `repos`, generates
-{py:obj}`mass_driver.models.source.Repo` objects when calling `discover()`, as a
-dictionary indexed by {py:obj}`mass_driver.models.source.RepoID` (basically a
+{py:obj}`~mass_driver.models.source.Repo` objects when calling {py:meth}`~mass_driver.models.source.Source.discover`, as a
+dictionary indexed by {py:obj}`~mass_driver.models.source.RepoID` (basically a
 string).
 
-The only constraint on `RepoID` is that the string key is unique, so in this
+The only constraint on {py:obj}`~mass_driver.models.source.RepoID` is that the string key is unique, so in this
 case we use the `git clone` URL, which is guaranteed unique. Smarter Sources
 will use something shorter, as adequate.
 
-Note the `patch_data` field of `Repo`, unused in this sample Source, is an
-arbitrary dictionary under the `Source`'s control, perfect to provide per-repo
+Note the `patch_data` field of {py:obj}`~mass_driver.models.source.Repo`, unused in this sample Source, is an
+arbitrary dictionary under the {py:obj}`~mass_driver.models.source.Source`'s control, perfect to provide per-repo
 data extracted from the source that will be relevant to make migration against;
 For instance the file name to fix from some reporting tool...
 
@@ -55,6 +55,10 @@ repo-list = 'mass_driver.sources.simple:RepolistSource'
 Prove it is available via `mass-driver sources`:
 
 ```{program-output} poetry run mass-driver sources
+```
+
+```{note}
+For a more elaborate Source, take a look at the `pyGithub`-enabled {py:obj}`~mass_driver.sources.github_source.GithubPersonalSource`, using inheritance to enable two auth methods for `pyGithub`, using envvars for secret tokens.
 ```
 
 ### Testing a Source
