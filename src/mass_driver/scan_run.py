@@ -1,40 +1,33 @@
 """Scan code of repositories"""
 
 import traceback
+from copy import deepcopy
 from pathlib import Path
 
-from mass_driver.models.activity import (
-    ActivityOutcome,
-    IndexedScanResult,
-    RepoPathLookup,
-    RepoUrl,
-    ScanResult,
-)
+from mass_driver.models.activity import ActivityOutcome, IndexedScanResult, ScanResult
 from mass_driver.models.scan import ScanLoaded
+from mass_driver.models.source import IndexedRepos, RepoUrl
 from mass_driver.repo import clone_if_remote, get_cache_folder
 
 
-def scan_main(
-    config: ScanLoaded, repo_urls: list[RepoUrl], cache: bool
-) -> ActivityOutcome:
+def scan_main(config: ScanLoaded, repos: IndexedRepos, cache: bool) -> ActivityOutcome:
     """Apply the scanners over the repos"""
-    repo_count = len(repo_urls)
+    repo_count = len(repos)
     cache_folder = get_cache_folder(cache)
+    cloned_repos = deepcopy(repos)
     print(f"Processing {repo_count} repos with {len(config.scanners)} scanners")
     scan_results: IndexedScanResult = {}
-    repo_local_paths: RepoPathLookup = {}
-    for repo_index, repo_url in enumerate(repo_urls, start=1):
-        print(f"[{repo_index:03d}/{repo_count:03d}] Processing {repo_url}...")
+    for repo_index, (repo_id, repo) in enumerate(repos.items(), start=1):
+        print(f"[{repo_index:03d}/{repo_count:03d}] Processing {repo_id}...")
         scan, repo_local_path = scan_repo(
             config,
-            repo_url,
+            repo.clone_url,
             cache_path=cache_folder,
         )
-        scan_results[repo_url] = scan
-        repo_local_paths[repo_url] = repo_local_path
+        scan_results[repo_id] = scan
+        cloned_repos[repo_id].cloned_path = repo_local_path
     return ActivityOutcome(
-        repos_input=repo_urls,
-        local_repos_path=repo_local_paths,
+        repos_sourced=cloned_repos,
         scan_result=scan_results,
     )
 

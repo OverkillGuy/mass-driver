@@ -32,6 +32,12 @@ run:  # Remember to export GITHUB_API_TOKEN beforehand
 .PHONY: docs
 docs: clean-docs
 	cd docs && make html
+	poetry run doc2dash \
+		--force \
+		--name mass-driver \
+		docs/build/html \
+		--destination docs/build/docset \
+		--icon docs/source/_static/icon_small.png
 
 .PHONY: clean-docs
 clean-docs:

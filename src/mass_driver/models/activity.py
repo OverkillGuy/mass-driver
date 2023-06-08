@@ -3,7 +3,6 @@
 Encompasses both Migrations and Forge activities.
 """
 
-from pathlib import Path
 from tomllib import loads
 
 from pydantic import BaseModel
@@ -16,34 +15,33 @@ from mass_driver.models.migration import (  # Forge,
     ForgeLoaded,
     MigrationFile,
     MigrationLoaded,
+    SourceConfigFile,
+    SourceConfigLoaded,
     forge_from_config,
     load_driver,
+    load_source,
 )
 from mass_driver.models.patchdriver import PatchResult
 from mass_driver.models.scan import ScanFile, ScanLoaded, Scanner
+from mass_driver.models.source import IndexedRepos, RepoID
 
-RepoUrl = str
-"""A repo's clone URL, either git@github.com format or local filesystem path"""
-
-IndexedPatchResult = dict[RepoUrl, PatchResult]
+IndexedPatchResult = dict[RepoID, PatchResult]
 """A set of PatchResults, indexed by original repo URL given as input"""
 
-IndexedPRResult = dict[RepoUrl, PRResult]
+IndexedPRResult = dict[RepoID, PRResult]
 """A set of PRResults, indexed by original repo URL given as input"""
 
-RepoPathLookup = dict[RepoUrl, Path]
-"""A lookup table for the local cloned repo path, given its remote equivalent (or filesystem path)"""
 ScanResult = dict[str, dict]
 """The output of one or more scanner(s) on a single repo, indexed by scanner-name"""
 
-
-IndexedScanResult = dict[RepoUrl, ScanResult]
+IndexedScanResult = dict[RepoID, ScanResult]
 """A set of results of N scanners over multiple repos, indexed by original repo URL"""
 
 
 class ActivityFile(BaseModel):
     """Top-level object for migration + forge, proxy for TOML file, pre-class-load"""
 
+    source: SourceConfigFile | None = None
     scan: ScanFile | None = None
     migration: MigrationFile | None = None
     forge: ForgeFile | None = None
@@ -53,6 +51,7 @@ class ActivityFile(BaseModel):
 class ActivityLoaded(BaseModel):
     """Top-level object for migration + forge, proxy for TOML file, post-load"""
 
+    source: SourceConfigLoaded | None = None
     scan: ScanLoaded | None = None
     migration: MigrationLoaded | None = None
     forge: ForgeLoaded | None = None
@@ -67,10 +66,8 @@ class ActivityLoaded(BaseModel):
 class ActivityOutcome(BaseModel):
     """The outcome of running activities"""
 
-    repos_input: list[RepoUrl]
-    """The initial input we were iterating over"""
-    local_repos_path: RepoPathLookup
-    """A lookup table for the on-disk cloned filepath of each repo, indexed by repos_input url"""
+    repos_sourced: IndexedRepos = {}
+    """The repos, as discovered from Source"""
     migration_result: IndexedPatchResult | None = None
     """A lookup table of the results of a Migration, indexed by repos_input url"""
     forge_result: IndexedPRResult | None = None
@@ -84,13 +81,16 @@ def load_activity_toml(activity_config: str) -> ActivityFile:
     activity_dict = loads(activity_config)
     if TOML_PROJECTKEY not in activity_dict:
         raise ValueError(
-            "Config given invalid: " f"Missing top-level '{TOML_PROJECTKEY}' key"
+            "Activity Config given invalid: "
+            f"Missing top-level '{TOML_PROJECTKEY}' key"
         )
     return ActivityFile.parse_obj(activity_dict[TOML_PROJECTKEY])
 
 
 def load_activity(activity: ActivityFile) -> ActivityLoaded:
     """Load up all plugins of an Activity"""
+    if activity.source is not None:
+        source_loaded = load_source(activity.source)
     if activity.scan is not None:
         scan_loaded = load_scan(activity.scan)
     if activity.migration is not None:
@@ -98,6 +98,7 @@ def load_activity(activity: ActivityFile) -> ActivityLoaded:
     if activity.forge is not None:
         forge_loaded = forge_from_config(activity.forge)
     return ActivityLoaded(
+        source=source_loaded if activity.source is not None else None,
         scan=scan_loaded if activity.scan is not None else None,
         migration=migration_loaded if activity.migration is not None else None,
         forge=forge_loaded if activity.forge is not None else None,

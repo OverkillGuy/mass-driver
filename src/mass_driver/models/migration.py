@@ -4,9 +4,10 @@ from tomllib import loads
 
 from pydantic import BaseModel
 
-from mass_driver.discovery import get_driver, get_forge
+from mass_driver.discovery import get_driver, get_forge, get_source
 from mass_driver.models.forge import BranchName, Forge
 from mass_driver.models.patchdriver import PatchDriver
+from mass_driver.models.source import Source
 
 TOML_PROJECTKEY = "mass-driver"
 
@@ -46,7 +47,8 @@ def load_migration(migration_config: str) -> MigrationFile:
     migration_dict = loads(migration_config)
     if TOML_PROJECTKEY not in migration_dict:
         raise ValueError(
-            "Config file given invalid: " f"Missing top-level '{TOML_PROJECTKEY}' key"
+            "Migration Config file given invalid: "
+            f"Missing top-level '{TOML_PROJECTKEY}' key"
         )
     return MigrationFile.parse_obj(migration_dict[TOML_PROJECTKEY])
 
@@ -130,3 +132,48 @@ def load_forge(config: str) -> ForgeLoaded:
     """Look up driver and validate configuration (de-opaquify)"""
     forge_file = load_forge_toml(config)
     return forge_from_config(forge_file)
+
+
+class SourceConfigFile(BaseModel):
+    """The config file describing a discovery event, as transcribed before Source lookup"""
+
+    source_name: str
+    """The plugin-name of the Source to use, via plugin discovery"""
+    source_config: dict
+    """The (opaque) configuration of the Source. Validated once source loaded"""
+
+
+class SourceConfigLoaded(SourceConfigFile):
+    """A Source configuration, once the Source is loaded with its config"""
+
+    source: Source
+    """Loaded Source (with validated configuration)"""
+
+    @classmethod
+    def from_config(cls, config_toml: str):
+        """Get a loaded sourceconfig from config contents"""
+        sourceconfig_nosource = load_sourceconfig(config_toml)
+        return load_driver(sourceconfig_nosource)
+
+
+def load_sourceconfig(source_config: str) -> SourceConfigFile:
+    """Load up a TOML config of a migration into memory"""
+    source_dict = loads(source_config)
+    if TOML_PROJECTKEY not in source_dict:
+        raise ValueError(
+            "SourceConfig file given invalid: "
+            f"Missing top-level '{TOML_PROJECTKEY}' key"
+        )
+    return SourceConfigFile.parse_obj(source_dict[TOML_PROJECTKEY])
+
+
+def source_from_config(config: SourceConfigFile) -> Source:
+    """Create Source instance from config file (TOML)"""
+    source_class = get_source(config.source_name)
+    return source_class.parse_obj(config.source_config)
+
+
+def load_source(config: SourceConfigFile) -> SourceConfigLoaded:
+    """Look up source and validate configuration (de-opaquify)"""
+    source = source_from_config(config)
+    return SourceConfigLoaded(source=source, **(config.dict()))
