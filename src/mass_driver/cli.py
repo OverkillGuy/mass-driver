@@ -19,7 +19,7 @@ def gen_parser() -> ArgumentParser:
 
 def repo_list_group(subparser: ArgumentParser):
     """Inject the repo-path/repo-filelist group of args"""
-    repolist_group = subparser.add_mutually_exclusive_group(required=True)
+    repolist_group = subparser.add_mutually_exclusive_group(required=False)
     repolist_group.add_argument(
         "--repo-path",
         nargs="*",
