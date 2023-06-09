@@ -6,7 +6,7 @@ from pathlib import Path
 from mass_driver.models.activity import ActivityOutcome, IndexedPatchResult
 from mass_driver.models.migration import MigrationLoaded
 from mass_driver.models.patchdriver import PatchOutcome, PatchResult
-from mass_driver.models.source import IndexedRepos, Repo
+from mass_driver.models.repository import IndexedRepos, Repo
 from mass_driver.repo import clone_if_remote, commit, get_cache_folder
 
 

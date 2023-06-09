@@ -2,7 +2,7 @@
 
 from github import AppAuthentication, Github
 
-from mass_driver.models.source import IndexedRepos, Repo, Source
+from mass_driver.models.repository import IndexedRepos, Repo, Source
 
 
 class GithubBaseSource(Source):

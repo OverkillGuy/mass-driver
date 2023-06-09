@@ -19,7 +19,7 @@ from mass_driver.forge_run import main as forge_main
 from mass_driver.forge_run import pause_until_ok
 from mass_driver.migration_run import main as migration_main
 from mass_driver.models.activity import ActivityLoaded, ActivityOutcome
-from mass_driver.models.source import IndexedRepos, Repo
+from mass_driver.models.repository import IndexedRepos, Repo
 from mass_driver.scan_run import scan_main
 
 

@@ -4,7 +4,7 @@ from pathlib import Path
 
 from pydantic import FilePath
 
-from mass_driver.models.source import IndexedRepos, Repo, RepoUrl, Source
+from mass_driver.models.repository import IndexedRepos, Repo, RepoUrl, Source
 
 
 class RepolistSource(Source):

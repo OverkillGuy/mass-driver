@@ -5,8 +5,8 @@ from copy import deepcopy
 from pathlib import Path
 
 from mass_driver.models.activity import ActivityOutcome, IndexedScanResult, ScanResult
+from mass_driver.models.repository import IndexedRepos, RepoUrl
 from mass_driver.models.scan import ScanLoaded
-from mass_driver.models.source import IndexedRepos, RepoUrl
 from mass_driver.repo import clone_if_remote, get_cache_folder
 
 

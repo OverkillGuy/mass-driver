@@ -1,6 +1,4 @@
-"""Sources of repos to migrate"""
-
-from typing import Optional
+"""Repositories for cloning and patching"""
 
 from pydantic import BaseModel, BaseSettings, DirectoryPath
 
@@ -19,8 +17,8 @@ class Repo(BaseModel):
     repo_id: RepoID
     """A unique name for the repo, to identify it against others"""
     patch_data: dict = {}
-    """Arbitrary data dict from source"""
-    cloned_path: Optional[DirectoryPath] = None
+    """Arbitrary data dict from Source"""
+    cloned_path: DirectoryPath | None = None
     """The filesystem path to the git cloned repo"""
 
 

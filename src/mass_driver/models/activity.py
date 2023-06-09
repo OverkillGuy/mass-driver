@@ -22,8 +22,8 @@ from mass_driver.models.migration import (  # Forge,
     load_source,
 )
 from mass_driver.models.patchdriver import PatchResult
+from mass_driver.models.repository import IndexedRepos, RepoID
 from mass_driver.models.scan import ScanFile, ScanLoaded, Scanner
-from mass_driver.models.source import IndexedRepos, RepoID
 
 IndexedPatchResult = dict[RepoID, PatchResult]
 """A set of PatchResults, indexed by original repo URL given as input"""
