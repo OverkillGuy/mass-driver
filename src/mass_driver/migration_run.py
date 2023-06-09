@@ -6,7 +6,7 @@ from pathlib import Path
 from mass_driver.models.activity import ActivityOutcome, IndexedPatchResult
 from mass_driver.models.migration import MigrationLoaded
 from mass_driver.models.patchdriver import PatchOutcome, PatchResult
-from mass_driver.models.source import IndexedRepos, RepoUrl
+from mass_driver.models.source import IndexedRepos, Repo
 from mass_driver.repo import clone_if_remote, commit, get_cache_folder
 
 
@@ -27,7 +27,7 @@ def main(
             # Ensure no driver persistence between repos
             migration_copy = deepcopy(migration)
             result, repo_local_path, excep = process_repo(
-                repo.clone_url, migration_copy, cache_path=cache_folder
+                repo, migration_copy, cache_path=cache_folder
             )
             patch_results[repo_id] = result
             cloned_repos[repo_id].cloned_path = repo_local_path
@@ -48,12 +48,12 @@ def main(
 
 
 def process_repo(
-    repo_url: RepoUrl,
+    repo: Repo,
     migration: MigrationLoaded,
     cache_path: Path,
 ) -> tuple[PatchResult, Path, Exception | None]:
     """Process a repo with Mass Driver"""
-    repo_gitobj = clone_if_remote(repo_url, cache_path)
+    repo_gitobj = clone_if_remote(repo.clone_url, cache_path)
     repo_local_path = Path(repo_gitobj.working_dir)
     try:
         result = migration.driver.run(repo_local_path)
