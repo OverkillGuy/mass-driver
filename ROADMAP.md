@@ -13,6 +13,8 @@ These sections are in rough order in which they'll be pursued.
 
 Before anything, polish the usecase of one-shot PR generation as CLI.
 
+- Cacheing/saving of discovery from a Source (avoid expensive calls)
+- Solve the disconnect between Source `patch_data` and PatchDriver params
 - Scanners polishing:
   - Scan-info: scanner-invariant info about the scan event: timestamp,
     scan_uid... (repo-specific can get auto-scanned)
