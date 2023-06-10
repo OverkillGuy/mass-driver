@@ -3,9 +3,9 @@
 
 import subprocess
 from dataclasses import dataclass
-from pathlib import Path
 
 from mass_driver.models.patchdriver import PatchDriver, PatchOutcome, PatchResult
+from mass_driver.models.repository import Repo
 
 
 @dataclass
@@ -28,9 +28,9 @@ class ShellDriver(PatchDriver):
     shell: bool = True
     """Passed to subprocess.check_call, to enable true shell behaviour rather than exec"""
 
-    def run(self, repo: Path) -> PatchResult:
+    def run(self, repo: Repo) -> PatchResult:
         """Run the command on the repo"""
-        cmd = subprocess.run(self.command, cwd=repo, shell=self.shell)
+        cmd = subprocess.run(self.command, cwd=repo.cloned_path, shell=self.shell)
         return (
             PatchResult(PatchOutcome.PATCHED_OK)
             if cmd.returncode == 0

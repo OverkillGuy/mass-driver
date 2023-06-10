@@ -1,9 +1,10 @@
 """PatchDriver base object definition"""
 
 from enum import Enum
-from pathlib import Path
 
 from pydantic import BaseModel
+
+from mass_driver.models.source import Repo
 
 
 class PatchOutcome(str, Enum):
@@ -31,7 +32,7 @@ class PatchResult(BaseModel):
 class PatchDriver(BaseModel):
     """Base class for creating patches over repositories"""
 
-    def run(self, repo: Path) -> PatchResult:
+    def run(self, repo: Repo) -> PatchResult:
         """Apply the update to given (cloned) Git Repository.
 
         Return the outcome of patching for this repository.

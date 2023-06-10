@@ -6,9 +6,24 @@ The project uses semantic versioning (see [semver](https://semver.org)).
 
 ## [Unreleased]
 
+### Changed
+- **BREAKING**: `PatchDriver.run()` gives a `Repo` object, not a `pathlib.Path`.
+  - `mass_driver.models.source` file renamed to `mass_driver.models.repository`
+  - `PatchDriver.run(repo: Path)` now `PatchDriver.run(repo: Repo)`
+  - All `PatchDriver.run()` uses of `repo` need changed to `Repo.cloned_path`
+
+### Added
+- Since`Patchdriver.run()` now gives `Repo`, drivers can now use `Repo` fields:
+  - `Repo.patch_data` (arbitrary source-provided repo metadata dict)
+  - `Repo.clone_url` (URL used for cloning the repo initiall), and
+  - `Repo.repo_id` (arbitrary source-defined unique identifier for this repo
+     amongst the discovered repos)
+
+### Removed
+- Broken PatchDrivers now removed:
+  - Plugin `shell` (`ShellDriver`) never worked with `PatchResult`
 
 ## v0.14.0 - 2023-06-08
-
 
 ### Added
 - New `source` feature for discovering what repos to patch/scan.
