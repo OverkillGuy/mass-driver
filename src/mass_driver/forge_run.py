@@ -5,7 +5,7 @@ from git import Repo as GitRepo
 from mass_driver.models.activity import ActivityOutcome, IndexedPRResult
 from mass_driver.models.forge import PROutcome, PRResult
 from mass_driver.models.migration import ForgeLoaded
-from mass_driver.models.repository import Repo
+from mass_driver.models.repository import ClonedRepo
 from mass_driver.repo import push
 
 
@@ -18,7 +18,7 @@ def main(
     print(f"Processing {repo_count} with Forge...")
     pr_results: IndexedPRResult = {}
     for repo_index, (repo_id, repo) in enumerate(
-        progress.repos_sourced.items(), start=1
+        progress.repos_cloned.items(), start=1
     ):
         pause_every = config.interactive_pause_every
         if pause_every is not None and repo_index % pause_every == 0:
@@ -43,7 +43,7 @@ def main(
 
 def process_repo(
     config: ForgeLoaded,
-    repo: Repo,
+    repo: ClonedRepo,
 ) -> PRResult:
     """Process a single repo"""
     repo_path = repo.cloned_path

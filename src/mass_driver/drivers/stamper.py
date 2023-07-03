@@ -3,7 +3,7 @@
 from pathlib import Path
 
 from mass_driver.models.patchdriver import PatchDriver, PatchOutcome, PatchResult
-from mass_driver.models.repository import Repo
+from mass_driver.models.repository import ClonedRepo
 
 
 class Stamper(PatchDriver):
@@ -19,7 +19,7 @@ class Stamper(PatchDriver):
     file_ownership: str = "0664"
     """Unix file permissions for the new file"""
 
-    def run(self, repo: Repo) -> PatchResult:
+    def run(self, repo: ClonedRepo) -> PatchResult:
         """Create the file on given repo, creating folder the way"""
         target_path_abs = repo.cloned_path / Path(self.filepath_to_create)
         # Create parent folders on the way

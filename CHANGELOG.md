@@ -7,7 +7,7 @@ The project uses semantic versioning (see [semver](https://semver.org)).
 ## [Unreleased]
 
 ### Changed
-- **BREAKING**: `PatchDriver.run()` gives a `Repo` object, not a `pathlib.Path`.
+- **BREAKING**: `PatchDriver.run()` gives a `ClonedRepo` object, not a `pathlib.Path`.
   - `mass_driver.models.source` file renamed to `mass_driver.models.repository`
   - `PatchDriver.run(repo: Path)` now `PatchDriver.run(repo: Repo)`
   - All `PatchDriver.run()` uses of `repo` need changed to `Repo.cloned_path`

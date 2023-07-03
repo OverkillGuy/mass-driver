@@ -22,7 +22,7 @@ from mass_driver.models.migration import (  # Forge,
     load_source,
 )
 from mass_driver.models.patchdriver import PatchResult
-from mass_driver.models.repository import IndexedRepos, RepoID
+from mass_driver.models.repository import IndexedClonedRepos, IndexedRepos, RepoID
 from mass_driver.models.scan import ScanFile, ScanLoaded, Scanner
 
 IndexedPatchResult = dict[RepoID, PatchResult]
@@ -68,6 +68,8 @@ class ActivityOutcome(BaseModel):
 
     repos_sourced: IndexedRepos = {}
     """The repos, as discovered from Source"""
+    repos_cloned: IndexedClonedRepos = {}
+    """The repos, as cloned"""
     migration_result: IndexedPatchResult | None = None
     """A lookup table of the results of a Migration, indexed by repos_input url"""
     forge_result: IndexedPRResult | None = None

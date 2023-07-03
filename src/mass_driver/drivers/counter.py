@@ -5,7 +5,7 @@ Simplest code we could implement that demonstrates PatchDriver capabilities.
 
 
 from mass_driver.models.patchdriver import PatchDriver, PatchOutcome, PatchResult
-from mass_driver.models.repository import Repo
+from mass_driver.models.repository import ClonedRepo
 
 
 class Counter(PatchDriver):
@@ -14,7 +14,7 @@ class Counter(PatchDriver):
     target_count: int
     counter_file: str
 
-    def run(self, repo: Repo) -> PatchResult:
+    def run(self, repo: ClonedRepo) -> PatchResult:
         """Process the counter file"""
         counter_filepath_abs = repo.cloned_path / self.counter_file
         if not counter_filepath_abs.is_file():
