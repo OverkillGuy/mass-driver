@@ -71,7 +71,7 @@ autoapi_add_toctree_entry = False
 autosectionlabel_prefix_document = True
 
 myst_heading_anchors = 2
-myst_enable_extensions = ["substitution"]
+myst_enable_extensions = ["substitution", "colon_fence"]
 
 # man_pages = [
 #     # ("manpage", "mass-driver", "Send pull-requests to many repos, monitor PRs adoption", author, "1")

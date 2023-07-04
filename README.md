@@ -232,10 +232,17 @@ mass-driver run activity.toml
 Smarter Sources can use more elaborate parameters, maybe even secret parameters
 like API tokens.
 
-To pass secrets safely, config parameters passed via `source_config` in file
-format can be passed as envvar, using prefix `SOURCE_`. So we could have avoided
-the `repos` entry in file, by providing a `SOURCE_REPOS` envvar instead. This
-feature works because the Source class derives from `Pydantic.BaseSettings`.
+
+Note that to pass secrets safely at runtime, config parameters passed via
+`source_config` in file format can be passed as envvar, using prefix `SOURCE_`.
+So we could have avoided the `repos` entry in file, by providing a
+`SOURCE_REPOS` envvar instead. This feature works because the Source class
+derives from `Pydantic.BaseSettings`.
+
+As a `Source` developer, though, you should really look into usage of
+`Pydantic.SecretStr` to avoid leaking the secret when config or result is
+stored. See [Pydantic docs on Secret
+fields](https://docs.pydantic.dev/1.10/usage/types/#secret-types).
 
 
 ### Using the scanners

@@ -35,9 +35,22 @@ This class, taking a parameter `repos`, generates
 dictionary indexed by {py:obj}`~mass_driver.models.repository.RepoID` (basically a
 string).
 
-The only constraint on {py:obj}`~mass_driver.models.repository.RepoID` is that the string key is unique, so in this
-case we use the `git clone` URL, which is guaranteed unique. Smarter Sources
-will use something shorter, as adequate.
+The only constraint on {py:obj}`~mass_driver.models.repository.RepoID` (type
+being an alias of `str`) is that the string key is unique, so in this case we
+use the `git clone` URL, which is guaranteed unique. Smarter Sources will use
+something shorter, as adequate.
+
+:::{admonition} Don't use `str` for secret fields!
+:class: danger
+
+When passing sensitive config like API tokens, you should ensure that dumping
+the mass-driver config doesn't disclose any secret value. Pydantic has specific
+types for that, providing the {py:obj}`pydantic.SecretStr` type, see [Pydantic
+docs on Secret
+fields](https://docs.pydantic.dev/1.10/usage/types/#secret-types). These field
+types never print their content when represented as string, requiring a call to
+`my_secret_field.get_secret_value()` to actually disclose the secret.
+:::
 
 Note the `patch_data` field of {py:obj}`~mass_driver.models.repository.Repo`, unused in this sample Source, is an
 arbitrary dictionary under the {py:obj}`~mass_driver.models.repository.Source`'s control, perfect to provide per-repo
