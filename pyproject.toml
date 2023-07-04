@@ -100,6 +100,7 @@ github-app = 'mass_driver.forges.github:GithubAppForge'
 repo-list = 'mass_driver.sources.simple:RepolistSource'
 repo-filelist = 'mass_driver.sources.simple:RepoFilelistSource'
 template-filelist = 'mass_driver.sources.simple:TemplateFileSource'
+csv-filelist = 'mass_driver.sources.simple:CSVFileSource'
 github-search = 'mass_driver.sources.github_source:GithubPersonalSource'
 github-app-search = 'mass_driver.sources.github_source:GithubAppSource'
 

@@ -1,0 +1,3 @@
+clone_url,repo_id,force_pull,extra_key
+git@github.com:OverkillGuy/sphinx-needs-test,sphinx-needs-test,True,super
+git@github.com:OverkillGuy/mass-driver,mass-driver,True,duper

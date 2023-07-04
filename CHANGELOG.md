@@ -33,6 +33,8 @@ codepaths, enabling use of Source-discovered information in `PatchDriver.run`.
 - Scan+Migration+Forge can now ALL happen in one run command:
   - Clones one repo, then scanning it, then migrating it, then next repo
   - Can thus do all of Source -> [Clone] -> Scan -> Migrate -> Forge
+- New `csv-filelist` Source for importing repos in CSV file format
+- New `tests.fixture.massdrive_runlocal()` func to enable source testing
 
 ### Fixed
 - Secret tokens for Github plugins no longer leak on config dump

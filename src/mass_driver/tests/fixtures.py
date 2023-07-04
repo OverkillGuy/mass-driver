@@ -8,6 +8,7 @@ from pathlib import Path
 from git import Repo
 
 from mass_driver.cli import cli as massdriver_cli
+from mass_driver.models.activity import ActivityOutcome
 from mass_driver.models.patchdriver import PatchOutcome
 
 
@@ -24,21 +25,22 @@ def copy_folder(repo_data, tmp_path):
     shutil.copytree(str(repo_data), str(tmp_path))
 
 
-def massdrive_runlocal(repo_url, activity_configfilepath: Path):
+def massdrive_runlocal(
+    repo_url: str | None, activity_configfilepath: Path
+) -> ActivityOutcome:
     """Run 'mass-driver run' with a local repo and activity config
 
     Returns:
         ActivityOutcome of the execution
     """
-    return massdriver_cli(
-        [
-            "run",
-            str(activity_configfilepath),
-            "--repo-path",
-            repo_url,
-            "--no-pause",
-        ]
-    )
+    massdrive_args = [
+        "run",
+        str(activity_configfilepath),
+        "--no-pause",
+    ]
+    if repo_url is not None:
+        massdrive_args.extend(["--repo-path", repo_url])
+    return massdriver_cli(massdrive_args)
 
 
 def massdrive(repo_url: str, activity_configfilepath: Path, repo_is_path: bool = True):

@@ -1,0 +1,6 @@
+[mass-driver.source]
+source_name = "template-filelist"
+
+[mass-driver.source.source_config]
+repo_file = "repos_templated.txt"
+clone_url_template = "git@github.com:{id}.git"
