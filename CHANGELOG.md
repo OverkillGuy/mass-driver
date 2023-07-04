@@ -34,6 +34,10 @@ codepaths, enabling use of Source-discovered information in `PatchDriver.run`.
   - Clones one repo, then scanning it, then migrating it, then next repo
   - Can thus do all of Source -> [Clone] -> Scan -> Migrate -> Forge
 
+### Fixed
+- Secret tokens for Github plugins no longer leak on config dump
+  (`--json-outfile` flag), by replacing `str` with `pydantic.SecretStr`.
+  - Docs updated to warn downstream devs about this risk.
 
 ## v0.14.0 - 2023-06-08
 

@@ -1,6 +1,7 @@
 """Githubas Forge. Using the github lib if available"""
 
 from github import AppAuthentication, Github
+from pydantic import SecretStr
 
 from mass_driver.models.forge import BranchName, Forge
 
@@ -44,29 +45,29 @@ class GithubPersonalForge(GithubBaseForge):
     Github app authentication.
     """
 
-    token: str
+    token: SecretStr
     """Github personal access token"""
 
     def __init__(self, **data):
         """Log in to Github first"""
         super().__init__(**data)
-        self._github_api = Github(login_or_token=self.token)
+        self._github_api = Github(login_or_token=self.token.get_secret_value())
 
 
 class GithubAppForge(GithubBaseForge):
     """Create PRs on Github as a Github App, not user"""
 
-    app_id: str
-    app_private_key: str
+    app_id: SecretStr
+    app_private_key: SecretStr
     app_installation_id: int
 
     def __init__(self, **data):
         """Log in to Github first"""
         super().__init__(**data)
         auth = AppAuthentication(
-            app_id=self.app_id,
-            private_key=self.app_private_key,
-            installation_id=self.app_installation_id,
+            app_id=self.app_id.get_secret_value(),
+            private_key=self.app_private_key.get_secret_value(),
+            installation_id=self.app_installation_id.get_secret_value(),
         )
         self._github_api = Github(app_auth=auth)
 

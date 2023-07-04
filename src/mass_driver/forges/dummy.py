@@ -1,5 +1,7 @@
 """Dummy Forge, does not do anything meaningful"""
 
+from pydantic import SecretStr
+
 from mass_driver.models.forge import BranchName, Forge
 
 DUMMY_PR_URL = "https://github.com/OverkillGuy/sphinx-needs-tests/pull/1"
@@ -12,8 +14,8 @@ class DummyForge(Forge):
     PR_URL: str = DUMMY_PR_URL
     """The PR's URL, for ease of access in tests"""
 
-    some_param_for_forgeconfig: str
-    """A parameter to set via forgeconfig, for tests"""
+    some_param_for_forgeconfig: SecretStr
+    """A 'secret' parameter to set via forgeconfig, for tests. Type enforces no-leak!"""
 
     def create_pr(
         self,
