@@ -26,7 +26,7 @@ GitPython = "*"
 # [1]: https://github.com/PyGithub/PyGithub/issues/2472#issuecomment-1482378022
 PyGithub = "==1.58.0"
 # Mass-driver settings
-pydantic = "*"
+pydantic = "1.*"
 
 # Note: Linters not defined in this file but .pre-commit-config.yaml, which
 # installs/manages each tool in its own isolated virtualenv

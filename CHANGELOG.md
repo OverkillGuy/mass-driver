@@ -38,6 +38,7 @@ codepaths, enabling use of Source-discovered information in `PatchDriver.run`.
 - Secret tokens for Github plugins no longer leak on config dump
   (`--json-outfile` flag), by replacing `str` with `pydantic.SecretStr`.
   - Docs updated to warn downstream devs about this risk.
+- Pin `pydantic` to `1.*`, as breaking version `2.0` was just released.
 
 ## v0.14.0 - 2023-06-08
 
