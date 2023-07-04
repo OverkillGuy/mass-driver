@@ -9,7 +9,7 @@ from pathlib import Path
 from mass_driver.forge_run import PROutcome
 from mass_driver.forges.dummy import DUMMY_PR_URL
 from mass_driver.models.patchdriver import PatchOutcome
-from mass_driver.tests.fixtures import copy_folder, massdrive, massdrive_scan
+from mass_driver.tests.fixtures import copy_folder, massdrive
 
 
 def test_migration_and_forge(tmp_path, shared_datadir, mocker):
@@ -27,7 +27,9 @@ def test_migration_and_forge(tmp_path, shared_datadir, mocker):
     copy_folder(Path(shared_datadir / "sample_repo"), repo_path)
     activityconfig_filepath = shared_datadir / "activity.toml"
     # When I run mass-driver
-    migration_result, forge_result = massdrive(str(repo_path), activityconfig_filepath)
+    migration_result, forge_result, _scan = massdrive(
+        str(repo_path), activityconfig_filepath
+    )
     # Then I get OK outcome on migration
     assert (
         migration_result.outcome == PatchOutcome.PATCHED_OK
@@ -51,7 +53,7 @@ def test_scan(tmp_path, shared_datadir, mocker):
     copy_folder(Path(shared_datadir / "sample_repo"), repo_path)
     activityconfig_filepath = shared_datadir / "activity.toml"
     # When I run a mass-driver scan
-    scan_result = massdrive_scan(str(repo_path), activityconfig_filepath)
+    _mig, _forge, scan_result = massdrive(str(repo_path), activityconfig_filepath)
     # Then I get scan results
     assert isinstance(scan_result, dict), "Should return dict scan result"
     # And scan result is correct

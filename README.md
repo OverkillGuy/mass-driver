@@ -251,10 +251,10 @@ Let's define an Activity file specifying a list of scanners to run:
 [mass-driver.scan]
 scanner_names = ["root-files", "dockerfile-from"]
 ```
-This can be run similarly to migration:
+This can be run just like a migration:
 
 ``` shell
-mass-driver scan scan.toml --repo-filelist repos.txt
+mass-driver run scan.toml --repo-filelist repos.txt
 ```
 
 

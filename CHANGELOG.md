@@ -6,22 +6,34 @@ The project uses semantic versioning (see [semver](https://semver.org)).
 
 ## [Unreleased]
 
+
 ### Changed
-- **BREAKING**: `PatchDriver.run()` gives a `ClonedRepo` object, not a `pathlib.Path`.
-  - `mass_driver.models.source` file renamed to `mass_driver.models.repository`
-  - `PatchDriver.run(repo: Path)` now `PatchDriver.run(repo: Repo)`
-  - All `PatchDriver.run()` uses of `repo` need changed to `Repo.cloned_path`
+Major break of interface: Rework of the cloning system, merges migration/scan
+codepaths, enabling use of Source-discovered information in `PatchDriver.run`.
+
+- **BREAKING**: `PatchDriver.run()` passes `ClonedRepo` obj, not `pathlib.Path`.
+  - Any use of `repo` in your `PatchDriver.run()` should use `repo.cloned_path`.
+  - See `ClonedRepo` docs, contains information derived from `Source`, such as
+    `patch_data` field, arbitrary source-issued information dict.
+- **BREAKING**: `tests.fixtures.massdrive()` now returns 3-item-tuple, not 2.
+  - Returned tuple: `PatchResult`, `ForgeResult`, `ScanResult` (or `None`)
+  - Any tests using `fixtures.massdrive` should now set `mig, forge, scan =`...
+  - Swap `fixtures.massdrive_scan` with `fixtures.massdrive` accepting 2 junk arg
+- **BREAKING**: `mass-driver scan` CLI removed, now part of `mass-driver run`.
+  Activity flow for `run` command is now:
+  - Source discovery phase (if any, or from CLI), generating `Repo` list
+  - Main phase, iterating over each Repo, first to clone them =`ClonedRepo` list
+  - Inside main phase, scan (if any), generating `ScanResult`
+  - Inside main phase, migrate (if any), generating `MigrationResult`
+  - After main phase,  interactively pause for review if requested
+  - Forge activity, iterating over each repo again, creating `ForgeResult`
+- **BREAKING**: `models.source` module renamed to `models.repository`.
 
 ### Added
-- Since`Patchdriver.run()` now gives `Repo`, drivers can now use `Repo` fields:
-  - `Repo.patch_data` (arbitrary source-provided repo metadata dict)
-  - `Repo.clone_url` (URL used for cloning the repo initiall), and
-  - `Repo.repo_id` (arbitrary source-defined unique identifier for this repo
-     amongst the discovered repos)
+- Scan+Migration+Forge can now ALL happen in one run command:
+  - Clones one repo, then scanning it, then migrating it, then next repo
+  - Can thus do all of Source -> [Clone] -> Scan -> Migrate -> Forge
 
-### Removed
-- Broken PatchDrivers now removed:
-  - Plugin `shell` (`ShellDriver`) never worked with `PatchResult`
 
 ## v0.14.0 - 2023-06-08
 

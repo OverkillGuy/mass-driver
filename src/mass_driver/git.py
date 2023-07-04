@@ -1,4 +1,4 @@
-"""Cloning remote repos (repos not using local path)"""
+"""Manipulating git repos natively, without much knowledge of mass-driver models"""
 
 from pathlib import Path
 from tempfile import mkdtemp

@@ -2,11 +2,11 @@
 
 from git import Repo as GitRepo
 
+from mass_driver.git import push
 from mass_driver.models.activity import ActivityOutcome, IndexedPRResult
 from mass_driver.models.forge import PROutcome, PRResult
 from mass_driver.models.migration import ForgeLoaded
 from mass_driver.models.repository import ClonedRepo
-from mass_driver.repo import push
 
 
 def main(

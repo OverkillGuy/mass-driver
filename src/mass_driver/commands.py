@@ -6,6 +6,7 @@ from typing import Callable, Optional
 
 from pydantic import ValidationError
 
+from mass_driver.activity_run import run
 from mass_driver.discovery import (
     discover_drivers,
     discover_forges,
@@ -17,10 +18,8 @@ from mass_driver.discovery import (
 )
 from mass_driver.forge_run import main as forge_main
 from mass_driver.forge_run import pause_until_ok
-from mass_driver.migration_run import main as migration_main
 from mass_driver.models.activity import ActivityLoaded, ActivityOutcome
 from mass_driver.models.repository import IndexedRepos, Repo
-from mass_driver.scan_run import scan_main
 
 
 def drivers_command(args: Namespace):
@@ -75,30 +74,28 @@ def run_command(args: Namespace) -> ActivityOutcome:
     # Source discovery to know what repos to patch/forge/scan
     source_config = activity.source
     repos_sourced = source_repolist_args(args)
-    if repos_sourced is None:  # No CLI repos = call Source
+    if repos_sourced is None:  # No repo-list from CLI flags: call Source
         repos_sourced = source_config.source.discover()
-    if activity.migration is None:
-        print("No migration section: skipping migration")
-        migration_result = ActivityOutcome(
-            repos_sourced=repos_sourced,
-        )
+    if activity.migration is None and activity.scan is None:
+        print("No migration/scan section: skipping")
+        run_result = ActivityOutcome(repos_sourced=repos_sourced)
     else:
-        migration_result = migration_main(
-            activity.migration,
+        run_result = run(
+            activity,
             repos_sourced,
             not args.no_cache,
         )
-    print("Migration complete!")
+    print("Main phase complete!")
     if activity.forge is None:
         # Nothing else to do, just print completion and exit
         print("No Forge available: end")
-        maybe_save_outcome(args, migration_result)
-        return migration_result
+        maybe_save_outcome(args, run_result)
+        return run_result
     # Now guaranteed to have a Forge: pause + forge
     if not args.no_pause:
         print("Review the commits now.")
         pause_until_ok("Type y/yes/continue to run the Forge\n")
-    forge_result = forge_main(activity.forge, migration_result)
+    forge_result = forge_main(activity.forge, run_result)
     maybe_save_outcome(args, forge_result)
     return forge_result
 
@@ -112,25 +109,7 @@ def scanners_command(args: Namespace):
     return True
 
 
-def scan_command(args: Namespace) -> ActivityOutcome:
-    """Process the CLI for 'scan'"""
-    print("Scan mode!")
-    activity_str = args.activity_file.read()
-    activity = ActivityLoaded.from_config(activity_str)
-    # Source discovery to know what repos to patch/forge/scan
-    source_config = activity.source
-    repos_sourced = source_repolist_args(args)
-    if repos_sourced is None:  # No CLI repos = call Source
-        repos_sourced = source_config.source.discover()
-    result = scan_main(
-        activity.scan,
-        repos=repos_sourced,
-        cache=not args.no_cache,
-    )
-    maybe_save_outcome(args, result)
-    return result
-
-
+# TODO: Make a generic version that isn't forge-specific
 def forge_config_error_exit(e: ValidationError):
     """Exit in case of bad forge config"""
     for error in e.errors():

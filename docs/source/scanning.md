@@ -68,7 +68,7 @@ scanner_names = ["dockerfile-from", "root-files"]
 Now let's generate the scan reports:
 
 ```shell
-mass-driver scan dockerfile_scan.toml --repo-filelist repos.txt
+mass-driver run dockerfile_scan.toml --repo-filelist repos.txt
 ```
 
 
@@ -108,7 +108,7 @@ language: python
 ```
 
 Note how the test relies on the `massdrive_scan_check` fixture to run scan
-against specific folder. This wraps around the `massdrive_scan` fixture.
+against specific folder. This wraps around the `massdrive` fixture.
 
 
 ```{note}
