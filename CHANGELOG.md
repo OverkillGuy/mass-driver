@@ -7,6 +7,9 @@ The project uses semantic versioning (see [semver](https://semver.org)).
 ## [Unreleased]
 
 
+## v0.15.0 - 2023-07-05
+
+
 ### Changed
 Major break of interface: Rework of the cloning system, merges migration/scan
 codepaths, enabling use of Source-discovered information in `PatchDriver.run`.
