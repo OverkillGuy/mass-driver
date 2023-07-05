@@ -7,8 +7,42 @@ The project uses semantic versioning (see [semver](https://semver.org)).
 ## [Unreleased]
 
 
-## v0.14.0 - 2023-06-08
+### Changed
+Major break of interface: Rework of the cloning system, merges migration/scan
+codepaths, enabling use of Source-discovered information in `PatchDriver.run`.
 
+- **BREAKING**: `PatchDriver.run()` passes `ClonedRepo` obj, not `pathlib.Path`.
+  - Any use of `repo` in your `PatchDriver.run()` should use `repo.cloned_path`.
+  - See `ClonedRepo` docs, contains information derived from `Source`, such as
+    `patch_data` field, arbitrary source-issued information dict.
+- **BREAKING**: `tests.fixtures.massdrive()` now returns 3-item-tuple, not 2.
+  - Returned tuple: `PatchResult`, `ForgeResult`, `ScanResult` (or `None`)
+  - Any tests using `fixtures.massdrive` should now set `mig, forge, scan =`...
+  - Swap `fixtures.massdrive_scan` with `fixtures.massdrive` accepting 2 junk arg
+- **BREAKING**: `mass-driver scan` CLI removed, now part of `mass-driver run`.
+  Activity flow for `run` command is now:
+  - Source discovery phase (if any, or from CLI), generating `Repo` list
+  - Main phase, iterating over each Repo, first to clone them =`ClonedRepo` list
+  - Inside main phase, scan (if any), generating `ScanResult`
+  - Inside main phase, migrate (if any), generating `MigrationResult`
+  - After main phase,  interactively pause for review if requested
+  - Forge activity, iterating over each repo again, creating `ForgeResult`
+- **BREAKING**: `models.source` module renamed to `models.repository`.
+
+### Added
+- Scan+Migration+Forge can now ALL happen in one run command:
+  - Clones one repo, then scanning it, then migrating it, then next repo
+  - Can thus do all of Source -> [Clone] -> Scan -> Migrate -> Forge
+- New `csv-filelist` Source for importing repos in CSV file format
+- New `tests.fixture.massdrive_runlocal()` func to enable source testing
+
+### Fixed
+- Secret tokens for Github plugins no longer leak on config dump
+  (`--json-outfile` flag), by replacing `str` with `pydantic.SecretStr`.
+  - Docs updated to warn downstream devs about this risk.
+- Pin `pydantic` to `1.*`, as breaking version `2.0` was just released.
+
+## v0.14.0 - 2023-06-08
 
 ### Added
 - New `source` feature for discovering what repos to patch/scan.

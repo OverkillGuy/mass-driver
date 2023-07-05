@@ -4,8 +4,7 @@ from enum import Enum
 
 from pydantic import BaseModel, BaseSettings
 
-BranchName = str
-"""A git branch name, assumed to exist remotely on the Forge"""
+from mass_driver.models.repository import BranchName
 
 
 class Forge(BaseSettings):

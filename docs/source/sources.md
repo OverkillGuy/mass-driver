@@ -9,12 +9,12 @@ end-before: "### Using the scanners"
 ### Creating a Source
 
 Sources are mass-driver plugins that map to
-{py:obj}`mass_driver.models.source.Source`. Let's create one.
+{py:obj}`mass_driver.models.repository.Source`. Let's create one.
 
 First, we import relevant bits:
 
 ```python
-from mass_driver.models.source import IndexedRepos, Repo, RepoUrl, Source
+from mass_driver.models.repository import IndexedRepos, Repo, RepoUrl, Source
 ```
 Remembering that:
 
@@ -31,16 +31,29 @@ pyobject: RepolistSource
 ```
 
 This class, taking a parameter `repos`, generates
-{py:obj}`~mass_driver.models.source.Repo` objects when calling {py:meth}`~mass_driver.models.source.Source.discover`, as a
-dictionary indexed by {py:obj}`~mass_driver.models.source.RepoID` (basically a
+{py:obj}`~mass_driver.models.repository.Repo` objects when calling {py:meth}`~mass_driver.models.repository.Source.discover`, as a
+dictionary indexed by {py:obj}`~mass_driver.models.repository.RepoID` (basically a
 string).
 
-The only constraint on {py:obj}`~mass_driver.models.source.RepoID` is that the string key is unique, so in this
-case we use the `git clone` URL, which is guaranteed unique. Smarter Sources
-will use something shorter, as adequate.
+The only constraint on {py:obj}`~mass_driver.models.repository.RepoID` (type
+being an alias of `str`) is that the string key is unique, so in this case we
+use the `git clone` URL, which is guaranteed unique. Smarter Sources will use
+something shorter, as adequate.
 
-Note the `patch_data` field of {py:obj}`~mass_driver.models.source.Repo`, unused in this sample Source, is an
-arbitrary dictionary under the {py:obj}`~mass_driver.models.source.Source`'s control, perfect to provide per-repo
+:::{admonition} Don't use `str` for secret fields!
+:class: danger
+
+When passing sensitive config like API tokens, you should ensure that dumping
+the mass-driver config doesn't disclose any secret value. Pydantic has specific
+types for that, providing the {py:obj}`pydantic.SecretStr` type, see [Pydantic
+docs on Secret
+fields](https://docs.pydantic.dev/1.10/usage/types/#secret-types). These field
+types never print their content when represented as string, requiring a call to
+`my_secret_field.get_secret_value()` to actually disclose the secret.
+:::
+
+Note the `patch_data` field of {py:obj}`~mass_driver.models.repository.Repo`, unused in this sample Source, is an
+arbitrary dictionary under the {py:obj}`~mass_driver.models.repository.Source`'s control, perfect to provide per-repo
 data extracted from the source that will be relevant to make migration against;
 For instance the file name to fix from some reporting tool...
 

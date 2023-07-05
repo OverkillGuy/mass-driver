@@ -93,24 +93,13 @@ def run_subparser(subparser):
 
 def scanners_subparser(subparser):
     """Inject the scanners subparser"""
+    # "Scanners" are a little simpler than other plugins (func vs pydantic class)
+    # Hence get their own smaller function, cannot reuse plugin_subparser
     scan = subparser.add_parser(
         "scanners",
         help="List available scanners",
     )
     scan.set_defaults(func=commands.scanners_command)
-
-
-def scan_subparser(subparser):
-    """Inject the scan subparser"""
-    scan = subparser.add_parser(
-        "scan",
-        help="Scan repositories using all available scans",
-    )
-    activity_arg(scan)
-    jsonout_args(scan)
-    repo_list_group(scan)
-    cache_arg(scan)
-    scan.set_defaults(func=commands.scan_command)
 
 
 def subparsers(parser: ArgumentParser) -> ArgumentParser:
@@ -122,7 +111,6 @@ def subparsers(parser: ArgumentParser) -> ArgumentParser:
     plugin_subparser(subparser, "source", commands.sources_command)
     run_subparser(subparser)
     scanners_subparser(subparser)
-    scan_subparser(subparser)
     return parser
 
 

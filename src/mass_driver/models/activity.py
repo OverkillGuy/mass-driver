@@ -22,8 +22,8 @@ from mass_driver.models.migration import (  # Forge,
     load_source,
 )
 from mass_driver.models.patchdriver import PatchResult
+from mass_driver.models.repository import IndexedClonedRepos, IndexedRepos, RepoID
 from mass_driver.models.scan import ScanFile, ScanLoaded, Scanner
-from mass_driver.models.source import IndexedRepos, RepoID
 
 IndexedPatchResult = dict[RepoID, PatchResult]
 """A set of PatchResults, indexed by original repo URL given as input"""
@@ -68,12 +68,14 @@ class ActivityOutcome(BaseModel):
 
     repos_sourced: IndexedRepos = {}
     """The repos, as discovered from Source"""
+    repos_cloned: IndexedClonedRepos = {}
+    """The repos, as cloned"""
+    scan_result: IndexedScanResult | None = None
+    """A lookup table of the scan results, indexed by repos_input url"""
     migration_result: IndexedPatchResult | None = None
     """A lookup table of the results of a Migration, indexed by repos_input url"""
     forge_result: IndexedPRResult | None = None
     """A lookup table of the results of a Forge, indexed by repos_input url"""
-    scan_result: IndexedScanResult | None = None
-    """A lookup table of the scan results, indexed by repos_input url"""
 
 
 def load_activity_toml(activity_config: str) -> ActivityFile:

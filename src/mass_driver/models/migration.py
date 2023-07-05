@@ -7,7 +7,7 @@ from pydantic import BaseModel
 from mass_driver.discovery import get_driver, get_forge, get_source
 from mass_driver.models.forge import BranchName, Forge
 from mass_driver.models.patchdriver import PatchDriver
-from mass_driver.models.source import Source
+from mass_driver.models.repository import Source
 
 TOML_PROJECTKEY = "mass-driver"
 

@@ -2,8 +2,6 @@
 
 from mass_driver.cli import cli
 
-API_AUTH_TOK = "not-a-real-pass123deadb0b"
-
 
 def test_cli_shows_usage(capsys):
     """Checks we can invoke the CLI entrypoint (no shelling out) via --help"""

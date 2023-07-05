@@ -5,8 +5,8 @@ from typing import Callable
 
 from mass_driver.models.forge import Forge
 from mass_driver.models.patchdriver import PatchDriver
+from mass_driver.models.repository import Source
 from mass_driver.models.scan import Scanner
-from mass_driver.models.source import Source
 
 ENTRYPOINT = "massdriver"
 """The entrypoint we discover all types of plugins from"""

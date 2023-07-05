@@ -1,0 +1,5 @@
+[mass-driver.source]
+source_name = "csv-filelist"
+
+[mass-driver.source.source_config]
+csv_file = "repos.csv"

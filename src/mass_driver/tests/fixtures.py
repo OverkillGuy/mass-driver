@@ -8,6 +8,7 @@ from pathlib import Path
 from git import Repo
 
 from mass_driver.cli import cli as massdriver_cli
+from mass_driver.models.activity import ActivityOutcome
 from mass_driver.models.patchdriver import PatchOutcome
 
 
@@ -24,8 +25,26 @@ def copy_folder(repo_data, tmp_path):
     shutil.copytree(str(repo_data), str(tmp_path))
 
 
+def massdrive_runlocal(
+    repo_url: str | None, activity_configfilepath: Path
+) -> ActivityOutcome:
+    """Run 'mass-driver run' with a local repo and activity config
+
+    Returns:
+        ActivityOutcome of the execution
+    """
+    massdrive_args = [
+        "run",
+        str(activity_configfilepath),
+        "--no-pause",
+    ]
+    if repo_url is not None:
+        massdrive_args.extend(["--repo-path", repo_url])
+    return massdriver_cli(massdrive_args)
+
+
 def massdrive(repo_url: str, activity_configfilepath: Path, repo_is_path: bool = True):
-    """Run mass-driver with given driver-config over a sample LOCAL repo
+    """Run mass-driver with given activityconfig over a sample LOCAL repo
 
     The "repo" is either a local folder path which we'll 'git init && git commit
     -Am' over, or a cloneable URL in which case we will pass it through.
@@ -38,40 +57,39 @@ def massdrive(repo_url: str, activity_configfilepath: Path, repo_is_path: bool =
         See pytest-datadir's "datadir" fixture for convenient data linking
 
     Returns:
-        The PatchResult object returned by mass-driver for that repo
-
+        A tuple of (PatchResult, ForgeResult, ScanResult) returned by mass-driver for
+        that repo. If any of these activities are empty, None is given for it.
     """
     if repo_is_path:
         repoize(Path(repo_url))
-    result = massdriver_cli(
-        [
-            "run",
-            str(activity_configfilepath),
-            "--repo-path",
-            repo_url,
-            "--no-pause",
-        ]
+    result = massdrive_runlocal(repo_url, activity_configfilepath)
+    scan_result = (
+        result.scan_result[repo_url] if result.scan_result is not None else None
     )
     mig_result = (
-        result.migration_result[str(repo_url)]
+        result.migration_result[repo_url]
         if result.migration_result is not None
         else None
     )
     for_result = (
-        result.forge_result[str(repo_url)] if result.forge_result is not None else None
+        result.forge_result[repo_url] if result.forge_result is not None else None
     )
-    return mig_result, for_result
+    return mig_result, for_result, scan_result
 
 
 def massdrive_check_file(workdir: Path):
-    """Run mass-driver migration.toml over input.yaml and check the output.yaml matches"""
+    """Run mass-driver migration.toml over input.yaml and check the output.yaml matches
+
+    Returns:
+        tuple of mutated vs reference file if passing result.PATCHED_OK assertion
+    """
     config_file = workdir / "migration.toml"
     input_file = workdir / "input.txt"
     reference_file = workdir / "output.txt"
     outcome_file = workdir / "outcome.txt"
     details_file = workdir / "details.txt"
     try:
-        migration_result, _forge_result = massdrive(
+        migration_result, _forge_result, _scan_result = massdrive(
             str(workdir),
             config_file,
         )
@@ -95,29 +113,16 @@ def massdrive_check_file(workdir: Path):
         return mutated, reference
 
 
-def massdrive_scan(
-    repo_url: str, activity_configfilepath: Path, repo_is_path: bool = True
-):
-    """Run mass-driver scan over a given local repo"""
-    if repo_is_path:
-        repoize(Path(repo_url))
-    result = massdriver_cli(
-        [
-            "scan",
-            str(activity_configfilepath),
-            "--repo-path",
-            repo_url,
-        ]
-    )
-    return result.scan_result[str(repo_url)] if result.scan_result is not None else None
-
-
 def massdrive_scan_check(workdir: Path):
-    """Scan mass-driver over workdir and check the scan_results.json matches"""
+    """Scan mass-driver over workdir and check the scan_results.json matches
+
+    Returns:
+        tuple of scan_results dict + reference_results dict, for comparison by caller
+    """
     reference_results_file = workdir / "scan_results.json"
     config_file = workdir / "activity.toml"
     try:
-        scan_results = massdrive_scan(
+        _mig, _forge, scan_results = massdrive(
             str(workdir),
             config_file,
         )

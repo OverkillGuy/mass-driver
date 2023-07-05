@@ -1,8 +1,10 @@
-"""Sources of repos to migrate"""
-
-from typing import Optional
+"""Repositories for cloning and patching"""
 
 from pydantic import BaseModel, BaseSettings, DirectoryPath
+
+BranchName = str
+"""A git branch name, assumed to exist remotely on the Forge"""
+
 
 RepoID = str
 """A unique identifier for a repository to process"""
@@ -12,20 +14,34 @@ RepoUrl = str
 
 
 class Repo(BaseModel):
-    """A sourced git repository, along with any per-repo info for patching"""
+    """A repository as-discovered, pre-cloning, along with any Sourced metadata"""
 
     clone_url: RepoUrl
     """The 'git clone'-able URL"""
     repo_id: RepoID
     """A unique name for the repo, to identify it against others"""
+    upstream_branch: BranchName | None = None
+    """A git branch to check out fro mremote, if any (defaults to None = use as-is)"""
+    force_pull: bool = False
+    """Pull the given branch before handing it over (useful when reusing repos)"""
     patch_data: dict = {}
-    """Arbitrary data dict from source"""
-    cloned_path: Optional[DirectoryPath] = None
+    """Arbitrary data dict from Source"""
+
+
+class ClonedRepo(Repo):
+    """A repository after it has been successfully cloned, branch configured"""
+
+    cloned_path: DirectoryPath
     """The filesystem path to the git cloned repo"""
+    current_branch: BranchName
+    """The name of the currently checked out branch"""
 
 
 IndexedRepos = dict[RepoID, Repo]
 """A "list" of repositories, but indexed by repo ID (Repo.repo_id)"""
+
+IndexedClonedRepos = dict[RepoID, ClonedRepo]
+"""A "list" of cloned repositories, but indexed by repo ID (ClonedRepo.repo_id)"""
 
 
 class Source(BaseSettings):

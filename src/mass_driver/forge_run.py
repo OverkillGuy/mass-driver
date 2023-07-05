@@ -1,13 +1,12 @@
 """The main run-command of Forges, creating mass-PRs from existing branhces"""
 
-from pathlib import Path
-
 from git import Repo as GitRepo
 
+from mass_driver.git import push
 from mass_driver.models.activity import ActivityOutcome, IndexedPRResult
 from mass_driver.models.forge import PROutcome, PRResult
 from mass_driver.models.migration import ForgeLoaded
-from mass_driver.repo import push
+from mass_driver.models.repository import ClonedRepo
 
 
 def main(
@@ -19,20 +18,16 @@ def main(
     print(f"Processing {repo_count} with Forge...")
     pr_results: IndexedPRResult = {}
     for repo_index, (repo_id, repo) in enumerate(
-        progress.repos_sourced.items(), start=1
+        progress.repos_cloned.items(), start=1
     ):
         pause_every = config.interactive_pause_every
         if pause_every is not None and repo_index % pause_every == 0:
             pause_until_ok(f"Reached {pause_every} actions. Continue?\n")
-        repo_local_path = repo.cloned_path
-
         try:
             print(
-                f"[{repo_index:03d}/{repo_count:03d}] Processing {repo_local_path}..."
+                f"[{repo_index:03d}/{repo_count:03d}] Processing {repo.cloned_path}..."
             )
-            if repo_local_path is None:
-                raise ValueError("Repo not cloned locally, can't create PR of it")
-            result = process_repo(config, repo_local_path)
+            result = process_repo(config, repo)
             pr_results[repo_id] = result
         except Exception as e:
             print(f"Error processing repo '{repo_id}'\nError was: {e}")
@@ -48,9 +43,12 @@ def main(
 
 def process_repo(
     config: ForgeLoaded,
-    repo_path: Path,
+    repo: ClonedRepo,
 ) -> PRResult:
     """Process a single repo"""
+    repo_path = repo.cloned_path
+    if repo_path is None:
+        raise ValueError("Repo not cloned locally, can't create PR of it")
     git_repo = GitRepo(path=str(repo_path))
     if config.git_push_first:
         push(git_repo, config.head_branch)
