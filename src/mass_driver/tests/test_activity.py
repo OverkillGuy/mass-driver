@@ -9,10 +9,15 @@ from pathlib import Path
 from mass_driver.forge_run import PROutcome
 from mass_driver.forges.dummy import DUMMY_PR_URL
 from mass_driver.models.patchdriver import PatchOutcome
-from mass_driver.tests.fixtures import copy_folder, massdrive
+from mass_driver.tests.fixtures import (
+    copy_folder,
+    massdrive,
+    massdrive_runlocal,
+    repoize,
+)
 
 
-def test_migration_and_forge(tmp_path, shared_datadir, mocker):
+def test_migration_and_forge(tmp_path, shared_datadir, monkeypatch):
     """Feature: Validate the Forge CLI
 
          As the mass-driver dev
@@ -25,10 +30,15 @@ def test_migration_and_forge(tmp_path, shared_datadir, mocker):
     """
     repo_path = Path(tmp_path / "test_repo/")
     copy_folder(Path(shared_datadir / "sample_repo"), repo_path)
+    repoize(repo_path)
+    monkeypatch.chdir(repo_path)
+    repo_id = "."
     activityconfig_filepath = shared_datadir / "activity.toml"
     # When I run mass-driver
-    migration_result, forge_result, _scan = massdrive(
-        str(repo_path), activityconfig_filepath
+    result = massdrive_runlocal(None, activityconfig_filepath)
+    migration_result, forge_result = (
+        result.migration_result[repo_id],
+        result.forge_result[repo_id],
     )
     # Then I get OK outcome on migration
     assert (
