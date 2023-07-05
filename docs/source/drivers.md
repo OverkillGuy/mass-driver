@@ -23,6 +23,7 @@ slots, and exposing a single `run` method:
 
 ```python
 from mass_driver.models.patchdriver import PatchDriver, PatchResult, PatchOutcome
+from mass_driver.models.repository import ClonedRepo
 
 class PerlPackageBumper(PatchDriver):
     """Bump version of Perl packages"""
@@ -32,7 +33,7 @@ class PerlPackageBumper(PatchDriver):
     package_target: str
     package_version: str
 
-    def run(self, repo: Path) -> PatchResult:
+    def run(self, repo: ClonedRepo) -> PatchResult:
         """Run the package bumper"""
         packages = get_packages()
         if self.package_target not in packages:
@@ -121,7 +122,8 @@ For more granular, custom testing, the fixture
 {py:func}`mass_driver.tests.fixtures.massdrive`, can run mass-driver CLI in a
 prepackaged way, returning just
 {py:class}`mass_driver.models.activity.MigrationOutcome` +
-{py:class}`mass_driver.models.activity.ForgeResult` (if any forge defined).
+{py:class}`mass_driver.models.activity.ForgeResult` (if any forge defined) +
+{py:class}`mass_driver.models.activity.ScanResult` (if any scans defined).
 
 ## Available drivers
 (available-drivers)=
