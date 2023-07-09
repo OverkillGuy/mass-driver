@@ -1,0 +1,10 @@
+# Changes here will be overwritten by Copier; NEVER EDIT MANUALLY
+_commit: v1.0.0
+_src_path: /home/jiby/dev/ws/python_template/
+author_email: jb@jiby.tech
+author_name: Jb Doyon
+description: Send bulk repo change requests
+package_name: mass_driver
+project_name: Mass Driver
+project_slug: mass-driver
+python_version: '3.11'
