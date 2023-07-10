@@ -34,8 +34,8 @@ extensions = [
     "sphinx.ext.autosectionlabel",
     "sphinx.ext.viewcode",
     "sphinx_jinja",
-    "autoapi.extension",
     "myst_parser",
+    "autodoc2",
     "sphinxcontrib.programoutput",
 ]
 
@@ -61,17 +61,29 @@ html_theme = "sphinx_rtd_theme"
 html_static_path = ["_static"]
 
 
-autoapi_type = "python"
-autoapi_dirs = ["../../src"]
-
-# Do not hijack toctree to add entry
-autoapi_add_toctree_entry = False
-
-# Make sure the target is unique
-autosectionlabel_prefix_document = True
+autodoc2_packages = [
+    "../../src/mass_driver",
+]
+# Enable all docstrings as Myst Markdown
+autodoc2_docstring_parser_regexes = [
+    (r".*", "myst"),
+]
 
 myst_heading_anchors = 2
 myst_enable_extensions = ["substitution", "colon_fence"]
+
+
+# https://myst-parser.readthedocs.io/en/latest/syntax/cross-referencing.html#customising-external-url-resolution
+myst_url_schemes = {
+    "http": None,
+    "https": None,
+    "rfc": "https://datatracker.ietf.org/doc/html/rfc{{path}}"
+    # "gh-issue": {
+    #     "url": "https://github.com/executablebooks/MyST-Parser/issue/{{path}}#{{fragment}}",
+    #     "title": "Issue #{{path}}",
+    #     "classes": ["github"],
+    # },
+}
 
 # man_pages = [
 #     # ("manpage", "mass-driver", "Send pull-requests to many repos, monitor PRs adoption", author, "1")
@@ -84,16 +96,17 @@ from mass_driver.discovery import discover_drivers
 discovered_drivers = discover_drivers()
 drivers = {}
 for driver in discovered_drivers:
-    drivers[driver.name] = {"name": driver.name,
-                            "module": driver.module,
-                            "class_name": driver.attr,
-                            # "class": driver_class,
-                            }
+    drivers[driver.name] = {
+        "name": driver.name,
+        "module": driver.module,
+        "class_name": driver.attr,
+        # "class": driver_class,
+    }
 
 jinja_contexts = {
-    'drivers': {"drivers": drivers},
+    "drivers": {"drivers": drivers},
 }
 
 jinja_env_kwargs = {
-    'trim_blocks': True,
+    "trim_blocks": True,
 }

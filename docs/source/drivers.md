@@ -4,7 +4,6 @@ Below are listed the Patch Drivers (shortened to "drivers") available at time of
 docs generation. Note that drivers are expected to be coming from third parties,
 and are exposed as "plugins" (also known as python package entry_points).
 
-
 ## Making your own driver
 
 The simplest way to make something custom is to reconfigure an existing Driver.
@@ -85,6 +84,7 @@ We've set up some unit-level tests for PatchDriver, to be able to validate offli
 These tests focus on individual file transformation, which is a very common usecase.
 
 Here's the layout of the `tests/` folder we'll be using:
+
 ```
 ├── test_counterdriver
 │   ├── count_to_1
@@ -126,8 +126,8 @@ prepackaged way, returning just
 {py:class}`mass_driver.models.activity.ScanResult` (if any scans defined).
 
 ## Available drivers
-(available-drivers)=
 
+(available-drivers)=
 
 We've packaged separately some drivers in
 [mass-driver-plugins](https://github.com/OverkillGuy/mass-driver-plugins), have

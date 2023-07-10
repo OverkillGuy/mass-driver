@@ -1,0 +1,5 @@
+---
+MD024:
+  # Allow duplicate heading names under different parent headings (doesn't
+  # complain about multiple "Added" headings in changelog, for example)
+  allow_different_nesting: true

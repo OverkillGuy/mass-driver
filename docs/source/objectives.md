@@ -34,5 +34,6 @@ language: gherkin
 language: gherkin
 ---
 ```
+
 This is the dream of {py:obj}`~mass_driver.models.source.Source` plugins, as
 described in [Sources](./sources)

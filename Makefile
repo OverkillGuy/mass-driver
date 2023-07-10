@@ -19,7 +19,7 @@ lint:  # Use all linters on all files (not just staged for commit)
 
 .PHONY: test
 test:
-	poetry run pytest -vv
+	poetry run pytest
 
 # ACTION=--really-commit-changes
 ACTION=--dry-run
@@ -49,13 +49,13 @@ docs-serve:
 
 .PHONY: build
 build:
-	poetry build -f wheel
+	poetry build
 
 .PHONY: docker-build-release
 docker-build-release:
 	docker build \
 		-t "${DOCKER_IMAGE_NAME}:${APP_VERSION}" \
-		-f Dockerfile.release \
+		-f release.Dockerfile \
 		.
 
 .PHONY: docker-build-dev
@@ -72,7 +72,7 @@ release:
 # Set the new version Makefile variable after the version bump
 	$(eval NEW_VERSION := $(shell poetry version --short ${BUMP}))
 	sed -i \
-		"s/\(## \[Unreleased\]\)/\1\n\n\n## v${NEW_VERSION} - $(shell date -I)/" \
+		"s/\(## \[Unreleased\]\)/\1\n\n## v${NEW_VERSION} - $(shell date -I)/" \
 		CHANGELOG.md
 	git add CHANGELOG.md pyproject.toml
 	git commit -m "Bump to version v${NEW_VERSION}"

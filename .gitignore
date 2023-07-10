@@ -1,6 +1,9 @@
 # Mass-driver tool uses this path to store/cache data
 .mass_driver/
 
+docs/source/apidocs/
+
+
 # Poetry.lock is an exact version pinning tool (down to SHA256 of libs)
 # If writing a (reusable) library, exact versions don't matter that much so it
 # may make sense to gitignore that file, uncommenting the following line:

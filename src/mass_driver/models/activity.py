@@ -3,9 +3,8 @@
 Encompasses both Migrations and Forge activities.
 """
 
-from tomllib import loads
-
 from pydantic import BaseModel
+from tomllib import loads
 
 from mass_driver.discovery import get_scanners
 from mass_driver.models.forge import PRResult

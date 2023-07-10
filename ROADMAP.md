@@ -20,9 +20,10 @@ Before anything, polish the usecase of one-shot PR generation as CLI.
     scan_uid... (repo-specific can get auto-scanned)
 
 - Better CLI output for summarizing the conclusion of an activity
-- Create cookiecutter template (including tests) for each plugin type
+- Create template (including tests) for each plugin type
 
-- Publish JSON Schema of the `Activity` model, to enable validation/IDE completion
+- Publish JSON Schema of the `Activity` model, to enable validation/IDE
+  completion
 
 ## Persistence
 
@@ -42,7 +43,6 @@ a long-running service with an API, so that migrations/forge can be triggered
 from HTTP.
 
 Note that presence of API should NOT prevent the CLI from being used still.
-
 
 ## Web view?
 
@@ -74,5 +74,5 @@ when my Dockerfile's `FROM` gets an update").
 
 Configurable delay ("Weekly PRs for pypi, immediate for Dockerfile").
 
-I think of this a lot like [pre-commit](https://pre-commit.com), with a dev-defined per-repo list
-of subscriptions that need to be kept up to date.
+I think of this a lot like [pre-commit](https://pre-commit.com), with a
+dev-defined per-repo list of subscriptions that need to be kept up to date.

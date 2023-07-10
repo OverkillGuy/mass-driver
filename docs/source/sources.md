@@ -16,6 +16,7 @@ First, we import relevant bits:
 ```python
 from mass_driver.models.repository import IndexedRepos, Repo, RepoUrl, Source
 ```
+
 Remembering that:
 
 ```python
@@ -31,9 +32,9 @@ pyobject: RepolistSource
 ```
 
 This class, taking a parameter `repos`, generates
-{py:obj}`~mass_driver.models.repository.Repo` objects when calling {py:meth}`~mass_driver.models.repository.Source.discover`, as a
-dictionary indexed by {py:obj}`~mass_driver.models.repository.RepoID` (basically a
-string).
+{py:obj}`~mass_driver.models.repository.Repo` objects when calling
+{py:meth}`~mass_driver.models.repository.Source.discover`, as a dictionary
+indexed by {py:obj}`~mass_driver.models.repository.RepoID` (basically a string).
 
 The only constraint on {py:obj}`~mass_driver.models.repository.RepoID` (type
 being an alias of `str`) is that the string key is unique, so in this case we
@@ -52,10 +53,11 @@ types never print their content when represented as string, requiring a call to
 `my_secret_field.get_secret_value()` to actually disclose the secret.
 :::
 
-Note the `patch_data` field of {py:obj}`~mass_driver.models.repository.Repo`, unused in this sample Source, is an
-arbitrary dictionary under the {py:obj}`~mass_driver.models.repository.Source`'s control, perfect to provide per-repo
-data extracted from the source that will be relevant to make migration against;
-For instance the file name to fix from some reporting tool...
+Note the `patch_data` field of {py:obj}`~mass_driver.models.repository.Repo`,
+unused in this sample Source, is an arbitrary dictionary under the
+{py:obj}`~mass_driver.models.repository.Source`'s control, perfect to provide
+per-repo data extracted from the source that will be relevant to make migration
+against; For instance the file name to fix from some reporting tool...
 
 To package this plugin for running it, we add it to the `pyproject.toml`
 plugins:
@@ -82,7 +84,6 @@ own.
 This is because Sources are usually API calls of sorts, which are hard to test
 for, because of the requirement to mock API calls, and the lack of realism this
 provides.
-
 
 ```{warning}
 The Source subsystem, compared to other mass-driver plugins, bubbles up exceptions to the root, aborting any ongoing activity if left unchecked.

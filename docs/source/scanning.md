@@ -7,7 +7,6 @@ to finding patterns in repositories before any change can happen.
 Let's see how mass-driver scans enable exploration of our repositories by
 writing simple python functions, reusable as plugins.
 
-
 ## Using mass-driver to scan
 
 ```{include} ../../README.md
@@ -21,11 +20,14 @@ end-before: "## Development"
 Scanners are mass-driver plugins that map to functions. Let's create one.
 
 First some imports:
+
 ```python
 from pathlib import Path
 from typing import Any
 ```
+
 Then the function:
+
 ```{literalinclude} ../../src/mass_driver/scanners/basic_scanners.py
 ---
 language: python
@@ -52,25 +54,26 @@ dockerfile-from = 'my_lovely_package.dockerfile:dockerfile_from_scanner'
 
 Prove it is available via `mass-driver scanners`:
 
-```
+```none
 Available scanners:
 root-files
 dockerfile-from
 ```
 
-And now we can define an activity file with our scanner toggled on, possibly as part of other scanners.
+And now we can define an activity file with our scanner toggled on, possibly as
+part of other scanners.
 
 ```toml
 # dockerfile_scan.toml
 [mass-driver.scan]
 scanner_names = ["dockerfile-from", "root-files"]
 ```
+
 Now let's generate the scan reports:
 
 ```shell
 mass-driver run dockerfile_scan.toml --repo-filelist repos.txt
 ```
-
 
 ### Testing the scanner
 
@@ -81,7 +84,7 @@ trivial matter.
 So let's start by writing a new empty file `tests/test_scanner.py`, and a folder
 structure like this:
 
-```
+```none
 tests/
 ├── test_scanner/
 │   ├── dockerfile/
@@ -110,7 +113,7 @@ language: python
 Note how the test relies on the `massdrive_scan_check` fixture to run scan
 against specific folder. This wraps around the `massdrive` fixture.
 
-
 ```{note}
-The scanner subsystem will swallow exceptions, using the `scannerror` key to define two things: `exception: str`, and `backtrace: list[str]`.
+The scanner subsystem will swallow exceptions, using the `scannerror`
+key to define two things: `exception: str`, and `backtrace: list[str]`.
 ```

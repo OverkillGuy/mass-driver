@@ -99,7 +99,7 @@ class GithubAppForge(GithubBaseForge):
         auth = AppAuthentication(
             app_id=self.app_id.get_secret_value(),
             private_key=self.app_private_key.get_secret_value(),
-            installation_id=self.app_installation_id.get_secret_value(),
+            installation_id=self.app_installation_id,
         )
         self._github_api = Github(app_auth=auth)
 

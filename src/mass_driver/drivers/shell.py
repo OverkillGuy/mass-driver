@@ -10,16 +10,15 @@ from mass_driver.models.repository import ClonedRepo
 
 @dataclass
 class ShellDriver(PatchDriver):
-    """
-    Run a generic shell command
+    """Run a generic shell command
 
     For instance, the following is a valid "sed" invocation:
 
-    .. code:: python
+    ```python
+    ShellDriver(command=["sed", "-i", "s/v0.1.0/v0.2.0/g", "version.txt"])
+    ```
 
-        ShellDriver(command=["sed", "-i", "s/v0.1.0/v0.2.0/g", "version.txt"])
-
-    Note that the process is run inside `subprocess.check_call` (raises CalledProcessError on bad
+    Note that the process is run inside {py:func}`subprocess.check_call` (raises CalledProcessError on bad
     exit code).
     """
 

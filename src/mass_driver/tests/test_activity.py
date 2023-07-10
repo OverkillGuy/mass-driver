@@ -6,6 +6,8 @@ Feature: Unified 'Activities' for separable migration-then-forge
 
 from pathlib import Path
 
+import pytest
+
 from mass_driver.forge_run import PROutcome
 from mass_driver.forges.dummy import DUMMY_PR_URL
 from mass_driver.models.patchdriver import PatchOutcome
@@ -36,6 +38,13 @@ def test_migration_and_forge(tmp_path, shared_datadir, monkeypatch):
     activityconfig_filepath = shared_datadir / "activity.toml"
     # When I run mass-driver
     result = massdrive_runlocal(None, activityconfig_filepath)
+    if result is None:
+        # Note: "return" is to trick mypy to the early-exit of pytest.fail()
+        return pytest.fail("Should have a result")
+    if result.migration_result is None:
+        return pytest.fail("Should have a migration result")
+    if result.forge_result is None:
+        return pytest.fail("Should have a migration result")
     migration_result, forge_result = (
         result.migration_result[repo_id],
         result.forge_result[repo_id],
