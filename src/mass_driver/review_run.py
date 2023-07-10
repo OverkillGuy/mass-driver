@@ -48,20 +48,24 @@ def review(pr_list: list[str]):
         pr_details[pr_url]["draft"] = pr.draft
         # pr_details["statuses_head"] = pr.get_commits()[pr.commits-1]. if pr_detail["merged"]
 
-    merged = [pr_url for pr_url, pr_detail in pr_details.items() if pr_detail["merged"]]
+    merged = sorted(
+        [pr_url for pr_url, pr_detail in pr_details.items() if pr_detail["merged"]]
+    )
     count_merged = len(merged)
-    closed = [
-        pr_url
-        for pr_url, pr_detail in pr_details.items()
-        if pr_detail["state"] == "closed"
-    ]
-    closed_not_merged = list(set(closed) - set(merged))
+    closed = sorted(
+        [
+            pr_url
+            for pr_url, pr_detail in pr_details.items()
+            if pr_detail["state"] == "closed"
+        ]
+    )
+    closed_not_merged = sorted(list(set(closed) - set(merged)))
     count_closed = len(closed_not_merged)
-    mergeable = [
-        pr_url for pr_url, pr_detail in pr_details.items() if pr_detail["mergeable"]
-    ]
+    mergeable = sorted(
+        [pr_url for pr_url, pr_detail in pr_details.items() if pr_detail["mergeable"]]
+    )
     count_mergeable = len(mergeable)
-    non_mergeable = set(pr_objs.keys()) - set(closed) - set(mergeable)
+    non_mergeable = sorted(list(set(pr_objs.keys()) - set(closed) - set(mergeable)))
     count_non_mergeable = len(non_mergeable)
 
     print()
