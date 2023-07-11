@@ -119,6 +119,9 @@ def reviewpr_subparser(subparser):
         type=FileType("r"),
         help="File with list of pull requests",
     )
+    run.add_argument(
+        "forge", help="The name of the Forge plugin to use to look up status"
+    )
     run.set_defaults(dry_run=True, func=commands.review_pr_command)
 
 

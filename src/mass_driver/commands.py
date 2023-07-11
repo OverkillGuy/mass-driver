@@ -12,6 +12,7 @@ from mass_driver.discovery import (
     discover_forges,
     discover_sources,
     get_driver_entrypoint,
+    get_forge,
     get_forge_entrypoint,
     get_scanners,
     get_source_entrypoint,
@@ -113,10 +114,13 @@ def scanners_command(args: Namespace):
 def review_pr_command(args: Namespace):
     """Review a list of Pull Requests"""
     print("Pull request review mode!")
+    forge_class = get_forge(args.forge)
+    forge = forge_class()  # Credentials via env
     pr_list = args.pr
     if args.pr_filelist:
         pr_list = args.pr_filelist.read().strip().split("\n")
-    review(pr_list)
+    review(pr_list, forge)
+    return 0
 
 
 # TODO: Make a generic version that isn't forge-specific

@@ -1,6 +1,7 @@
 """Githubas Forge. Using the github lib if available"""
 
 import re
+import sys
 
 from github import AppAuthentication, Github
 from pydantic import SecretStr
@@ -34,7 +35,51 @@ class GithubBaseForge(Forge):
         )
         return pr.html_url
 
-    def get_pr(self, forge_repo: str, pr_id: str):
+    def get_pr_status(self, pr_url: str) -> str:
+        """Get the status of a single given PR, used as key to group PRs by status"""
+        try:
+            owner, repo, pr_num = detect_pr_info(pr_url)
+            owner_repo = f"{owner}/{repo}"
+        except ValueError as e:
+            print(
+                f"Invalid PR URL: {pr_url}",
+                file=sys.stderr,
+            )
+            raise e
+        try:
+            pr_obj = self._get_pr(owner_repo, pr_num)
+        except Exception as e:
+            print(
+                f"Issue when fetching PR info for {repo=}, {pr_num=}. Issue was: {e}",
+                file=sys.stderr,
+            )
+            raise e
+        if pr_obj.merged:
+            return "merged"
+        if pr_obj.state == "closed":
+            return "closed (but not merged)"
+        if pr_obj.mergeable:
+            return "mergeable (no conflicts)"
+        return "non-mergeable (conflicts)"
+
+    @property
+    def pr_statuses(self) -> list[str]:
+        """List possible PR statuses that will be returned by get_pr_status.
+
+        List is sorted from most complete (accepted-and-merged) to least completed (not
+        merged, not review-approved, has merge-conflicts).
+
+        The returned list's ordering is used by the view-pr mass-driver command to show
+        the PRs by status, from most completed to least completed.
+        """
+        return [
+            "merged",
+            "closed (but not merged)",
+            "mergeable (no conflict)",
+            "non-mergeable (conflicts)",
+        ]
+
+    def _get_pr(self, forge_repo: str, pr_id: str):
         """Get the PR by ID on forge_repo"""
         repo = self._github_api.get_repo(forge_repo)
         return repo.get_pull(int(pr_id))
