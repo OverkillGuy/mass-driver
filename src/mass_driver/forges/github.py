@@ -59,7 +59,7 @@ class GithubBaseForge(Forge):
         if pr_obj.state == "closed":
             return "closed (but not merged)"
         if pr_obj.mergeable:
-            return "mergeable (no conflicts)"
+            return "mergeable (no conflict)"
         return "non-mergeable (conflicts)"
 
     @property
