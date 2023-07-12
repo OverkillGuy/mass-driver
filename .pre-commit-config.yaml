@@ -53,14 +53,3 @@ repos:
   hooks:
   - id: markdownlint
     args: ["--fix", "--config", ".markdown-lint.yml"]
-- repo: https://github.com/adrienverge/yamllint.git
-  rev: v1.32.0
-  hooks:
-  - id: yamllint
-    exclude: \.copier.*\.yaml
-    args: [
-      "-d",
-      # Allows both indented and unindented list, as long as the whole document
-      # uses consistent indentation
-      "{extends: default, rules: {indentation: {indent-sequences: consistent}}}"
-    ]
