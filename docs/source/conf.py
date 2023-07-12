@@ -31,7 +31,6 @@ author = "Jb Doyon"
 extensions = [
     "sphinx.ext.autodoc",
     "sphinx.ext.autosummary",
-    "sphinx.ext.autosectionlabel",
     "sphinx.ext.viewcode",
     "sphinx_jinja",
     "myst_parser",
