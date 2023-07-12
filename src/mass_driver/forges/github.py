@@ -1,7 +1,6 @@
 """Githubas Forge. Using the github lib if available"""
 
 import re
-import sys
 
 from github import AppAuthentication, Github
 from pydantic import SecretStr
@@ -37,23 +36,9 @@ class GithubBaseForge(Forge):
 
     def get_pr_status(self, pr_url: str) -> str:
         """Get the status of a single given PR, used as key to group PRs by status"""
-        try:
-            owner, repo, pr_num = detect_pr_info(pr_url)
-            owner_repo = f"{owner}/{repo}"
-        except ValueError as e:
-            print(
-                f"Invalid PR URL: {pr_url}",
-                file=sys.stderr,
-            )
-            raise e
-        try:
-            pr_obj = self._get_pr(owner_repo, pr_num)
-        except Exception as e:
-            print(
-                f"Issue when fetching PR info for {repo=}, {pr_num=}. Issue was: {e}",
-                file=sys.stderr,
-            )
-            raise e
+        owner, repo, pr_num = detect_pr_info(pr_url)
+        owner_repo = f"{owner}/{repo}"
+        pr_obj = self._get_pr(owner_repo, pr_num)
         if pr_obj.merged:
             return "merged"
         if pr_obj.state == "closed":
