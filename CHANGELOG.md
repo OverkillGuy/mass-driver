@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 The project uses semantic versioning (see [semver](https://semver.org)).
 
 ## [Unreleased]
+
+
+## v0.16.0 - 2023-07-13
 Breaking interface of `Forge` to facilitate new `view-pr` feature.
 
 ### Added
