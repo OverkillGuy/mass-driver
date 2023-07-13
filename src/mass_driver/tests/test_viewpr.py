@@ -16,4 +16,4 @@ def test_viewpr(monkeypatch, capsys):
     captured = capsys.readouterr()
     # The 'dummy' forge always sets PRs to 'merged' status
     assert not captured.err, "Shouldn't have gotten any error message"
-    assert "01 merged" in captured.out, "Should have marked the PR as merged"
+    assert "(100.0%) merged" in captured.out, "Should have marked the PR as merged"

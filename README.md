@@ -288,7 +288,11 @@ mass-driver view-pr github --pr-filelist prs.txt
 With sample result:
 
 ```none
-Pull request review mode!
+> Pull request review mode!
+[001/004] Fetching PR status...
+[002/004] Fetching PR status...
+[003/004] Fetching PR status...
+[004/004] Fetching PR status...
 
 Merged:
 https://github.com/OverkillGuy/mass-driver/pull/1
@@ -298,11 +302,9 @@ Closed (but not merged):
 https://github.com/OverkillGuy/mass-driver/pull/2
 https://github.com/OverkillGuy/sphinx-needs-test/pull/2
 
-
-In summary:
-Got 4 unique PRs, of which:
-- 002 merged
-- 002 closed (but not merged)
+In summary: 4 unique PRs, of which...
+- 002 (50.0%) merged
+- 002 (50.0%) closed (but not merged)
 ```
 
 ## Development
