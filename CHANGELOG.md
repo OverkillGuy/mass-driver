@@ -5,10 +5,25 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 The project uses semantic versioning (see [semver](https://semver.org)).
 
 ## [Unreleased]
+Breaking interface of `Forge` to facilitate new `view-pr` feature.
+
+### Added
+- New `view-pr` feature for bulk reviewing the status of PRs that already exist.
+
+### Changed
+- **BREAKING**: New `Forge.get_pr_status()`, required from derived classes,
+  returning a string status, used as key to group PRs together for summary
+  purposes.
+- **BREAKING**: New `Forge.pr_statuses` property, required from derived classes,
+  returning a list of all possible string statuses of `Forge.get_pr_status()`,
+  sorted from most complete (e.g. merged) to least complete (e.g. not merged,
+  has merge-conflicts).
+
+### Removed
+- **BREAKING**: Removed `Forge.get_pr()`, which had unclear return type anyway.
 
 
 ## v0.15.0 - 2023-07-05
-
 
 ### Changed
 Major break of interface: Rework of the cloning system, merges migration/scan

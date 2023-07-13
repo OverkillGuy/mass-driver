@@ -263,7 +263,49 @@ This can be run just like a migration:
 ``` shell
 mass-driver run scan.toml --repo-filelist repos.txt
 ```
+### Reviewing bulk PR status
 
+Have a look at the `view-pr` subcommand for reviewing the status of many PRs at
+once.
+
+It requires specifying a forge like `github`, along with setting any required
+tokens, such as via `FORGE_TOKEN` envvar for `github` forge.
+
+``` shell
+export FORGE_TOKEN=xyz
+mass-driver view-pr github \
+    --pr \
+    https://github.com/OverkillGuy/mass-driver/pull/1 https://github.com/OverkillGuy/mass-driver/pull/2
+# Can specify multiple PRs as a args list
+```
+Equivalently via a file full of newline-delimited PR URLs
+
+``` shell
+export FORGE_TOKEN=xyz
+mass-driver view-pr github --pr-filelist prs.txt
+```
+
+With sample result:
+
+```none
+> Pull request review mode!
+[001/004] Fetching PR status...
+[002/004] Fetching PR status...
+[003/004] Fetching PR status...
+[004/004] Fetching PR status...
+
+Merged:
+https://github.com/OverkillGuy/mass-driver/pull/1
+https://github.com/OverkillGuy/sphinx-needs-test/pull/1
+
+Closed (but not merged):
+https://github.com/OverkillGuy/mass-driver/pull/2
+https://github.com/OverkillGuy/sphinx-needs-test/pull/2
+
+In summary: 4 unique PRs, of which...
+- 002 (50.0%) merged
+- 002 (50.0%) closed (but not merged)
+```
 
 ## Development
 

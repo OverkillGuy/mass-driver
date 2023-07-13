@@ -6,6 +6,13 @@ from pydantic import BaseModel, BaseSettings
 
 from mass_driver.models.repository import BranchName
 
+PRStatus = dict[str, bool]
+"""The status of a specific PR, as series of flags and bool-predicate.
+
+Keys must be sorted (inserted) from most PR-completed (PR is merged/closed) to least
+completed (unreviewed, draft, review-rejected, merge conflicts...)
+"""
+
 
 class Forge(BaseSettings):
     """Base class for git Forges like Github"""
@@ -18,13 +25,25 @@ class Forge(BaseSettings):
         pr_title: str,
         pr_body: str,
         draft: bool,
-    ):
-        """Send a PR, with msg body, to forge_repo for given branch of repo_path"""
-        pass
+    ) -> str:
+        """Send a PR to forge_repo for given branch of repo_path. Returns PR HTML URL"""
+        raise NotImplementedError("Forge base class can't create PR, use derived")
 
-    def get_pr(self, forge_repo: str, pr_id: str):
-        """Send a PR with msg on upstream of repo at repo_path, for given branch"""
-        raise NotImplementedError("Forge base class can't get PR, use derived")
+    def get_pr_status(self, pr: str) -> str:
+        """Get the status of a single given PR, used as key to group PRs by status"""
+        raise NotImplementedError("Forge base class can't get PR status, use derived")
+
+    @property
+    def pr_statuses(self) -> list[str]:
+        """A list of possible PR statuses that will be returned by get_pr_status.
+
+        List is sorted from most complete (accepted-and-merged) to least completed (not
+        merged, not review-approved, has merge-conflicts).
+
+        The returned list's ordering is used by the view-pr mass-driver command to show
+        the PRs by status, from most completed to least completed.
+        """
+        raise NotImplementedError("Forge base class can't list PR status, use derived")
 
     class Config:
         """Configuration of the Forge class"""

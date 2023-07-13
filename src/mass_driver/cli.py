@@ -102,6 +102,29 @@ def scanners_subparser(subparser):
     scan.set_defaults(func=commands.scanners_command)
 
 
+def reviewpr_subparser(subparser):
+    """Inject the view PR subparser"""
+    run = subparser.add_parser(
+        "view-pr",
+        help="Check status of given pull requests",
+    )
+    prlist_group = run.add_mutually_exclusive_group(required=True)
+    prlist_group.add_argument(
+        "--pr",
+        nargs="*",
+        help="One or more pull requests to review",
+    )
+    prlist_group.add_argument(
+        "--pr-filelist",
+        type=FileType("r"),
+        help="File with list of pull requests",
+    )
+    run.add_argument(
+        "forge", help="The name of the Forge plugin to use to look up status"
+    )
+    run.set_defaults(dry_run=True, func=commands.review_pr_command)
+
+
 def subparsers(parser: ArgumentParser) -> ArgumentParser:
     """Add the subparsers for all commands"""
     subparser = parser.add_subparsers(dest="cmd", title="Commands")
@@ -111,6 +134,7 @@ def subparsers(parser: ArgumentParser) -> ArgumentParser:
     plugin_subparser(subparser, "source", commands.sources_command)
     run_subparser(subparser)
     scanners_subparser(subparser)
+    reviewpr_subparser(subparser)
     return parser
 
 
