@@ -6,6 +6,9 @@ The project uses semantic versioning (see [semver](https://semver.org)).
 
 ## [Unreleased]
 
+
+## v0.16.1 - 2023-07-15
+
 ### Fixed
 - Formatting of the % of PR per status back to 2 digits precision not 11.
 
