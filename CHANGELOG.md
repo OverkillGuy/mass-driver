@@ -6,6 +6,9 @@ The project uses semantic versioning (see [semver](https://semver.org)).
 
 ## [Unreleased]
 
+### Fixed
+- Formatting of the % of PR per status back to 2 digits precision not 11.
+
 
 ## v0.16.0 - 2023-07-13
 Breaking interface of `Forge` to facilitate new `view-pr` feature.

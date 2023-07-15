@@ -52,7 +52,7 @@ def review(pr_list: list[str], forge: Forge):
     for status_name, status_count in count_by_status.items():
         if status_count:
             status_percent = (float(status_count) / pr_count) * 100
-            print(f"- {status_count:03} ({status_percent:04}%) {status_name}")
+            print(f"- {status_count:03} ({status_percent:04.2f}%) {status_name}")
     prlist_by_status = defaultdict(list)
     for pr_url, pr_state in pr_status.items():
         prlist_by_status[pr_state].append(pr_url)
