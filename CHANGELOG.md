@@ -6,6 +6,9 @@ The project uses semantic versioning (see [semver](https://semver.org)).
 
 ## [Unreleased]
 
+### Fixed
+- `github-app` forge no longer crashes due to type confusion on a param.
+
 
 ## v0.16.1 - 2023-07-15
 
