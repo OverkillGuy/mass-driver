@@ -75,7 +75,7 @@ Now let's generate the scan reports:
 mass-driver run dockerfile_scan.toml --repo-filelist repos.txt
 ```
 
-### Testing the scanner
+## Testing the scanner
 
 Before running it across many many repos, let's test it with sample data. For
 this, we have a couple handy test fixtures available that turn testing into a

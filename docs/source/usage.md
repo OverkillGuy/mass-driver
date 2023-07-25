@@ -4,8 +4,8 @@
 
 ```{include} ../../README.md
 ---
-start-after: "### Installation"
-end-before: "### Running the tool"
+start-after: "## Installation"
+end-before: "## Running the tool"
 ---
 ```
 
@@ -13,8 +13,8 @@ end-before: "### Running the tool"
 
 ```{include} ../../README.md
 ---
-start-after: "### Running the tool"
-end-before: "### Preparing a change"
+start-after: "## Running the tool"
+end-before: "## Preparing a change"
 ---
 ```
 
@@ -33,7 +33,7 @@ And about running the actual mass driver run-command `mass-driver run --help`:
 
 ```{include} ../../README.md
 ---
-start-after: "### Preparing a change"
+start-after: "## Preparing a change"
 end-before: "## Development"
 ---
 ```

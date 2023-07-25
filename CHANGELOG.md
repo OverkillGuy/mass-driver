@@ -5,20 +5,22 @@ The project uses semantic versioning (see [semver](https://semver.org)).
 
 ## [Unreleased]
 
-
 ## v0.16.1 - 2023-07-15
 
 ### Fixed
+
 - Formatting of the % of PR per status back to 2 digits precision not 11.
 
-
 ## v0.16.0 - 2023-07-13
+
 Breaking interface of `Forge` to facilitate new `view-pr` feature.
 
 ### Added
+
 - New `view-pr` feature for bulk reviewing the status of PRs that already exist.
 
 ### Changed
+
 - **BREAKING**: New `Forge.get_pr_status()`, required from derived classes,
   returning a string status, used as key to group PRs together for summary
   purposes.
@@ -28,8 +30,8 @@ Breaking interface of `Forge` to facilitate new `view-pr` feature.
   has merge-conflicts).
 
 ### Removed
-- **BREAKING**: Removed `Forge.get_pr()`, which had unclear return type anyway.
 
+- **BREAKING**: Removed `Forge.get_pr()`, which had unclear return type anyway.
 
 ## v0.15.0 - 2023-07-05
 

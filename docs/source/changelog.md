@@ -7,7 +7,7 @@ root of the code repository.
 
 ```{include} ../../CHANGELOG.md
 ---
-start-after: "# Changelog for Mass Driver"
+start-line: 2
 end-before: "## [Unreleased]"
 ```
 

@@ -1,12 +1,14 @@
 # Sources
 
+## Discovering repos using a Source
+
 ```{include} ../../README.md
 ---
-start-after: "<!-- source-activity -->"
-end-before: "### Using the scanners"
+start-after: "## Discovering repos using a Source"
+end-before: "## Using the scanners"
 ```
 
-### Creating a Source
+## Creating a Source
 
 Sources are mass-driver plugins that map to
 {py:obj}`mass_driver.models.repository.Source`. Let's create one.
@@ -76,7 +78,7 @@ Prove it is available via `mass-driver sources`:
 For a more elaborate Source, take a look at the `pyGithub`-enabled {py:obj}`~mass_driver.sources.github_source.GithubPersonalSource`, using inheritance to enable two auth methods for `pyGithub`, using envvars for secret tokens.
 ```
 
-### Testing a Source
+## Testing a Source
 
 There is no particular way to test a `Source` other than using `pytest` on your
 own.

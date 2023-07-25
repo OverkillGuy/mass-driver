@@ -10,49 +10,58 @@ This repository is on Github:
 
 Requires Python 3.11.
 
-## Usage
-
 See also the docs at [jiby.tech/mass-driver/](https://jiby.tech/mass-driver/)
 
-### Installation
+## Installation
 
 Install the package:
 
-    pip install mass-driver
+```none
+pip install mass-driver
+```
 
 We recommend you install CLIs via [pipx](https://pypa.github.io/pipx/), for
 dependency isolation:
 
-    pipx install mass-driver
+```none
+pipx install mass-driver
+```
 
 If you want to install from a git branch rather than Pypi:
 
-    pipx install https://github.com/OverkillGuy/mass-driver
-    # See pipx docs: https://pypa.github.io/pipx/#running-from-source-control
+```none
+pipx install https://github.com/OverkillGuy/mass-driver
+```
 
-### Running the tool
+See pipx docs: <https://pypa.github.io/pipx/#running-from-source-control>
+
+## Running the tool
 
 Use the help menu to start with:
 
-    mass-driver --help
+```none
+mass-driver --help
+```
 
-### Preparing a change
+## Preparing a change
 
 Let's prepare for doing a change over dozens of repositories. We'll need to find
 a `PatchDriver` that suits our needs, and configure it accordingly.
 
 List available `PatchDriver`s via:
 
-    mass-driver drivers --list
-    # The docs for a single driver:
-    mass-driver driver --info counter
+```none
+mass-driver drivers --list
+# The docs for a single driver:
+mass-driver driver --info counter
+```
 
 Remember, `PatchDriver`s are exposed via a python plugin system, which means
 anyone can package their own!
 
 Once you've got a driver, you should create a Migration file, in TOML:
 
-``` toml
+```toml
 # Saved as "fix_teamname.toml"
 [mass-driver.migration]
 # As seen in 'git log':
@@ -83,13 +92,13 @@ driver_config = { filename = "catalog.yaml", team_name = "Core Team" }
 With this file named `fix_teamname.toml` in hand, we can apply the change
 locally, either against a local repo we've already cloned:
 
-``` shell
+```shell
 mass-driver run fix_teamname.toml --repo-path ~/workspace/my-repo/
 ```
 
 Or against a repo being cloned from URL:
 
-``` shell
+```shell
 mass-driver run fix_teamname.toml --repo-path 'git@github.com:OverkillGuy/sphinx-needs-test.git'
 ```
 
@@ -99,7 +108,7 @@ We should expect a branch named `fix-team-name` with a single commit.
 To apply the change over a list of repositories, create a file with relevant
 repos:
 
-``` shell
+```shell
 cat <<EOF > repos.txt
 git@github.com:OverkillGuy/sphinx-needs-test.git
 git@github.com:OverkillGuy/speeders.git
@@ -108,7 +117,7 @@ EOF
 mass-driver run fix_teamname.toml --repo-filelist repos.txt
 ```
 
-### Creating PRs
+## Creating PRs
 
 Once the commits are done locally, let's send them up as PR a second step. For
 this, we'll be creating a second activity file containing a Forge definition.
@@ -154,7 +163,7 @@ export FORGE_TOKEN="ghp_supersecrettoken"
 mass-driver run fix_teamname_forge.toml --repo-filelist repos.txt
 ```
 
-### Combining migration then forge
+## Combining migration then forge
 
 Sometimes, we wish to expedite both the committing and the PR creation in a
 single move.
@@ -207,8 +216,8 @@ See JIRA-123[1].
 git_push_first = true
 
 ```
-<!-- source-activity -->
-### Discovering repos using a Source
+
+## Discovering repos using a Source
 
 Sometimes, the repos we want to apply patches to is a dynamic thing, coming from
 tooling, like a Github repository search, some compliance tool report, service
@@ -251,7 +260,7 @@ As a `Source` developer, though, you should really look into usage of
 stored. See [Pydantic docs on Secret
 fields](https://docs.pydantic.dev/1.10/usage/types/#secret-types).
 
-### Using the scanners
+## Using the scanners
 
 Before doing any actual migration, we might want to explore existing
 repositories to see what kind of change is required.
@@ -274,7 +283,8 @@ This can be run just like a migration:
 ``` shell
 mass-driver run scan.toml --repo-filelist repos.txt
 ```
-### Reviewing bulk PR status
+
+## Reviewing bulk PR status
 
 Have a look at the `view-pr` subcommand for reviewing the status of many PRs at
 once.
@@ -289,6 +299,7 @@ mass-driver view-pr github \
     https://github.com/OverkillGuy/mass-driver/pull/1 https://github.com/OverkillGuy/mass-driver/pull/2
 # Can specify multiple PRs as a args list
 ```
+
 Equivalently via a file full of newline-delimited PR URLs
 
 ``` shell

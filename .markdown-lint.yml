@@ -1,5 +1,14 @@
 ---
+# Disable line-length checking
+MD013: false
+
+# MD024/no-duplicate-heading/no-duplicate-header - Multiple headings with the same content
 MD024:
   # Allow duplicate heading names under different parent headings (doesn't
   # complain about multiple "Added" headings in changelog, for example)
   allow_different_nesting: true
+
+# MD046/code-block-style - Code block style
+MD046:
+  # Block style
+  style: "fenced"
