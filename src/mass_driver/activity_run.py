@@ -105,8 +105,6 @@ def migrate_repo(
     migration: MigrationLoaded,
 ) -> tuple[PatchResult, Exception | None]:
     """Process a repo with Mass Driver"""
-    # FIXME: IndexedRepos is map of Repo not ClonedRepos, causing chaos
-    # Solution is to move cloning to pre-migration(?) and keep ClonedRepo maps everywhere?
     try:
         result = migration.driver.run(cloned_repo)
     except Exception as e:

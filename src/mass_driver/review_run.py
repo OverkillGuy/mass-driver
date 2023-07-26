@@ -4,8 +4,6 @@ from collections import defaultdict
 
 from mass_driver.models.forge import Forge
 
-# TODO: Expand this for more than one Forge (Forge-specific PR status)
-
 ERROR_STATUS = "error fetching status"
 
 

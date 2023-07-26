@@ -1,8 +1,6 @@
 """Command line entrypoint for mass-driver"""
 import sys
 from argparse import ArgumentParser, FileType
-
-# TODO: Check obsoleted-ness of Callable? See collections.abc.Callable?
 from typing import Callable
 
 from mass_driver import commands

@@ -15,9 +15,7 @@ def clone_if_remote(repo_path: str, cache_folder: Path) -> GitRepo:
     if Path(repo_path).is_dir():
         print("Given an existing (local) repo: no cloning")
         # Clone it into cache anyway
-        return GitRepo(
-            path=repo_path
-        )  # FIXME: Actually clone-move the repo on the way.
+        return GitRepo(path=repo_path)  # TODO: Actually clone-move the repo on the way.
     # SSH clone URL e.g: git@github.com:OverkillGuy/python-template
     if ":" in repo_path:  # Presence of : is proxy for SSH clone URL
         *_junk, repo_blurb = repo_path.split(":")

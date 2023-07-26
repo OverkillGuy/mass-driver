@@ -45,7 +45,6 @@ class ActivityFile(BaseModel):
     scan: ScanFile | None = None
     migration: MigrationFile | None = None
     forge: ForgeFile | None = None
-    # TODO: Add RepoSource here
 
 
 class ActivityLoaded(BaseModel):

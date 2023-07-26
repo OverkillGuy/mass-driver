@@ -58,7 +58,7 @@ def process_repo(
     except ValueError:
         if not config.git_push_first:
             # No remote exists for repo and we didn't wanna push anyway
-            # FIXME: What to do with local URLs like in tests?
+            # TODO: What to do with local URLs like in tests?
             forge_remote_url = (
                 f"unix://{repo_path}"  # Pretending to have one and move on for tests
             )
