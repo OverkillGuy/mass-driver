@@ -1,6 +1,6 @@
 """The different main commands of the mass-driver tool"""
 
-import sys
+import logging
 from argparse import Namespace
 from typing import Callable, Optional
 
@@ -47,27 +47,27 @@ def plugins_command(
         target_plugin = args.info
         try:
             plugin_obj = entrypoint(target_plugin)
-            print(
+            logging.info(
                 f"Plugin name: {plugin_obj.name}; Import path: "
                 f"{plugin_obj.module}; Class: {plugin_obj.attr}"
             )
-            print(plugin_obj.load().__doc__)
+            logging.info(plugin_obj.load().__doc__)
             return
         except ImportError as e:
-            print(str(e), file=sys.stderr)
-            print(f"Try `mass driver {plugin}s --list`", file=sys.stderr)
+            logging.error("Error importing plugin", exc_info=e)
+            logging.error(f"Try `mass driver {plugin}s --list`")
             return
     # if args.list:  # Implicit
     plugins = discover()
-    print(f"Available {plugin}s:")
+    logging.info(f"Available {plugin}s:")
     for plugin_obj in plugins:
-        print(plugin_obj.name)
+        logging.info(plugin_obj.name)
     return True
 
 
 def run_command(args: Namespace) -> ActivityOutcome:
     """Process the CLI for 'run'"""
-    print("Run mode!")
+    logging.info("Run mode!")
     activity_str = args.activity_file.read()
     try:
         activity = ActivityLoaded.from_config(activity_str)
@@ -79,7 +79,7 @@ def run_command(args: Namespace) -> ActivityOutcome:
     if repos_sourced is None:  # No repo-list from CLI flags: call Source
         repos_sourced = source_config.source.discover()
     if activity.migration is None and activity.scan is None:
-        print("No migration/scan section: skipping")
+        logging.info("No migration/scan section: skipping")
         run_result = ActivityOutcome(repos_sourced=repos_sourced)
     else:
         run_result = run(
@@ -87,15 +87,15 @@ def run_command(args: Namespace) -> ActivityOutcome:
             repos_sourced,
             not args.no_cache,
         )
-    print("Main phase complete!")
+    logging.info("Main phase complete!")
     if activity.forge is None:
         # Nothing else to do, just print completion and exit
-        print("No Forge available: end")
+        logging.info("No Forge available: end")
         maybe_save_outcome(args, run_result)
         return run_result
     # Now guaranteed to have a Forge: pause + forge
     if not args.no_pause:
-        print("Review the commits now.")
+        logging.info("Review the commits now.")
         pause_until_ok("Type y/yes/continue to run the Forge\n")
     forge_result = forge_main(activity.forge, run_result)
     maybe_save_outcome(args, forge_result)
@@ -104,16 +104,16 @@ def run_command(args: Namespace) -> ActivityOutcome:
 
 def scanners_command(args: Namespace):
     """Process the CLI for 'scan'"""
-    print("Available scanners:")
+    logging.info("Available scanners:")
     scanners = get_scanners()
     for scanner in scanners:
-        print(scanner.name)
+        logging.info(scanner.name)
     return True
 
 
 def review_pr_command(args: Namespace):
     """Review a list of Pull Requests"""
-    print("Pull request review mode!")
+    logging.info("Pull request review mode!")
     forge_class = get_forge(args.forge)
     forge = forge_class()  # Credentials via env
     pr_list = args.pr
@@ -130,22 +130,18 @@ def config_error_exit(e: ValidationError):
         # Assume the class failing validation has env prefix
         env_prefix = model_class.Config.env_prefix
     except Exception:
-        print("Missing config:", e.errors(), file=sys.stderr)
+        logging.error("Missing config", exc_info=e)
         raise
     # We have a valid env_prefix now, use it to show missing envvar
     model_class_name = model_class.__name__
     for error in e.errors():
         if error["type"] == "value_error.missing":
             envvars = [env_prefix + var.upper() for var in error["loc"]]
-            print(
-                f"Missing {model_class_name} config: Set envvar(s) {', '.join(envvars)}",
-                file=sys.stderr,
+            logging.error(
+                f"Missing {model_class_name} config: Set envvar(s) {', '.join(envvars)}"
             )
         else:
-            print(
-                f"{model_class_name} config validation error: {error}",
-                file=sys.stderr,
-            )
+            logging.error(f"{model_class_name} config validation error: {error}")
     raise e  # exit code = Simulate the argparse behaviour of exiting on bad args
 
 
@@ -173,7 +169,7 @@ def maybe_save_outcome(args: Namespace, outcome: ActivityOutcome):
     if not args.json_outfile:
         return
     save_outcome(outcome, args.json_outfile)
-    print("Saved outcome to given JSON file")
+    logging.info("Saved outcome to given JSON file")
 
 
 def save_outcome(outcome: ActivityOutcome, out_file):

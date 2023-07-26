@@ -1,6 +1,6 @@
 """PatchDriver base object definition"""
-
 from enum import Enum
+from logging import Logger
 
 from pydantic import BaseModel
 
@@ -32,9 +32,23 @@ class PatchResult(BaseModel):
 class PatchDriver(BaseModel):
     """Base class for creating patches over repositories"""
 
+    _logger: Logger
+    """The logger object for this driver. Given dynamically by migration"""
+
     def run(self, repo: ClonedRepo) -> PatchResult:
         """Apply the update to given (cloned) Git Repository.
 
         Return the outcome of patching for this repository.
         """
         raise NotImplementedError("PatchDriver base class can't run, use derived")
+
+    @property
+    def logger(self):
+        """Grab the logger of this driver, as passed dynamically via mass-driver code"""
+        return self._logger
+
+    class Config:
+        """Pydantic config of the PatchDriver class"""
+
+        underscore_attrs_are_private = True
+        """Ensure we can set internal non-serializeable fields via underscore"""

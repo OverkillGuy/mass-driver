@@ -3,7 +3,6 @@
 Simplest code we could implement that demonstrates PatchDriver capabilities.
 """
 
-
 from mass_driver.models.patchdriver import PatchDriver, PatchOutcome, PatchResult
 from mass_driver.models.repository import ClonedRepo
 
@@ -30,7 +29,7 @@ class Counter(PatchDriver):
             )
         counter_number = int(counter_content)
         counter_is_different = counter_number != self.target_count
-        print(
+        self.logger.info(
             f"Measured: {counter_number}, target: {self.target_count}. Different? {counter_is_different}"
         )
         if counter_is_different:

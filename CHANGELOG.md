@@ -5,10 +5,18 @@ The project uses semantic versioning (see [semver](https://semver.org)).
 
 ## [Unreleased]
 
+### Added
+- `PatchDriver` now allows a `logger` field for customized logging
+- Migration run func sets `Patchdriver.logger` name: `driver.<plugin-name>`
+
+### Changed
+- Replaced all `print()` calls to `logging`
+
 ### Fixed
 
 - Error messages for bad config file for Sources no longer insist wrongly about
   "Forge config error". Now detecting the validation error's model properly.
+
 
 ## v0.16.2 - 2023-07-25
 
