@@ -1,8 +1,8 @@
 """Reusable fixtures for mass-driver testing"""
 
 import json
+import logging
 import shutil
-import sys
 from pathlib import Path
 
 from git import Repo
@@ -94,7 +94,7 @@ def massdrive_check_file(workdir: Path):
             config_file,
         )
     except Exception as e:
-        print("Error during mass-driver run", file=sys.stderr)
+        logging.error("Error during mass-driver run", exc_info=e)
         raise e
     if outcome_file.exists():
         assert migration_result.outcome == PatchOutcome(
@@ -127,7 +127,7 @@ def massdrive_scan_check(workdir: Path):
             config_file,
         )
     except Exception as e:
-        print("Error during mass-driver scan", file=sys.stderr)
+        logging.error("Error during mass-driver scan", exc_info=e)
         raise e
     reference_results = json.loads(reference_results_file.read_text())
     return scan_results, reference_results

@@ -1,5 +1,7 @@
 """The main run-command of Forges, creating mass-PRs from existing branhces"""
 
+import logging
+
 from git import Repo as GitRepo
 
 from mass_driver.git import push
@@ -15,7 +17,7 @@ def main(
 ) -> ActivityOutcome:
     """Process repo_paths with the given Forge"""
     repo_count = len(progress.repos_sourced)
-    print(f"Processing {repo_count} with Forge...")
+    logging.info(f"Processing {repo_count} with Forge...")
     pr_results: IndexedPRResult = {}
     for repo_index, (repo_id, repo) in enumerate(
         progress.repos_cloned.items(), start=1
@@ -24,19 +26,20 @@ def main(
         if pause_every is not None and repo_index % pause_every == 0:
             pause_until_ok(f"Reached {pause_every} actions. Continue?\n")
         try:
-            print(
+            logging.info(
                 f"[{repo_index:03d}/{repo_count:03d}] Processing {repo.cloned_path}..."
             )
             result = process_repo(config, repo)
             pr_results[repo_id] = result
         except Exception as e:
-            print(f"Error processing repo '{repo_id}'\nError was: {e}")
+            logging.error(f"Error processing repo '{repo_id}'")
+            logging.error("Error was: {e}")
             pr_results[repo_id] = PRResult(
                 outcome=PROutcome.PR_FAILED,
                 details=f"Unhandled exception caught during patching. Error was: {e}",
             )
             continue
-    print("Action completed: exiting")
+    logging.info("Action completed: exiting")
     progress.forge_result = pr_results
     return progress
 

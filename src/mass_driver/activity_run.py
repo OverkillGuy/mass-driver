@@ -1,5 +1,6 @@
 """Main activities of Mass-Driver: For each repo, clone it, then scan/migrate it"""
 
+import logging
 import traceback
 from copy import deepcopy
 from pathlib import Path
@@ -49,14 +50,14 @@ def run(
     if migration is not None:
         what_array.append(f"{migration.driver=}")
         patch_results = {}
-    print(f"Processing {repo_count} with {' and '.join(what_array)}")
+    logging.info(f"Processing {repo_count} with {' and '.join(what_array)}")
     for repo_index, (repo_id, repo) in enumerate(repos.items(), start=1):
         try:
-            print(f"[{repo_index:03d}/{repo_count:03d}] Processing {repo_id}...")
+            logging.info(f"[{repo_index:03d}/{repo_count:03d}] Processing {repo_id}...")
             cloned_repo, repo_gitobj = clone_repo(repo, cache_folder)
             cloned_repos[repo_id] = cloned_repo
         except Exception as e:
-            print(f"Error cloning repo '{repo_id}'\nError was: {e}")
+            logging.info(f"Error cloning repo '{repo_id}'\nError was: {e}")
             # FIXME: Clone failure lacks cloned_repo entry, dropping visibility of fail
             continue
         if scan and scanner_results is not None:
@@ -64,7 +65,8 @@ def run(
                 scan_result = scan_repo(scan, cloned_repo)
                 scanner_results[repo_id] = scan_result
             except Exception as e:
-                print(f"Error scanning repo '{repo_id}'\nError was: {e}")
+                logging.error(f"Error scanning repo '{repo_id}'")
+                logging.error(f"Error was: {e}")
                 # Reaching here should be impossible (catch-all in scan)
         if migration and patch_results is not None:
             try:
@@ -73,12 +75,13 @@ def run(
                 result, excep = migrate_repo(cloned_repo, repo_gitobj, migration_copy)
                 patch_results[repo_id] = result
             except Exception as e:
-                print(f"Error migrating repo '{repo_id}'\nError was: {e}")
+                logging.error(f"Error migrating repo '{repo_id}'")
+                logging.error(f"Error was: {e}")
                 patch_results[repo_id] = PatchResult(
                     outcome=PatchOutcome.PATCH_ERROR,
                     details=f"Unhandled exception caught during patching. Error was: {e}",
                 )
-    print("Action completed: exiting")
+    logging.info("Action completed: exiting")
     return ActivityOutcome(
         repos_sourced=repos,
         repos_cloned=cloned_repos,
@@ -100,6 +103,7 @@ def clone_repo(repo: Repo, cache_path: Path) -> tuple[ClonedRepo, GitRepo]:
     return cloned_repo, repo_gitobj
 
 
+# TODO: Avoid passing out the exception, catch the trace in details kw (see scanner_run)
 def migrate_repo(
     cloned_repo: ClonedRepo,
     repo_gitobj: GitRepo,
@@ -107,6 +111,7 @@ def migrate_repo(
 ) -> tuple[PatchResult, Exception | None]:
     """Process a repo with Mass Driver"""
     try:
+        migration.driver._logger = logging.getLogger(f"driver.{migration.driver_name}")
         result = migration.driver.run(cloned_repo)
     except Exception as e:
         result = PatchResult(
@@ -114,7 +119,7 @@ def migrate_repo(
             details=f"Unhandled exception caught during patching. Error was: {e}",
         )
         return (result, e)
-    print(result.outcome.value)
+    logging.info(result.outcome.value)
     if result.outcome != PatchOutcome.PATCHED_OK:
         return (result, None)
     # Patched OK: Save the mutation

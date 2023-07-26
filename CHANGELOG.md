@@ -5,6 +5,13 @@ The project uses semantic versioning (see [semver](https://semver.org)).
 
 ## [Unreleased]
 
+### Added
+- `PatchDriver` now allows a `logger` field for customized logging
+- Migration run func sets `Patchdriver.logger` name: `driver.<plugin-name>`
+### Changed
+- Replaced all `print()` calls to `logging`
+
+
 ## v0.16.4 - 2023-11-04
 
 ### Fixed
@@ -16,6 +23,7 @@ The project uses semantic versioning (see [semver](https://semver.org)).
 - `make docs` now works again with `sphinx-autodoc2`: Pinned `astroid` dep to
   `2.15.8` (< 3.0.0) to avoid the regression caused by unpinned `astroid`.
 
+
 ## v0.16.3 - 2023-09-11
 
 ### Fixed
@@ -25,9 +33,12 @@ The project uses semantic versioning (see [semver](https://semver.org)).
 - Error messages for bad config file for Sources no longer insist wrongly about
   "Forge config error". Now detecting the validation error's model properly.
 
+<<<<<<< variant A
 ### Changed
 
 - Updated to python-template v1.3.0 (from 1.1.0)
+>>>>>>> variant B
+======= end
 
 ## v0.16.2 - 2023-07-25
 

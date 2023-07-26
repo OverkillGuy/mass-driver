@@ -1,4 +1,5 @@
 """Command line entrypoint for mass-driver"""
+import logging
 import sys
 from argparse import ArgumentParser, FileType
 from typing import Callable
@@ -138,12 +139,13 @@ def subparsers(parser: ArgumentParser) -> ArgumentParser:
 
 def cli(arguments: list[str]):
     """Run the mass_driver cli"""
+    logging.basicConfig(level=logging.INFO)
     parser = subparsers(gen_parser())
     pargs = parser.parse_args(arguments)
     try:
         return pargs.func(pargs)  # Dispatch to the subcommand func (drivers/run)
-    except Exception as e:
-        print(f"Uncaught exception: {e}", file=sys.stderr)
+    except Exception:
+        logging.error("Uncaught exception")  # , exc_info=e   # No catching backtrace!
         return False
 
 
