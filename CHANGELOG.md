@@ -7,6 +7,11 @@ The project uses semantic versioning (see [semver](https://semver.org)).
 ## [Unreleased]
 
 
+### Fixed
+- Error messages for bad config file for Sources no longer insist wrongly about
+  "Forge config error". Now detecting the validation error's model properly.
+
+
 ## v0.16.2 - 2023-07-25
 
 ### Fixed

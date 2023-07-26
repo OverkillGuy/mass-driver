@@ -72,7 +72,7 @@ def run_command(args: Namespace) -> ActivityOutcome:
     try:
         activity = ActivityLoaded.from_config(activity_str)
     except ValidationError as e:
-        forge_config_error_exit(e)
+        config_error_exit(e)
     # Source discovery to know what repos to patch/forge/scan
     source_config = activity.source
     repos_sourced = source_repolist_args(args)
@@ -123,19 +123,27 @@ def review_pr_command(args: Namespace):
     return 0
 
 
-# TODO: Make a generic version that isn't forge-specific
-def forge_config_error_exit(e: ValidationError):
-    """Exit in case of bad forge config"""
+def config_error_exit(e: ValidationError):
+    """Exit in case of bad config models"""
+    model_class = e.model.__base__
+    try:
+        # Assume the class failing validation has env prefix
+        env_prefix = model_class.Config.env_prefix
+    except Exception:
+        print("Missing config:", e.errors(), file=sys.stderr)
+        raise
+    # We have a valid env_prefix now, use it to show missing envvar
+    model_class_name = model_class.__name__
     for error in e.errors():
         if error["type"] == "value_error.missing":
-            envvars = ["FORGE_" + var.upper() for var in error["loc"]]
+            envvars = [env_prefix + var.upper() for var in error["loc"]]
             print(
-                f"Missing Forge config: Set envvar(s) {', '.join(envvars)}",
+                f"Missing {model_class_name} config: Set envvar(s) {', '.join(envvars)}",
                 file=sys.stderr,
             )
         else:
             print(
-                f"Forge config validation error: {error}",
+                f"{model_class_name} config validation error: {error}",
                 file=sys.stderr,
             )
     raise e  # exit code = Simulate the argparse behaviour of exiting on bad args
