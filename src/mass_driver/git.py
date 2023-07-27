@@ -11,10 +11,12 @@ from mass_driver.models.migration import MigrationLoaded
 DEFAULT_CACHE = Path(".mass_driver/repos/")
 
 
-def clone_if_remote(repo_path: str, cache_folder: Path) -> GitRepo:
+def clone_if_remote(
+    repo_path: str, cache_folder: Path, logger: logging.Logger
+) -> GitRepo:
     """Build a GitRepo; If repo_path isn't a directory, clone it"""
     if Path(repo_path).is_dir():
-        logging.info("Given an existing (local) repo: no cloning")
+        logger.info("Given an existing (local) repo: no cloning")
         # Clone it into cache anyway
         return GitRepo(path=repo_path)  # TODO: Actually clone-move the repo on the way.
     # SSH clone URL e.g: git@github.com:OverkillGuy/python-template
@@ -26,9 +28,9 @@ def clone_if_remote(repo_path: str, cache_folder: Path) -> GitRepo:
         repo_name = Path(repo_path).name
     clone_target = cache_folder / org / repo_name
     if clone_target.is_dir():
-        logging.info("Given a URL for we cloned already: no cloning")
+        logger.info("Given a URL for we cloned already: no cloning")
         return GitRepo(clone_target)
-    logging.info("Given a URL, cache miss: cloning")
+    logger.info("Given a URL, cache miss: cloning")
     cloned = GitRepo.clone_from(
         url=repo_path,
         to_path=clone_target,
@@ -37,12 +39,12 @@ def clone_if_remote(repo_path: str, cache_folder: Path) -> GitRepo:
     return cloned
 
 
-def get_cache_folder(cache: bool) -> Path:
+def get_cache_folder(cache: bool, logger: logging.Logger) -> Path:
     """Create a cache folder, either locally or in temp"""
     cache_folder = DEFAULT_CACHE
     if not cache:
         cache_folder = Path(mkdtemp(suffix=".cache"))
-        logging.info(
+        logger.info(
             f"Using repo cache folder: {cache_folder}/ (Won't wipe it on exit!)"
         )
     return cache_folder
