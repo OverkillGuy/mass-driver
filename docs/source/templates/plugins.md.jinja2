@@ -1,0 +1,36 @@
+{% for plugin_type, plugins_discovered in plugins | items %}
+{% if plugin_type in ["drivers", "forges", "sources"] %}
+{# Class-based plugin #}
+### {{ plugin_type | capitalize }}
+
+{% for name, details in plugins_discovered | items %}
+#### {{ name }}
+
+Plugin name: `{{name}}`
+
+```{eval-rst}
+.. autoapiclass:: {{details.module}}.{{details.class_name}}
+```
+
+{# ```{autodoc2-object} {{details.module}}.{{details.class_name}} #}
+{# render_plugin = "myst" #}
+{# no_index = true #}
+{# ``` #}
+
+
+{% endfor %}
+{% endif %}
+{% endfor %}
+
+### Scanners
+{# Function-based plugin #}
+{% for name, details in plugins['scanners'] | items %}
+#### {{ name }}
+
+Plugin name: `{{name}}`
+
+```{eval-rst}
+.. autoapifunction:: {{details.module}}.{{details.class_name}}
+```
+
+{% endfor %}

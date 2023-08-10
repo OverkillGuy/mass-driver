@@ -6,7 +6,7 @@ Encompasses both Migrations and Forge activities.
 from pydantic import BaseModel
 from tomllib import loads
 
-from mass_driver.discovery import get_scanners
+from mass_driver.discovery import get_scanner
 from mass_driver.models.forge import PRResult
 from mass_driver.models.migration import (  # Forge,
     TOML_PROJECTKEY,
@@ -107,10 +107,14 @@ def load_activity(activity: ActivityFile) -> ActivityLoaded:
 
 def load_scan(s: ScanFile):
     """Load the ScanFile, discovering drivers"""
-    all_scanners = get_scanners()
-    scanners_by_name = {scanner.name: scanner for scanner in all_scanners}
     selected_scanners: list[Scanner] = []
     for selected_name in s.scanner_names:
-        if selected_name in scanners_by_name:
-            selected_scanners.append(scanners_by_name[selected_name])
+        try:
+            selected_scanner = get_scanner(selected_name)
+            selected_scanners.append(selected_scanner)
+        except ImportError as e:
+            # Fail on the FIRST scanner load failure
+            raise ImportError(
+                "Failed to discover a scanner from given scanner list"
+            ) from e
     return ScanLoaded(scanner_names=s.scanner_names, scanners=selected_scanners)

@@ -25,6 +25,8 @@ The project uses semantic versioning (see [semver](https://semver.org)).
 
 - Error messages for bad config file for Sources no longer insist wrongly about
   "Forge config error". Now detecting the validation error's model properly.
+- Failing to load a scanner that was selected in config now throws `ImportError`
+  on the first plugin-load failure, instead of silently skipping the scanner.
 
 
 ## v0.16.2 - 2023-07-25
