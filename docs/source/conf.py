@@ -90,20 +90,34 @@ myst_url_schemes = {
 
 # Sphinx-jinja:
 
-from mass_driver.discovery import discover_drivers
+from mass_driver.discovery import (
+    discover_drivers,
+    discover_forges,
+    discover_sources,
+    discover_scanners,
+)
 
-discovered_drivers = discover_drivers()
-drivers = {}
-for driver in discovered_drivers:
-    drivers[driver.name] = {
-        "name": driver.name,
-        "module": driver.module,
-        "class_name": driver.attr,
-        # "class": driver_class,
-    }
+plugin_discovery = {
+    "drivers": discover_drivers,
+    "forges": discover_forges,
+    "sources": discover_sources,
+    "scanners": discover_scanners,
+}
+
+
+plugins = {}
+for plugin_type, discover_func in plugin_discovery.items():
+    plugins[plugin_type] = {}
+    plugins_discovered = discover_func()
+    for plugin in plugins_discovered:
+        plugins[plugin_type][plugin.name] = {
+            "name": plugin.name,
+            "module": plugin.module,
+            "class_name": plugin.attr,
+        }
 
 jinja_contexts = {
-    "drivers": {"drivers": drivers},
+    "plugins": {"plugins": plugins},
 }
 
 jinja_env_kwargs = {

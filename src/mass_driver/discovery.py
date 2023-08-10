@@ -35,6 +35,11 @@ def discover_sources() -> EntryPoints:
     return entry_points(group=SOURCE_ENTRYPOINT)
 
 
+def discover_scanners() -> EntryPoints:
+    """Discover all Scanners"""
+    return entry_points(group=SCANNER_ENTRYPOINT)
+
+
 def get_plugin_entrypoint(
     plugin: str, name: str, entrypoint: str, discover: Callable
 ) -> EntryPoint:
@@ -65,6 +70,13 @@ def get_source_entrypoint(source_name: str) -> EntryPoint:
     )
 
 
+def get_scanner_entrypoint(scanner_name: str) -> EntryPoint:
+    """Fetch the given scanner Entrypoint, by name"""
+    return get_plugin_entrypoint(
+        "scanner", scanner_name, SCANNER_ENTRYPOINT, discover_scanners
+    )
+
+
 def get_driver(driver_name: str) -> type[PatchDriver]:
     """Get the given driver Class, by entrypoint name"""
     return get_driver_entrypoint(driver_name).load()
@@ -80,7 +92,7 @@ def get_source(source_name: str) -> type[Source]:
     return get_source_entrypoint(source_name).load()
 
 
-def get_scanners() -> list[Scanner]:
-    """Grab all discovered scanners"""
-    scanners = entry_points(group=SCANNER_ENTRYPOINT)
-    return [Scanner(name=s.name, func=s.load()) for s in scanners]
+def get_scanner(scanner_name: str) -> Scanner:
+    """Get the given scanner func, by entrypoint name"""
+    s = get_scanner_entrypoint(scanner_name)
+    return Scanner(name=s.name, func=s.load())

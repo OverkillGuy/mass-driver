@@ -21,13 +21,11 @@ lint:  # Use all linters on all files (not just staged for commit)
 test:
 	poetry run pytest
 
-# ACTION=--really-commit-changes
-ACTION=--dry-run
-REPOS=--repo-path "git@github.com:OverkillGuy/sphinx-needs-test.git"
-#REPOS=--repo-filelist repos
+ACTION=run --no-pause
+FILE=clone.toml
 .PHONY: run
 run:  # Remember to export GITHUB_API_TOKEN beforehand
-	poetry run mass-driver ${ACTION} ${REPOS}
+	poetry run mass-driver ${ACTION} ${FILE}
 
 .PHONY: docs
 docs: clean-docs

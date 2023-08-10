@@ -2,23 +2,22 @@ Mass Driver
 ===========
 
 ```{note}
-Below is the rendered version of the project's `README.md` file, found at the
-root of the code repository.
+Below is a rendered version of the project's `README.md` file, found at the root of the code repository. Consider this a summary of the actual project documentation found in other pages.
 ```
 
 ```{include} ../../README.md
-parser: myst_parser.sphinx_
+:start-after: "# Mass Driver"
 ```
 
-```{toctree} Table of Contents
-maxdepth: 2
----
+```{toctree}
+:maxdepth: 2
 usage
+drivers
 sources
 scanning
 objectives
 Roadmap <roadmap>
-drivers
+plugins
 development
 Changelog <changelog>
 API Reference <apidocs/index>

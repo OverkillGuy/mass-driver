@@ -135,18 +135,3 @@ prepackaged way, returning just
 {py:class}`mass_driver.models.activity.MigrationOutcome` +
 {py:class}`mass_driver.models.activity.ForgeResult` (if any forge defined) +
 {py:class}`mass_driver.models.activity.ScanResult` (if any scans defined).
-
-## Available drivers
-
-(available-drivers)=
-
-We've packaged separately some drivers in
-[mass-driver-plugins](https://github.com/OverkillGuy/mass-driver-plugins), have
-a look there too.
-
-These are the drivers that are packaged in by default:
-
-```{jinja} drivers
----
-file: templates/drivers.md.jinja2
-```

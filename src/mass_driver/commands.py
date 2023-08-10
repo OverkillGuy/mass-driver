@@ -10,11 +10,11 @@ from mass_driver.activity_run import run
 from mass_driver.discovery import (
     discover_drivers,
     discover_forges,
+    discover_scanners,
     discover_sources,
     get_driver_entrypoint,
     get_forge,
     get_forge_entrypoint,
-    get_scanners,
     get_source_entrypoint,
 )
 from mass_driver.forge_run import main as forge_main
@@ -105,7 +105,7 @@ def run_command(args: Namespace) -> ActivityOutcome:
 def scanners_command(args: Namespace):
     """Process the CLI for 'scan'"""
     logging.info("Available scanners:")
-    scanners = get_scanners()
+    scanners = discover_scanners()
     for scanner in scanners:
         logging.info(scanner.name)
     return True
