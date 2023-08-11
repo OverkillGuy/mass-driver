@@ -25,7 +25,8 @@ ACTION=run --no-pause
 FILE=clone.toml
 .PHONY: run
 run:  # Remember to export GITHUB_API_TOKEN beforehand
-	poetry run mass-driver ${ACTION} ${FILE}
+	-find .mass_driver/ -delete
+	time poetry run mass-driver ${ACTION} ${FILE}
 
 .PHONY: docs
 docs: clean-docs

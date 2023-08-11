@@ -12,7 +12,12 @@ The project uses semantic versioning (see [semver](https://semver.org)).
 
 ### Changed
 - Replaced all `print()` calls to `logging` module
-- Loggers used as nested:
+- **FASTER**: Multi-threaded per-repo processsing! Handling of clone, scan,
+  patching is done as individual thread per repo, with N=8
+  pooled threads.
+  - Early data shows a x6 improvement in performance, as cloning
+    one repo doesn't block others anymore.
+- Replaced all `print()` calls to `logging` module, with nested loggers:
   - from `root` (default)
   - to `run` (or other file-activity-based)
   - to `repo.<repo-id>` for logs for a specific repo's processing
