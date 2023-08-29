@@ -12,7 +12,7 @@ writing simple python functions, reusable as plugins.
 ```{include} ../../README.md
 ---
 start-after: "<!-- scanner-activity -->"
-end-before: "## Development"
+end-before: "## Reviewing bulk PR status"
 ```
 
 ## Creating a Scanner
