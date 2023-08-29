@@ -30,18 +30,23 @@ repos:
   - id: hadolint
     name: Hadolint (Dockerfile checker)
 # Actual Python Linters
+- repo: https://github.com/python-poetry/poetry
+  rev: 1.6.1
+  hooks:  # Validate poetry package + ensure lockfile updated
+  - id: poetry-check
+  - id: poetry-lock
 - repo: https://github.com/psf/black
-  rev: 23.3.0
+  rev: 23.7.0
   hooks:
   - id: black
     name: Black (Python formatter)
 - repo: https://github.com/astral-sh/ruff-pre-commit
-  rev: v0.0.272
+  rev: v0.0.285
   hooks:
   - id: ruff
     args: ["--fix", "--exit-non-zero-on-fix"]
 - repo: https://github.com/pre-commit/mirrors-mypy
-  rev: v1.3.0
+  rev: v1.5.1
   hooks:
   - id: mypy
     name: Mypy (Python type-checker)
@@ -49,7 +54,7 @@ repos:
     # Uncomment below if mypy requires extra type stub packages
     # additional_dependencies: [types-PyYAML==6.0.12.2]
 - repo: https://github.com/igorshubovych/markdownlint-cli
-  rev: v0.34.0
+  rev: v0.35.0
   hooks:
   - id: markdownlint
     args: ["--fix", "--config", ".markdown-lint.yml"]

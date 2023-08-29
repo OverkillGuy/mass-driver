@@ -1,7 +1,7 @@
 FROM python:3.11 as builder
 
 # Bring poetry, our package manager
-ARG POETRY_VERSION=1.2.0
+ARG POETRY_VERSION=1.6.1
 RUN pip install --no-cache-dir poetry==${POETRY_VERSION}
 
 # Copy code in to build a package

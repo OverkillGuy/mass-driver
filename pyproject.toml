@@ -37,8 +37,6 @@ pytest = "7.*"
 pytest-cov = "*"
 # Clearer assertion failures (colorful diff)
 pytest-clarity = "1.*"
-# Expose unittest.Mocker in pytest
-pytest-mock = "*"
 # Test-specific data folder
 pytest-datadir = "*"
 

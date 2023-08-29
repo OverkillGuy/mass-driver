@@ -406,5 +406,5 @@ license details.
 
 ### Templated repository
 
-This repo was created by the cookiecutter template available at
-<https://github.com/OverkillGuy/python-template>, using commit hash: `5c882f2e22311a2307263d14877c8229a2ed6961`.
+This repository was created by the copier template available at
+gh:OverkillGuy/python-template, using version v1.3.0.
