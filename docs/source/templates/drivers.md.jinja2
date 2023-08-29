@@ -3,11 +3,9 @@
 
 Plugin name: `{{name}}`
 
-```{eval-rst}
-.. autoapiclass:: {{details.module}}.{{details.class_name}}
-  :noindex:
-  :members:
-  :show-inheritance:
+```{autodoc2-object} {{details.module}}.{{details.class_name}}
+render_plugin = "myst"
+no_index = true
 ```
 
 {% endfor %}

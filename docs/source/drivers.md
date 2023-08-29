@@ -4,7 +4,6 @@ Below are listed the Patch Drivers (shortened to "drivers") available at time of
 docs generation. Note that drivers are expected to be coming from third parties,
 and are exposed as "plugins" (also known as python package entry_points).
 
-
 ## Making your own driver
 
 The simplest way to make something custom is to reconfigure an existing Driver.
@@ -67,7 +66,8 @@ perlbump = 'mypackage.mymodule:PerlPackageBumper'
 The key here is we're declaring a new plugin called `perlbump`, part of
 `massdriver.drivers`.
 
-If you're more of a `setup.py` person, follow [the equivalent instructions for setup.py](https://github.com/python-poetry/poetry/issues/927#issuecomment-1232254538)
+If you're more of a `setup.py` person, follow [the equivalent instructions for
+setup.py](https://github.com/python-poetry/poetry/issues/927#issuecomment-1232254538)
 
 ### Using our new plugin
 
@@ -78,14 +78,18 @@ Once it is, you can follow the [using mass-driver](usage) docs to execute it.
 
 ### Testing and validating a PatchDriver
 
-Obviously, we don't recommend testing a mass-PR tool in production by cloning hundreds of repos.
+Obviously, we don't recommend testing a mass-PR tool in production by cloning
+hundreds of repos.
 
-We've set up some unit-level tests for PatchDriver, to be able to validate offline that a driver is working.
+We've set up some unit-level tests for PatchDriver, to be able to validate
+offline that a driver is working.
 
-These tests focus on individual file transformation, which is a very common usecase.
+These tests focus on individual file transformation, which is a very common
+usecase.
 
 Here's the layout of the `tests/` folder we'll be using:
-```
+
+```none
 ├── test_counterdriver
 │   ├── count_to_1
 │   │   ├── input.txt
@@ -98,11 +102,16 @@ Here's the layout of the `tests/` folder we'll be using:
 └── test_counterdriver.py
 ```
 
-Note that the actual `pytest` test is `test_counterdriver.py`, with a similarly named folder `test_counterdriver/` containing 2 folders.
+Note that the actual `pytest` test is `test_counterdriver.py`, with a similarly
+named folder `test_counterdriver/` containing 2 folders.
 
-The pattern of testing we use here is to try transforming `input.txt` via mass-driver (configured by `migration.toml`), checking patching is successful (`PatchOutcome.PATCHED_OK`), and comparing the resulting file to `output.txt`, flagging any differences as test failures.
+The pattern of testing we use here is to try transforming `input.txt` via
+mass-driver (configured by `migration.toml`), checking patching is successful
+(`PatchOutcome.PATCHED_OK`), and comparing the resulting file to `output.txt`,
+flagging any differences as test failures.
 
-Optionally, presence of an `outcome.txt` will be used to check what outcome to expect instead (from the `PatchOutcome` Enum).
+Optionally, presence of an `outcome.txt` will be used to check what outcome to
+expect instead (from the `PatchOutcome` Enum).
 
 Similarly, the presence of a `details.txt` will be used to check the
 `PatchResult.details` field, with the check: `details_txt in result.details`.
@@ -116,7 +125,9 @@ end-before: "# test-end marker"
 ---
 ```
 
-The key here is use of the test fixture {py:func}`mass_driver.tests.fixtures.massdrive_check_file`, which takes a folder with these text files, and runs mass-driver over it.
+The key here is use of the test fixture
+{py:func}`mass_driver.tests.fixtures.massdrive_check_file`, which takes a folder
+with these text files, and runs mass-driver over it.
 
 For more granular, custom testing, the fixture
 {py:func}`mass_driver.tests.fixtures.massdrive`, can run mass-driver CLI in a
@@ -126,8 +137,8 @@ prepackaged way, returning just
 {py:class}`mass_driver.models.activity.ScanResult` (if any scans defined).
 
 ## Available drivers
-(available-drivers)=
 
+(available-drivers)=
 
 We've packaged separately some drivers in
 [mass-driver-plugins](https://github.com/OverkillGuy/mass-driver-plugins), have

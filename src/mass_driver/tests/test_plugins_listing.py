@@ -1,5 +1,4 @@
-"""
-Validate plugin discovery
+"""Validate plugin discovery
 
 Feature: Plugin discovery
   As the mass-driver dev

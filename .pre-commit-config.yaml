@@ -1,57 +1,55 @@
-exclude: "^docs/source/conf.py$"
+---
 repos:
--   repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.4.0
-    hooks:
-    -   id: trailing-whitespace
-    -   id: end-of-file-fixer
-    -   id: check-added-large-files
-    -   id: check-executables-have-shebangs
-    -   id: check-case-conflict
-    -   id: check-vcs-permalinks
-    -   id: forbid-new-submodules
-    -   id: mixed-line-ending
-    -   id: check-merge-conflict
-    -   id: detect-private-key
-    -   id: detect-aws-credentials
-        args: [ '--allow-missing-credentials']  # Avoid failure on CI
-    -   id: check-toml
-    -   id: check-yaml
-    -   id: check-json
--   repo: https://github.com/shellcheck-py/shellcheck-py
-    rev: v0.9.0.2
-    hooks:
-    -   id: shellcheck
-        name: Shellcheck
-        args: ["-f", "gcc"]  # output filename:linenum:colnum (clickable)
--   repo: https://github.com/AleksaC/hadolint-py
-    rev: v2.12.0.2
-    hooks:
-      - id: hadolint
-        name: Hadolint (Dockerfile checker)
+- repo: https://github.com/pre-commit/pre-commit-hooks
+  rev: v4.4.0
+  hooks:
+  - id: trailing-whitespace
+  - id: end-of-file-fixer
+  - id: check-added-large-files
+  - id: check-executables-have-shebangs
+  - id: check-case-conflict
+  - id: check-vcs-permalinks
+  - id: forbid-new-submodules
+  - id: mixed-line-ending
+  - id: check-merge-conflict
+  - id: detect-private-key
+  - id: detect-aws-credentials
+    args: ['--allow-missing-credentials']  # Avoid failure on CI
+  - id: check-toml
+  - id: check-yaml
+  - id: check-json
+- repo: https://github.com/shellcheck-py/shellcheck-py
+  rev: v0.9.0.5
+  hooks:
+  - id: shellcheck
+    name: Shellcheck
+    args: ["-f", "gcc"]  # output filename:linenum:colnum (clickable)
+- repo: https://github.com/AleksaC/hadolint-py
+  rev: v2.12.0.2
+  hooks:
+  - id: hadolint
+    name: Hadolint (Dockerfile checker)
 # Actual Python Linters
--   repo: https://github.com/psf/black
-    rev: 23.1.0
-    hooks:
-      - id: black
-        name: Black (Python formatter)
--   repo: https://github.com/pycqa/isort
-    rev: 5.12.0
-    hooks:
-      - id: isort
-        name: isort (Python import sorter)
--   repo: https://github.com/pycqa/flake8
-    rev: 6.0.0
-    hooks:
-    -   id: flake8
-        name: Flake8 (Python linter)
-        args: ["--output-file", "test_results/flake8.txt", "--tee", "src/", "tests/"]
-        additional_dependencies:
-          - "flake8-bandit==4.1.1"
-          - "flake8-bugbear==23.1.20"
-          - "flake8-docstrings==1.7.0"
--   repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v0.991
-    hooks:
-    -   id: mypy
-        name: Mypy (Python type-checker)
+- repo: https://github.com/psf/black
+  rev: 23.3.0
+  hooks:
+  - id: black
+    name: Black (Python formatter)
+- repo: https://github.com/astral-sh/ruff-pre-commit
+  rev: v0.0.272
+  hooks:
+  - id: ruff
+    args: ["--fix", "--exit-non-zero-on-fix"]
+- repo: https://github.com/pre-commit/mirrors-mypy
+  rev: v1.3.0
+  hooks:
+  - id: mypy
+    name: Mypy (Python type-checker)
+    exclude: "docs/source/conf.py"
+    # Uncomment below if mypy requires extra type stub packages
+    # additional_dependencies: [types-PyYAML==6.0.12.2]
+- repo: https://github.com/igorshubovych/markdownlint-cli
+  rev: v0.34.0
+  hooks:
+  - id: markdownlint
+    args: ["--fix", "--config", ".markdown-lint.yml"]
