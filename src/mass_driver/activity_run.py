@@ -58,17 +58,13 @@ def run(
     futures_map = {}
     with futures.ThreadPoolExecutor(max_workers=8) as executor:
         for repo_id, repo in repos.items():
-            repo_logger_name = f"repo.{repo_id}"
-            repo_logger = logging.getLogger(repo_logger_name)
-
             future_obj = executor.submit(
                 per_repo_process,
                 repo_id,
                 repo,
                 activity,
-                repo_logger,
+                logging.getLogger(f"repo.{repo_id}"),
                 cache_folder,
-                repo_count,
             )
             futures_map[future_obj] = repo_id
         # Submitted the jobs: iterate on completion
@@ -90,7 +86,7 @@ def run(
     )
 
 
-def per_repo_process(repo_id, repo, activity, logger, cache_folder, repo_count):
+def per_repo_process(repo_id, repo, activity, logger, cache_folder):
     """Process a single repo, in-thread"""
     try:
         logger.info(f"Processing {repo_id}...")
