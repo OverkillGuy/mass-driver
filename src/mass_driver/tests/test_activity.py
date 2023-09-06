@@ -61,7 +61,7 @@ def test_migration_and_forge(tmp_path, shared_datadir, monkeypatch):
     ), "Should have returned correct PR URL"
 
 
-def test_scan(tmp_path, shared_datadir, mocker):
+def test_scan(tmp_path, shared_datadir):
     """Feature: Scan repositories
 
     As a mass-driver user
