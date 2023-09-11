@@ -5,6 +5,8 @@ The project uses semantic versioning (see [semver](https://semver.org)).
 
 ## [Unreleased]
 
+## v0.16.3 - 2023-09-11
+
 ### Fixed
 
 - `ShellDriver` no longer crashes due to irrelevant dataclass import
