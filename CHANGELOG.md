@@ -5,15 +5,16 @@ The project uses semantic versioning (see [semver](https://semver.org)).
 
 ## [Unreleased]
 
-### Changed
-
-- Updated to python-template v1.3.0 (from 1.1.0)
-
 ### Fixed
 
+- `ShellDriver` no longer crashes due to irrelevant dataclass import
 - Updated `pyGithub`, fixes "missing cryptography" error
 - Error messages for bad config file for Sources no longer insist wrongly about
   "Forge config error". Now detecting the validation error's model properly.
+
+### Changed
+
+- Updated to python-template v1.3.0 (from 1.1.0)
 
 ## v0.16.2 - 2023-07-25
 

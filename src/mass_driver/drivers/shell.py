@@ -2,13 +2,12 @@
 
 
 import subprocess
-from dataclasses import dataclass
+import sys
 
 from mass_driver.models.patchdriver import PatchDriver, PatchOutcome, PatchResult
 from mass_driver.models.repository import ClonedRepo
 
 
-@dataclass
 class ShellDriver(PatchDriver):
     """Run a generic shell command
 
@@ -25,11 +24,20 @@ class ShellDriver(PatchDriver):
     command: list[str]
     """Shell command to apply to the repository, as string list"""
     shell: bool = True
-    """Passed to subprocess.check_call, to enable true shell behaviour rather than exec"""
+    """Passed to subprocess.run, to enable true shell behaviour rather than exec"""
 
     def run(self, repo: ClonedRepo) -> PatchResult:
         """Run the command on the repo"""
-        cmd = subprocess.run(self.command, cwd=repo.cloned_path, shell=self.shell)
+        cmd = subprocess.run(
+            self.command,
+            cwd=repo.cloned_path,
+            shell=self.shell,
+            capture_output=True,
+        )
+        if cmd.stdout.strip():
+            print(cmd.stdout)
+        if cmd.stderr.strip():
+            print(cmd.stderr, file=sys.stderr)
         return (
             PatchResult(PatchOutcome.PATCHED_OK)
             if cmd.returncode == 0
