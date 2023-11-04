@@ -5,6 +5,8 @@ The project uses semantic versioning (see [semver](https://semver.org)).
 
 ## [Unreleased]
 
+## v0.16.4 - 2023-11-04
+
 ### Fixed
 
 - Attempting to run a Forge activity with `git_push_first=True`, without
