@@ -11,6 +11,8 @@ The project uses semantic versioning (see [semver](https://semver.org)).
   migration or scan activity, no longer causes exit without processing any
   repos. Clone step invoked properly mean remote-clone URLs are now supported,
   converted to local filepaths internally.
+- `make docs` now works again with `sphinx-autodoc2`: Pinned `astroid` dep to
+  `2.15.8` (< 3.0.0) to avoid the regression caused by unpinned `astroid`.
 
 ## v0.16.3 - 2023-09-11
 
