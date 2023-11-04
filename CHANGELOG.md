@@ -5,6 +5,13 @@ The project uses semantic versioning (see [semver](https://semver.org)).
 
 ## [Unreleased]
 
+### Fixed
+
+- Attempting to run a Forge activity with `git_push_first=True`, without
+  migration or scan activity, no longer causes exit without processing any
+  repos. Clone step invoked properly mean remote-clone URLs are now supported,
+  converted to local filepaths internally.
+
 ## v0.16.3 - 2023-09-11
 
 ### Fixed

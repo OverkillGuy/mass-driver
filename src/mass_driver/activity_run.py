@@ -42,7 +42,7 @@ def run(
     cloned_repos: IndexedClonedRepos = {}
     scanner_results: IndexedScanResult | None = None
     patch_results: IndexedPatchResult | None = None
-    what_array = []
+    what_array = ["clone"]
     if scan is not None:
         what_array.append(f"{len(scan.scanners)} scanners")
         scanner_results = {}

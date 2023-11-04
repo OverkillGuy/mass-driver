@@ -78,19 +78,19 @@ def run_command(args: Namespace) -> ActivityOutcome:
     repos_sourced = source_repolist_args(args)
     if repos_sourced is None:  # No repo-list from CLI flags: call Source
         repos_sourced = source_config.source.discover()
-    if activity.migration is None and activity.scan is None:
-        print("No migration/scan section: skipping")
-        run_result = ActivityOutcome(repos_sourced=repos_sourced)
-    else:
+    if needs_run(activity):
         run_result = run(
             activity,
             repos_sourced,
             not args.no_cache,
         )
+    else:
+        print("No clone needed: skipping")
+        run_result = ActivityOutcome(repos_sourced=repos_sourced)
     print("Main phase complete!")
     if activity.forge is None:
         # Nothing else to do, just print completion and exit
-        print("No Forge available: end")
+        print("No Forge: end")
         maybe_save_outcome(args, run_result)
         return run_result
     # Now guaranteed to have a Forge: pause + forge
@@ -180,3 +180,18 @@ def save_outcome(outcome: ActivityOutcome, out_file):
     """Save the output to given JSON file handle"""
     out_file.write(outcome.json(indent=2))
     out_file.write("\n")
+
+
+def needs_run(activity: ActivityLoaded) -> bool:
+    """Check if we need to call the activity_run command = Clone/Mig/Scan step
+
+    We usually do if: migration OR scan OR forge with git_push_first=True
+
+    Last one because git_push requires resolving ssh clone url to local repo path
+    which is what clone step does in activity_run
+    """
+    got_mig = activity.migration is not None
+    got_scan = activity.scan is not None
+    got_forge_clone = activity.forge is not None and activity.forge.git_push_first
+    # activity-running is only needed if we need some clone:
+    return got_mig or got_scan or got_forge_clone
