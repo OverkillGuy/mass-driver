@@ -29,6 +29,8 @@ from mass_driver.models.repository import (
 )
 from mass_driver.models.scan import ScanLoaded
 
+LOGGER_PREFIX = "run"
+
 
 def run(
     activity: ActivityLoaded,
@@ -36,7 +38,7 @@ def run(
     cache: bool,
 ) -> ActivityOutcome:
     """Run the main activity: over N repos, clone, then scan/patch"""
-    logger = logging.getLogger("run")
+    logger = logging.getLogger(LOGGER_PREFIX)
     repo_count = len(repos.keys())
     migration = activity.migration
     scan = activity.scan
@@ -53,7 +55,7 @@ def run(
         patch_results = {}
     logger.info(f"Processing {repo_count} with {' and '.join(what_array)}")
     for repo_index, (repo_id, repo) in enumerate(repos.items(), start=1):
-        repo_logger_name = f"repo.{repo_id}"
+        repo_logger_name = f"{logger.name}.repo.{repo_id.replace('.','_')}"
         repo_logger = logging.getLogger(repo_logger_name)
         try:
             logger.info(f"[{repo_index:03d}/{repo_count:03d}] Processing {repo_id}...")
