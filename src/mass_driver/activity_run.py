@@ -57,6 +57,7 @@ def run(
             cloned_repos[repo_id] = cloned_repo
         except Exception as e:
             print(f"Error cloning repo '{repo_id}'\nError was: {e}")
+            # FIXME: Clone failure lacks cloned_repo entry, dropping visibility of fail
             continue
         if scan and scanner_results is not None:
             try:
