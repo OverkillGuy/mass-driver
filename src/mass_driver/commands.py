@@ -6,7 +6,7 @@ from typing import Callable, Optional
 
 from pydantic import ValidationError
 
-from mass_driver.activity_run import run
+from mass_driver.activity_run import sequential_run as run
 from mass_driver.discovery import (
     discover_drivers,
     discover_forges,

@@ -78,3 +78,14 @@ def switch_branch_then_pull(repo: GitRepo, pull: bool, branch_name: str | None =
         repo.git.checkout(branch_name)
     if pull:
         repo.remote().pull()
+
+
+def get_default_branch(r: GitRepo) -> str:
+    """Get the default branch of a repository"""
+    # From https://github.com/gitpython-developers/GitPython/discussions/1364#discussioncomment-1530384
+    try:
+        return r.remotes.origin.refs.HEAD.ref.remote_head
+    except Exception:
+        raise ValueError(
+            "base_branch param could not be autodetected: no git remote available"
+        )

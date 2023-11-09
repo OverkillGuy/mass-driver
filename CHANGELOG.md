@@ -16,10 +16,11 @@ The project uses semantic versioning (see [semver](https://semver.org)).
 - Loggers used as nested:
   - from `root` (default)
   - to `run` (or other file-activity-based)
-  - to `repo.<repo-id>` for logs for a specific repo's processing
-  - to subloggers like `repo.<repo-id>.driver.<driver-plugin-name>`
-- `PatchDriver` now has a `logger` for such customized logging: Repo-processing
-  sets `Patchdriver.logger` named `repo.<repo-id>.driver.<driver-plugin-name>`
+  - to `run.repo.<repo-id>` for logs for a specific repo's processing
+  - to subloggers like `run.repo.<repo-id>.driver.<driver-plugin-name>`
+- `PatchDriver` now has a `logger` obj for such customized logging:
+  Repo-processing sets `Patchdriver.logger` named
+  `run.repo.<repo-id>.driver.<driver-plugin-name>`
   - Please replace any `print` with `self.logger.info`!
 
 ## v0.16.4 - 2023-11-04
