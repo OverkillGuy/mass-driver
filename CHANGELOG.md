@@ -9,6 +9,12 @@ The project uses semantic versioning (see [semver](https://semver.org)).
 
 - `PatchDriver` now allows a `logger` field for customized logging
 - Migration run func sets `Patchdriver.logger` name: `driver.<plugin-name>`
+- **FASTER**: Experimental multi-threaded per-repo processsing! Handling of
+  clone, scan, patching is done as individual thread per repo, with N=8 pooled
+  threads.
+  - Early data shows a x6 improvement in performance, as cloning
+    one repo doesn't block others anymore.
+  - Enable via new experimental flag `run --parallel`, defaulting to `False`
 
 ### Changed
 

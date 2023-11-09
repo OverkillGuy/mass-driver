@@ -85,6 +85,11 @@ def run_subparser(subparser):
         help="Disable the interactive pause between Migration and Forge",
         action="store_true",
     )
+    run.add_argument(
+        "--parallel",
+        help="Run the processing of repos in parallel, via up to 8 threads",
+        action="store_true",
+    )
     cache_arg(run)
     repo_list_group(run)
     run.set_defaults(dry_run=True, func=commands.run_command)

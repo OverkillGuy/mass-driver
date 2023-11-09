@@ -6,7 +6,7 @@ from typing import Callable, Optional
 
 from pydantic import ValidationError
 
-from mass_driver.activity_run import sequential_run as run
+from mass_driver.activity_run import sequential_run, thread_run
 from mass_driver.discovery import (
     discover_drivers,
     discover_forges,
@@ -79,7 +79,8 @@ def run_command(args: Namespace) -> ActivityOutcome:
     if repos_sourced is None:  # No repo-list from CLI flags: call Source
         repos_sourced = source_config.source.discover()
     if needs_run(activity):
-        run_result = run(
+        run_variant = thread_run if args.parallel else sequential_run
+        run_result = run_variant(
             activity,
             repos_sourced,
             not args.no_cache,
