@@ -1,6 +1,6 @@
 """Test a couple of Sources"""
 
-from mass_driver.models.repository import Repo
+from mass_driver.models.repository import SourcedRepo
 from mass_driver.tests.fixtures import massdrive_runlocal
 
 
@@ -17,7 +17,7 @@ def test_template_source(datadir, monkeypatch):
     assert sourced, "Should have gotten repos sourced"
     assert len(sourced) == 3, "Should have gotten 3 repos"
     repos = list(sourced.values())
-    assert isinstance(repos[0], Repo), "Should have gotten a Repo back"
+    assert isinstance(repos[0], SourcedRepo), "Should have gotten a SourcedRepo back"
 
 
 def test_csv_source(datadir, monkeypatch):
@@ -33,5 +33,5 @@ def test_csv_source(datadir, monkeypatch):
     assert sourced, "Should have gotten repos sourced"
     assert len(sourced) == 2, "Should have gotten 2 CSV repos"
     repos = list(sourced.values())
-    assert isinstance(repos[0], Repo), "Should have gotten a Repo back"
+    assert isinstance(repos[0], SourcedRepo), "Should have gotten a SourcedRepo back"
     assert "extra_key" in repos[0].patch_data, "Should have parsed extra CSV field"

@@ -16,13 +16,13 @@ Sources are mass-driver plugins that map to
 First, we import relevant bits:
 
 ```python
-from mass_driver.models.repository import IndexedRepos, Repo, RepoUrl, Source
+from mass_driver.models.repository import IndexedRepos, SourcedRepo, RepoUrl, Source
 ```
 
 Remembering that:
 
 ```python
-IndexedRepos = dict[RepoID, Repo]
+IndexedRepos = dict[RepoID, SourcedRepo]
 ```
 
 So we now write up a new class:
@@ -34,7 +34,7 @@ pyobject: RepolistSource
 ```
 
 This class, taking a parameter `repos`, generates
-{py:obj}`~mass_driver.models.repository.Repo` objects when calling
+{py:obj}`~mass_driver.models.repository.SourcedRepo` objects when calling
 {py:meth}`~mass_driver.models.repository.Source.discover`, as a dictionary
 indexed by {py:obj}`~mass_driver.models.repository.RepoID` (basically a string).
 
@@ -55,7 +55,7 @@ types never print their content when represented as string, requiring a call to
 `my_secret_field.get_secret_value()` to actually disclose the secret.
 :::
 
-Note the `patch_data` field of {py:obj}`~mass_driver.models.repository.Repo`,
+Note the `patch_data` field of {py:obj}`~mass_driver.models.repository.SourcedRepo`,
 unused in this sample Source, is an arbitrary dictionary under the
 {py:obj}`~mass_driver.models.repository.Source`'s control, perfect to provide
 per-repo data extracted from the source that will be relevant to make migration

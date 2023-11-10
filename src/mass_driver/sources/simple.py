@@ -5,7 +5,7 @@ from pathlib import Path
 
 from pydantic import FilePath
 
-from mass_driver.models.repository import IndexedRepos, Repo, RepoUrl, Source
+from mass_driver.models.repository import IndexedRepos, RepoUrl, Source, SourcedRepo
 
 
 class RepolistSource(Source):
@@ -16,7 +16,7 @@ class RepolistSource(Source):
 
     def discover(self) -> IndexedRepos:
         """Discover a list of repositories"""
-        return {url: Repo(clone_url=url, repo_id=url) for url in self.repos}
+        return {url: SourcedRepo(clone_url=url, repo_id=url) for url in self.repos}
 
 
 class RepoFilelistSource(Source):
@@ -29,9 +29,11 @@ class RepoFilelistSource(Source):
         """Discover a list of repositories"""
         repo_file_path = Path(self.repo_file)
         if not repo_file_path.is_file():
-            raise ValueError(f"Repo-file path not a real file:  '{self.repo_file}'")
+            raise ValueError(
+                f"SourcedRepo-file path not a real file:  '{self.repo_file}'"
+            )
         repo_list = repo_file_path.read_text().strip().split("\n")
-        return {url: Repo(clone_url=url, repo_id=url) for url in repo_list}
+        return {url: SourcedRepo(clone_url=url, repo_id=url) for url in repo_list}
 
 
 class TemplateFileSource(Source):
@@ -48,7 +50,7 @@ class TemplateFileSource(Source):
             raise ValueError(f"Path not a real file:  '{self.repo_file}'")
         id_list = self.repo_file.read_text().strip().split("\n")
         return {
-            repo_id: Repo(
+            repo_id: SourcedRepo(
                 clone_url=self.clone_url_template.format(id=repo_id), repo_id=repo_id
             )
             for repo_id in id_list
@@ -72,13 +74,13 @@ class CSVFileSource(Source):
         with open(self.csv_file) as csv_file:
             reader = csv.DictReader(csv_file, **reader_args)
             for row in reader:
-                # Grab all the Repo-matching fields off CSV row
-                repo_fields = set(Repo.__fields__) - {"patch_data"}
+                # Grab all the SourcedRepo-matching fields off CSV row
+                repo_fields = set(SourcedRepo.__fields__) - {"patch_data"}
                 csv_repo_fields = {k: row[k] for k in repo_fields if k in row}
-                # Anything NOT in Repo fields goes to patch_data = {fieldname:csv-value}
+                # Anything NOT in SourcedRepo fields goes to patch_data = {fieldname:csv-value}
                 csv_extra_fields = row.keys() - repo_fields
                 csv_extra_dict = {k: row[k] for k in csv_extra_fields}
-                repo_obj = Repo(**csv_repo_fields, patch_data=csv_extra_dict)
+                repo_obj = SourcedRepo(**csv_repo_fields, patch_data=csv_extra_dict)
                 repo_id = row["repo_id"]
                 out[repo_id] = repo_obj
         return out

@@ -3,7 +3,7 @@
 from github import AppAuthentication, Github
 from pydantic import SecretStr
 
-from mass_driver.models.repository import IndexedRepos, Repo, Source
+from mass_driver.models.repository import IndexedRepos, Source, SourcedRepo
 
 
 class GithubBaseSource(Source):
@@ -17,7 +17,7 @@ class GithubBaseSource(Source):
         """Discover a list of repositories"""
         repos = self._github_api.search_repositories(query=self.search_query)
         return {
-            repo.full_name: Repo(repo_id=repo.full_name, clone_url=repo.ssh_url)
+            repo.full_name: SourcedRepo(repo_id=repo.full_name, clone_url=repo.ssh_url)
             for repo in repos
         }
 

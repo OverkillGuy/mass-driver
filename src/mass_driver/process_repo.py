@@ -21,13 +21,13 @@ from mass_driver.models.migration import ForgeLoaded, MigrationLoaded
 from mass_driver.models.patchdriver import PatchOutcome, PatchResult
 from mass_driver.models.repository import (
     ClonedRepo,
-    Repo,
+    SourcedRepo,
 )
 from mass_driver.models.scan import ScanLoaded
 
 
 def clone_repo(
-    repo: Repo, cache_path: Path, logger: logging.Logger
+    repo: SourcedRepo, cache_path: Path, logger: logging.Logger
 ) -> tuple[ClonedRepo, GitRepo]:
     """Clone a repo (if needed) and switch branch"""
     repo_gitobj = clone_if_remote(repo.clone_url, cache_path, logger=logger)

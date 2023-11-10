@@ -18,6 +18,10 @@ The project uses semantic versioning (see [semver](https://semver.org)).
 
 ### Changed
 
+- **BREAKING**: Renamed`Repo` to `SourcedRepo` in `mass_driver.models.repository`
+  - This exposes better the idea of "a Repo as it was Source-d", in contrast to
+    `ClonedRepo` "a Repo after it was cloned".
+  - Also avoids clashes with `git.Repo` object from gitpython dependency.
 - Replaced all `print()` calls to `logging` module
 - Loggers used as nested:
   - from `root` (default)
