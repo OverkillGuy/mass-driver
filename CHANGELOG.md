@@ -5,6 +5,8 @@ The project uses semantic versioning (see [semver](https://semver.org)).
 
 ## [Unreleased]
 
+## v0.17.0 - 2023-11-12
+
 ### Added
 
 - Completing an activity (source, migration, forge) now summarizes results
