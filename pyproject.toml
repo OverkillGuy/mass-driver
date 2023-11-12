@@ -77,6 +77,7 @@ addopts = """-vv \
       --cov-report=html:test_results/coverage.html \
       --cov-report=term \
       --junit-xml=test_results/results.xml"""
+log_level = "INFO"
 
 [tool.ruff]
 # Always fix what you can, without needing CLI flags

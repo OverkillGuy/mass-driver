@@ -44,7 +44,7 @@ def test_migration_and_forge(tmp_path, shared_datadir, monkeypatch):
     if result.migration_result is None:
         return pytest.fail("Should have a migration result")
     if result.forge_result is None:
-        return pytest.fail("Should have a migration result")
+        return pytest.fail("Should have a forge result")
     migration_result, forge_result = (
         result.migration_result[repo_id],
         result.forge_result[repo_id],
@@ -53,6 +53,39 @@ def test_migration_and_forge(tmp_path, shared_datadir, monkeypatch):
     assert (
         migration_result.outcome == PatchOutcome.PATCHED_OK
     ), "Wrong outcome from patching"
+    # And PR creation is OK
+    assert forge_result.outcome == PROutcome.PR_CREATED, "Should succeed creating PR"
+    # And I get the PR URL I want
+    assert (
+        forge_result.pr_html_url == DUMMY_PR_URL
+    ), "Should have returned correct PR URL"
+
+
+def test_migration_then_forge(tmp_path, shared_datadir, monkeypatch):
+    """Scenario: Validate migration separate from forge"""
+    repo_path = Path(tmp_path / "test_repo/")
+    copy_folder(Path(shared_datadir / "sample_repo"), repo_path)
+    repoize(repo_path)
+    monkeypatch.chdir(repo_path)
+    repo_id = "."
+    # Given I run mass-driver in migration
+    result = massdrive_runlocal(None, shared_datadir / "mig_only.toml")
+    if result is None:
+        # Note: "return" is to trick mypy to the early-exit of pytest.fail()
+        return pytest.fail("Should have a result")
+    if result.migration_result is None:
+        return pytest.fail("Should have a migration result")
+    migration_result = result.migration_result[repo_id]
+    # And I get OK outcome on migration
+    assert (
+        migration_result.outcome == PatchOutcome.PATCHED_OK
+    ), "Wrong outcome from patching"
+    result2 = massdrive_runlocal(None, shared_datadir / "forge_only.toml")
+    assert result2, "Should have a result"
+    assert result2.forge_result, "Should have a forge result"
+    forge_result = result2.forge_result[repo_id]
+    if forge_result is None:
+        return pytest.fail("Should have a forge result for this repo")
     # And PR creation is OK
     assert forge_result.outcome == PROutcome.PR_CREATED, "Should succeed creating PR"
     # And I get the PR URL I want
