@@ -2,7 +2,6 @@
 
 
 import subprocess
-import sys
 
 from mass_driver.models.patchdriver import PatchDriver, PatchOutcome, PatchResult
 from mass_driver.models.repository import ClonedRepo
@@ -35,9 +34,9 @@ class ShellDriver(PatchDriver):
             capture_output=True,
         )
         if cmd.stdout.strip():
-            print(cmd.stdout)
+            self.logger.info(cmd.stdout)
         if cmd.stderr.strip():
-            print(cmd.stderr, file=sys.stderr)
+            self.logger.error(cmd.stderr)
         return (
             PatchResult(PatchOutcome.PATCHED_OK)
             if cmd.returncode == 0
