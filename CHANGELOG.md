@@ -7,11 +7,11 @@ The project uses semantic versioning (see [semver](https://semver.org)).
 
 ### Added
 
-- `PatchDriver` now allows a `logger` field for customized logging
-- Migration run func sets `Patchdriver.logger` name: `driver.<plugin-name>`
-- **FASTER**: Experimental multi-threaded per-repo processsing! Handling of
-  clone, scan, patching is done as individual thread per repo, with N=8 pooled
-  threads.
+- Completing an activity (source, migration, forge) now summarizes results
+  - Breakdown of repo count per outcome type, then sorted list of repos per type
+- **FASTER**: Optional, experimental multi-threaded per-repo processsing!
+  Handling of clone, scan, patching is done as individual thread per repo, with
+  N=8 pooled threads.
   - Early data shows a x6 improvement in performance, as cloning
     one repo doesn't block others anymore.
   - Enable via new experimental flag `run --parallel`, defaulting to `False`
@@ -23,7 +23,7 @@ The project uses semantic versioning (see [semver](https://semver.org)).
     `ClonedRepo` "a Repo after it was cloned".
   - Also avoids clashes with `git.Repo` object from gitpython dependency.
 - Replaced all `print()` calls to `logging` module
-- Loggers used as nested:
+- Loggers used are mostly nested:
   - from `root` (default)
   - to `run` (or other file-activity-based)
   - to `run.repo.<repo-id>` for logs for a specific repo's processing
@@ -31,7 +31,7 @@ The project uses semantic versioning (see [semver](https://semver.org)).
 - `PatchDriver` now has a `logger` obj for such customized logging:
   Repo-processing sets `Patchdriver.logger` named
   `run.repo.<repo-id>.driver.<driver-plugin-name>`
-  - Please replace any `print` with `self.logger.info`!
+  - **ACTION**: Please replace any `print` with `self.logger.info`!
 
 ## v0.16.4 - 2023-11-04
 

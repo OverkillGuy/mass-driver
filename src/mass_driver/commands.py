@@ -1,6 +1,7 @@
 """The different main commands of the mass-driver tool"""
 
 import logging
+import sys
 from argparse import Namespace
 from typing import Callable, Optional
 
@@ -22,6 +23,7 @@ from mass_driver.forge_run import pause_until_ok
 from mass_driver.models.activity import ActivityLoaded, ActivityOutcome
 from mass_driver.models.repository import IndexedRepos, SourcedRepo
 from mass_driver.review_run import review
+from mass_driver.summarize import summarize_forge, summarize_migration, summarize_source
 
 
 def drivers_command(args: Namespace):
@@ -67,7 +69,9 @@ def plugins_command(
 
 def run_command(args: Namespace) -> ActivityOutcome:
     """Process the CLI for 'run'"""
-    logging.info("Run mode!")
+    logging.basicConfig(stream=sys.stdout, level=logging.INFO)
+    logger = logging.getLogger("run")
+    logger.info("Run mode!")
     activity_str = args.activity_file.read()
     try:
         activity = ActivityLoaded.from_config(activity_str)
@@ -76,8 +80,10 @@ def run_command(args: Namespace) -> ActivityOutcome:
     # Source discovery to know what repos to patch/forge/scan
     source_config = activity.source
     repos_sourced = source_repolist_args(args)
+    sum_logger = logging.getLogger("summarize")
     if repos_sourced is None:  # No repo-list from CLI flags: call Source
         repos_sourced = source_config.source.discover()
+        summarize_source(repos_sourced, sum_logger)
     if needs_run(activity):
         run_variant = thread_run if args.parallel else sequential_run
         run_result = run_variant(
@@ -85,22 +91,26 @@ def run_command(args: Namespace) -> ActivityOutcome:
             repos_sourced,
             not args.no_cache,
         )
+        if activity.migration is not None and run_result.migration_result is not None:
+            summarize_migration(run_result.migration_result, sum_logger)
     else:
-        logging.info("No clone needed: skipping")
+        logger.info("No clone needed: skipping")
         run_result = ActivityOutcome(repos_sourced=repos_sourced)
-    logging.info("Main phase complete!")
+    logger.info("Main phase complete!")
     if activity.forge is None:
         # Nothing else to do, just print completion and exit
-        logging.info("No Forge: end")
+        logger.info("No Forge: end")
         maybe_save_outcome(args, run_result)
         return run_result
     # Now guaranteed to have a Forge: pause + forge
     if not args.no_pause:
-        logging.info("Review the commits now.")
+        logger.info("Review the commits now.")
         pause_until_ok("Type y/yes/continue to run the Forge\n")
-    forge_result = forge_main(activity.forge, run_result)
-    maybe_save_outcome(args, forge_result)
-    return forge_result
+    result = forge_main(activity.forge, run_result)
+    maybe_save_outcome(args, result)
+    if result.forge_result is not None:
+        summarize_forge(result.forge_result, sum_logger)
+    return result
 
 
 def scanners_command(args: Namespace):
