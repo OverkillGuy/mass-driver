@@ -24,7 +24,7 @@ GitPython = "*"
 # Pinned exactly to follow advice from maintainer around
 # unstable semantic versioning[1]
 # [1]: https://github.com/PyGithub/PyGithub/issues/2472#issuecomment-1482378022
-PyGithub = "==1.58.2"
+PyGithub = "==2.1.1"
 # Mass-driver settings
 pydantic = "1.*"
 

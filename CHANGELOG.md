@@ -5,6 +5,10 @@ The project uses semantic versioning (see [semver](https://semver.org)).
 
 ## [Unreleased]
 
+### Added
+
+- Update `pyGithub` to `2.1.1`, now throttles Github API to avoid ratelimits
+
 ## v0.17.0 - 2023-11-12
 
 ### Added

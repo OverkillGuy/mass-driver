@@ -2,7 +2,7 @@
 
 import re
 
-from github import AppAuthentication, Github
+from github import Auth, Github, GithubIntegration
 from pydantic import SecretStr
 
 from mass_driver.models.forge import BranchName, Forge
@@ -83,7 +83,7 @@ class GithubPersonalForge(GithubBaseForge):
     def __init__(self, **data):
         """Log in to Github first"""
         super().__init__(**data)
-        self._github_api = Github(login_or_token=self.token.get_secret_value())
+        self._github_api = Github(auth=Auth.Token(self.token.get_secret_value()))
 
 
 class GithubAppForge(GithubBaseForge):
@@ -96,12 +96,13 @@ class GithubAppForge(GithubBaseForge):
     def __init__(self, **data):
         """Log in to Github first"""
         super().__init__(**data)
-        auth = AppAuthentication(
+        auth = Auth.AppAuth(
             app_id=self.app_id.get_secret_value(),
             private_key=self.app_private_key.get_secret_value(),
-            installation_id=self.app_installation_id,
         )
-        self._github_api = Github(app_auth=auth)
+        _github_integration = GithubIntegration(auth=auth)
+        install = _github_integration.get_app_installation(self.app_installation_id)
+        self._github_api = install.get_github_for_installation()
 
 
 def detect_github_repo(remote_url: str):

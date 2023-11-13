@@ -125,6 +125,7 @@ def scanners_command(args: Namespace):
 def review_pr_command(args: Namespace):
     """Review a list of Pull Requests"""
     logging.info("Pull request review mode!")
+    # FIXME: ALl this can crash, you know!
     forge_class = get_forge(args.forge)
     forge = forge_class()  # Credentials via env
     pr_list = args.pr
