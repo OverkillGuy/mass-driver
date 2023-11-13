@@ -77,6 +77,9 @@ def run_command(args: Namespace) -> ActivityOutcome:
         activity = ActivityLoaded.from_config(activity_str)
     except ValidationError as e:
         config_error_exit(e)
+    except ImportError as e:
+        logger.exception(e)
+        raise e
     # Source discovery to know what repos to patch/forge/scan
     source_config = activity.source
     repos_sourced = source_repolist_args(args)

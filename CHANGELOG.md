@@ -9,6 +9,10 @@ The project uses semantic versioning (see [semver](https://semver.org)).
 
 - Update `pyGithub` to `2.1.1`, now throttles Github API to avoid ratelimits
 
+### Fixed
+
+- Catch and log import errors during activity loading, previously silent crashes
+
 ## v0.17.0 - 2023-11-12
 
 ### Added
