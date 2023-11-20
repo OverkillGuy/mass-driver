@@ -3,37 +3,24 @@
 Simplest code we could implement that demonstrates PatchDriver capabilities.
 """
 
-from mass_driver.models.patchdriver import PatchDriver, PatchOutcome, PatchResult
-from mass_driver.models.repository import ClonedRepo
+from mass_driver.drivers.bricks import SingleFileEditor
+from mass_driver.models.patchdriver import PatchOutcome, PatchResult
 
 
-class Counter(PatchDriver):
+class Counter(SingleFileEditor):
     """Increments a counter in a given file of repo, creating if non-existent"""
 
     target_count: int
-    counter_file: str
 
-    def run(self, repo: ClonedRepo) -> PatchResult:
-        """Process the counter file"""
-        counter_filepath_abs = repo.cloned_path / self.counter_file
-        if not counter_filepath_abs.is_file():
-            return PatchResult(
-                outcome=PatchOutcome.PATCH_DOES_NOT_APPLY,
-                details="No counter file exists yet",
-            )
-        counter_content = counter_filepath_abs.read_text().strip()
-        if not counter_content.isdigit():
+    def process_file(self, file_contents: str) -> str | PatchResult:
+        """Process the counter"""
+        stripped_content = file_contents.strip()
+        if not stripped_content.isdigit():
             return PatchResult(
                 outcome=PatchOutcome.PATCH_ERROR,
                 details="Counter file isn't an integer",
             )
-        counter_number = int(counter_content)
-        counter_is_different = counter_number != self.target_count
-        self.logger.info(
-            f"Measured: {counter_number}, target: {self.target_count}. Different? {counter_is_different}"
-        )
-        if counter_is_different:
-            counter_filepath_abs.write_text(str(self.target_count) + "\n")
-            return PatchResult(outcome=PatchOutcome.PATCHED_OK)
-        # COUNTER already same value
-        return PatchResult(outcome=PatchOutcome.ALREADY_PATCHED)
+        counter_number = int(stripped_content)
+        if counter_number == self.target_count:
+            return PatchResult(outcome=PatchOutcome.ALREADY_PATCHED)
+        return str(self.target_count) + "\n"  # UNIX files valid iff has newline EOF

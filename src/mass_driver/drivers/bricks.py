@@ -9,14 +9,15 @@ class SingleFileEditor(PatchDriver):
 
     Reads {py:attr}`target_file` and calls
     {py:meth}`process_file` with it string content, saving the file if
-    process changes the file.
+    process changes the file, or returns given {py:class}`PatchResult` if any.
 
     """
 
     target_file: str
+    """The file to edit"""
 
-    def process_file(self, file_contents: str) -> str:
-        """Process the file, returning the new content"""
+    def process_file(self, file_contents: str) -> str | PatchResult:
+        """Process the file, returning the new content or a PatchResult"""
         raise NotImplementedError("Derive this function yourself")
 
     def run(self, repo: ClonedRepo) -> PatchResult:
@@ -29,7 +30,11 @@ class SingleFileEditor(PatchDriver):
             )
         file_content_before = target_fullpath.read_text()
         try:
-            file_content_after = self.process_file(file_content_before)
+            process_output = self.process_file(file_content_before)
+            if isinstance(process_output, PatchResult):
+                return process_output
+            # In case it's a string: use it as data to write out
+            file_content_after = process_output
         except Exception as e:
             self.logger.exception(e)
             return PatchResult(
@@ -38,5 +43,5 @@ class SingleFileEditor(PatchDriver):
             )
         if file_content_after == file_content_before:
             return PatchResult(outcome=PatchOutcome.ALREADY_PATCHED)
-        target_fullpath.write_text(file_content_before)
+        target_fullpath.write_text(file_content_after)
         return PatchResult(outcome=PatchOutcome.PATCHED_OK)
