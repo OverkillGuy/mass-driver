@@ -10,6 +10,8 @@ The project uses semantic versioning (see [semver](https://semver.org)).
 - New `SingleFileEditor`, derived from `PatchDriver`, for editing single files.
   - Parameter `target_file`, will be fed its text content to `process_file()`.
   - Use via `from mass_driver.drivers.bricks import SingleFileEditor`.
+- New `GlobFileEditor`, similarly for editing multiple files from glob pattern.
+  - Use via `from mass_driver.drivers.bricks import GlobFileEditor`.
 
 ## v0.17.1 - 2023-11-13
 
