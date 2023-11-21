@@ -5,6 +5,8 @@ The project uses semantic versioning (see [semver](https://semver.org)).
 
 ## [Unreleased]
 
+## v0.18.0 - 2023-11-21
+
 ### Added
 
 - New `SingleFileEditor`, derived from `PatchDriver`, for editing single files.
