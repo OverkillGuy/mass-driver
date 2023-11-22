@@ -21,21 +21,12 @@ from mass_driver.models.migration import (  # Forge,
     load_source,
 )
 from mass_driver.models.patchdriver import PatchResult
+from mass_driver.models.status import RepoStatus, RepoOutcome
 from mass_driver.models.repository import IndexedClonedRepos, IndexedRepos, RepoID
 from mass_driver.models.scan import ScanFile, ScanLoaded, Scanner
 
-IndexedPatchResult = dict[RepoID, PatchResult]
-"""A set of PatchResults, indexed by original repo URL given as input"""
-
-IndexedPRResult = dict[RepoID, PRResult]
-"""A set of PRResults, indexed by original repo URL given as input"""
-
-ScanResult = dict[str, dict]
-"""The output of one or more scanner(s) on a single repo, indexed by scanner-name"""
-
-IndexedScanResult = dict[RepoID, ScanResult]
-"""A set of results of N scanners over multiple repos, indexed by original repo URL"""
-
+IndexedReposOutcome = dict[RepoID, RepoOutcome]
+"""A set of RepoOutcome, indexed by RepoID"""
 
 class ActivityFile(BaseModel):
     """Top-level object for migration + forge, proxy for TOML file, pre-class-load"""
@@ -60,20 +51,11 @@ class ActivityLoaded(BaseModel):
         activity_file = load_activity_toml(config_toml)
         return load_activity(activity_file)
 
-
 class ActivityOutcome(BaseModel):
     """The outcome of running activities"""
 
-    repos_sourced: IndexedRepos = {}
-    """The repos, as discovered from Source"""
-    repos_cloned: IndexedClonedRepos = {}
-    """The repos, as cloned"""
-    scan_result: IndexedScanResult | None = None
-    """A lookup table of the scan results, indexed by repos_input url"""
-    migration_result: IndexedPatchResult | None = None
-    """A lookup table of the results of a Migration, indexed by repos_input url"""
-    forge_result: IndexedPRResult | None = None
-    """A lookup table of the results of a Forge, indexed by repos_input url"""
+    repos: IndexedReposOutcome
+    """The individual repos and their status"""
 
 
 def load_activity_toml(activity_config: str) -> ActivityFile:
