@@ -20,8 +20,13 @@ from mass_driver.discovery import (
 )
 from mass_driver.forge_run import main as forge_main
 from mass_driver.forge_run import pause_until_ok
-from mass_driver.models.activity import ActivityLoaded, ActivityOutcome
-from mass_driver.models.repository import IndexedRepos, SourcedRepo
+from mass_driver.models.activity import (
+    ActivityLoaded,
+    ActivityOutcome,
+    IndexedReposOutcome,
+)
+from mass_driver.models.repository import SourcedRepo
+from mass_driver.models.status import RepoOutcome, RepoStatus
 from mass_driver.review_run import review
 from mass_driver.summarize import summarize_forge, summarize_migration, summarize_source
 
@@ -160,15 +165,19 @@ def config_error_exit(e: ValidationError):
     raise e  # exit code = Simulate the argparse behaviour of exiting on bad args
 
 
-def source_repolist_args(args) -> Optional[IndexedRepos]:
+def source_repolist_args(args) -> Optional[IndexedReposOutcome]:
     """Read the repo from args, if any"""
     repos = read_repolist(args)
     if repos is not None:
-        return (
-            {url: SourcedRepo(repo_id=url, clone_url=url) for url in repos}
-            if repos
-            else None
-        )
+        repo_dict = {
+            url: RepoOutcome(
+                repo_id=url,
+                status=RepoStatus.SOURCED,
+                source=SourcedRepo(repo_id=url, clone_url=url),
+            )
+            for url in repos
+        }
+        return ActivityOutcome(repos=repo_dict) if repos else None
     return None
 
 

@@ -7,7 +7,6 @@ from pydantic import BaseModel
 from tomllib import loads
 
 from mass_driver.discovery import get_scanner
-from mass_driver.models.forge import PRResult
 from mass_driver.models.migration import (  # Forge,
     TOML_PROJECTKEY,
     ForgeFile,
@@ -20,13 +19,13 @@ from mass_driver.models.migration import (  # Forge,
     load_driver,
     load_source,
 )
-from mass_driver.models.patchdriver import PatchResult
-from mass_driver.models.status import RepoStatus, RepoOutcome
-from mass_driver.models.repository import IndexedClonedRepos, IndexedRepos, RepoID
+from mass_driver.models.repository import RepoID
 from mass_driver.models.scan import ScanFile, ScanLoaded, Scanner
+from mass_driver.models.status import RepoOutcome
 
 IndexedReposOutcome = dict[RepoID, RepoOutcome]
 """A set of RepoOutcome, indexed by RepoID"""
+
 
 class ActivityFile(BaseModel):
     """Top-level object for migration + forge, proxy for TOML file, pre-class-load"""
@@ -50,6 +49,7 @@ class ActivityLoaded(BaseModel):
         """Get a loaded migration from config contents"""
         activity_file = load_activity_toml(config_toml)
         return load_activity(activity_file)
+
 
 class ActivityOutcome(BaseModel):
     """The outcome of running activities"""

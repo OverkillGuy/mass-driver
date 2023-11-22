@@ -2,14 +2,16 @@
 
 
 from enum import Enum
+
 from pydantic import BaseModel
 
-from mass_driver.models.repository import ClonedRepo, SourcedRepo
-from mass_driver.models.patchdriver import PatchResult
 from mass_driver.models.forge import PRResult
+from mass_driver.models.patchdriver import PatchResult
+from mass_driver.models.repository import ClonedRepo, SourcedRepo
 
 ScanResult = dict[str, dict]
 """The output of one or more scanner(s) on a single repo, indexed by scanner-name"""
+
 
 class RepoStatus(str, Enum):
     """The status of a single Repository"""
@@ -24,7 +26,6 @@ class RepoStatus(str, Enum):
     """Patch has been applied"""
     FORGED = "FORGED"
     """Necessary forge from Patch has been raised"""
-
 
 
 class RepoOutcome(BaseModel):
