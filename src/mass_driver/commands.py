@@ -91,12 +91,13 @@ def run_command(args: Namespace) -> ActivityOutcome:
     sum_logger = logging.getLogger("summarize")
     if repos_sourced is None:  # No repo-list from CLI flags: call Source
         repos_sourced = source_config.source.discover()
-        summarize_source(repos_sourced, sum_logger)
+        out = ActivityOutcome(repos=repos_sourced)
+        summarize_source(out, sum_logger)
     if needs_run(activity):
         run_variant = thread_run if args.parallel else sequential_run
         run_result = run_variant(
             activity,
-            repos_sourced,
+            out,
             not args.no_cache,
         )
         if activity.migration is not None and run_result.migration_result is not None:

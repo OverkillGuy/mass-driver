@@ -63,17 +63,9 @@ def massdrive(repo_url: str, activity_configfilepath: Path, repo_is_path: bool =
     if repo_is_path:
         repoize(Path(repo_url))
     result = massdrive_runlocal(repo_url, activity_configfilepath)
-    scan_result = (
-        result.scan_result[repo_url] if result.scan_result is not None else None
-    )
-    mig_result = (
-        result.migration_result[repo_url]
-        if result.migration_result is not None
-        else None
-    )
-    for_result = (
-        result.forge_result[repo_url] if result.forge_result is not None else None
-    )
+    scan_result = result.repos[repo_url].scan
+    mig_result = result.repos[repo_url].patch
+    for_result = result.repos[repo_url].forge
     return mig_result, for_result, scan_result
 
 

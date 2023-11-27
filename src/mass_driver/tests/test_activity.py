@@ -38,16 +38,14 @@ def test_migration_and_forge(tmp_path, shared_datadir, monkeypatch):
     activityconfig_filepath = shared_datadir / "activity.toml"
     # When I run mass-driver
     result = massdrive_runlocal(None, activityconfig_filepath)
-    if result is None:
-        # Note: "return" is to trick mypy to the early-exit of pytest.fail()
-        return pytest.fail("Should have a result")
-    if result.migration_result is None:
+    res = result.repos[repo_id]
+    if res.patch is None:
         return pytest.fail("Should have a migration result")
-    if result.forge_result is None:
+    if res.forge is None:
         return pytest.fail("Should have a forge result")
     migration_result, forge_result = (
-        result.migration_result[repo_id],
-        result.forge_result[repo_id],
+        res.patch,
+        res.forge,
     )
     # Then I get OK outcome on migration
     assert (
@@ -70,12 +68,12 @@ def test_migration_then_forge(tmp_path, shared_datadir, monkeypatch):
     repo_id = "."
     # Given I run mass-driver in migration
     result = massdrive_runlocal(None, shared_datadir / "mig_only.toml")
-    if result is None:
-        # Note: "return" is to trick mypy to the early-exit of pytest.fail()
-        return pytest.fail("Should have a result")
-    if result.migration_result is None:
+    res = result.repos[repo_id]
+    if res.patch is None:
         return pytest.fail("Should have a migration result")
-    migration_result = result.migration_result[repo_id]
+    if res.forge is None:
+        return pytest.fail("Should have a forge result")
+    migration_result = res.patch
     # And I get OK outcome on migration
     assert (
         migration_result.outcome == PatchOutcome.PATCHED_OK

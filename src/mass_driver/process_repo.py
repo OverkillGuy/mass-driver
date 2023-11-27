@@ -15,7 +15,6 @@ from mass_driver.git import (
     push,
     switch_branch_then_pull,
 )
-from mass_driver.models.activity import ScanResult
 from mass_driver.models.forge import PROutcome, PRResult
 from mass_driver.models.migration import ForgeLoaded, MigrationLoaded
 from mass_driver.models.patchdriver import PatchOutcome, PatchResult
@@ -24,6 +23,7 @@ from mass_driver.models.repository import (
     SourcedRepo,
 )
 from mass_driver.models.scan import ScanLoaded
+from mass_driver.models.status import ScanResult
 
 
 def clone_repo(

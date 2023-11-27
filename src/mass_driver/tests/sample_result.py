@@ -7,6 +7,7 @@ from mass_driver.models.activity import ActivityOutcome
 from mass_driver.models.forge import PROutcome, PRResult
 from mass_driver.models.patchdriver import PatchOutcome, PatchResult
 from mass_driver.models.repository import ClonedRepo, SourcedRepo
+from mass_driver.models.status import RepoOutcome, RepoStatus
 
 PATCH_ERRORS = 1
 ALREADY_PATCHED = 4
@@ -20,9 +21,13 @@ SOURCED_COUNT = sum([PATCH_ERRORS, ALREADY_PATCHED, PATCH_DOES_NOT_APPLY, PATCHE
 
 def generate_sample_results() -> ActivityOutcome:
     """Generate some sample results from multiple runs"""
-    sourced = {
-        f"repo-{i}": SourcedRepo(
-            repo_id=f"repo-{i}", clone_url=f"git@example.com/repo-{i}.git"
+    out = {
+        f"repo-{i}": RepoOutcome(
+            repo_id=f"repo-{i}",
+            status=RepoStatus.SOURCED,
+            source=SourcedRepo(
+                repo_id=f"repo-{i}", clone_url=f"git@example.com/repo-{i}.git"
+            ),
         )
         for i in range(SOURCED_COUNT)
     }
@@ -35,16 +40,16 @@ def generate_sample_results() -> ActivityOutcome:
     for subdir in tmp_subdirs:
         subdir.mkdir(parents=True)
 
-    cloned = {
-        f"repo-{i}": ClonedRepo(
-            repo_id=f"repo-{i}",
+    for i, tmp_subdir in enumerate(tmp_subdirs):
+        repo_id = f"repo-{i}"
+        out[repo_id].status = RepoStatus.CLONED
+        out[repo_id].clone = ClonedRepo(
+            repo_id=repo_id,
             clone_url=f"git@example.com/repo-{i}.git",
             cloned_path=tmp_subdir,
             cloned_branch="main",
             current_branch="main",
         )
-        for i, tmp_subdir in enumerate(tmp_subdirs)
-    }
 
     migrated_outcomes = (
         ["PATCHED_OK"] * PATCHED_OK
@@ -53,29 +58,24 @@ def generate_sample_results() -> ActivityOutcome:
         + ["PATCH_ERROR"] * PATCH_ERRORS
     )
 
-    migrated = {
-        f"repo-{i}": PatchResult(outcome=PatchOutcome(outcome))
-        for i, outcome in enumerate(migrated_outcomes)
-    }
+    for i, outcome in enumerate(migrated_outcomes):
+        repo_id = f"repo-{i}"
+        out[repo_id].patch = PatchResult(outcome=PatchOutcome(outcome))
+        out[repo_id].status = RepoStatus.PATCHED
 
     forge_outcomes = ["PR_FAILED"] * PR_FAILED + ["PR_CREATED"] * PR_CREATED
 
-    forged = {
-        f"repo-{i}": PRResult(
+    for i, outcome in enumerate(forge_outcomes):
+        repo_id = f"repo-{i}"
+        out[repo_id].forge = PRResult(
             outcome=PROutcome(outcome),
             pr_html_url=f"https://example.com/repo-{i}/pulls/1"
             if outcome == "PR_CREATED"
             else None,
         )
-        for i, outcome in enumerate(forge_outcomes)
-    }
+        out[repo_id].status = RepoStatus.FORGED
 
-    return ActivityOutcome(
-        repos_sourced=sourced,
-        repos_cloned=cloned,
-        migration_result=migrated,
-        forge_result=forged,
-    )
+    return ActivityOutcome(repos=out)
 
 
 SAMPLE_DATA = generate_sample_results()

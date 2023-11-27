@@ -29,9 +29,14 @@ def test_csv_source(datadir, monkeypatch):
     # When I run mass-driver
     res = massdrive_runlocal(None, activityconfig_filepath)
     # Then I get sourced repos
-    sourced = res.repos_sourced
+
+    sourced = res.repos
     assert sourced, "Should have gotten repos sourced"
     assert len(sourced) == 2, "Should have gotten 2 CSV repos"
     repos = list(sourced.values())
-    assert isinstance(repos[0], SourcedRepo), "Should have gotten a SourcedRepo back"
-    assert "extra_key" in repos[0].patch_data, "Should have parsed extra CSV field"
+    assert isinstance(
+        repos[0].source, SourcedRepo
+    ), "Should have gotten a SourcedRepo back"
+    assert (
+        "extra_key" in repos[0].source.patch_data
+    ), "Should have parsed extra CSV field"

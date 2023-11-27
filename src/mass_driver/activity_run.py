@@ -13,10 +13,9 @@ from mass_driver.git import (
 from mass_driver.models.activity import (
     ActivityLoaded,
     ActivityOutcome,
-    ScanResult,
 )
 from mass_driver.models.patchdriver import PatchOutcome, PatchResult
-from mass_driver.models.status import RepoStatus
+from mass_driver.models.status import RepoStatus, ScanResult
 from mass_driver.process_repo import clone_repo, migrate_repo, scan_repo
 
 LOGGER_PREFIX = "run"
@@ -41,8 +40,7 @@ def sequential_run(
     if migration is not None:
         what_array.append(f"{migration.driver=}")
     logger.info(f"Processing {repo_count} with {' and '.join(what_array)}")
-    for repo_index, repo in enumerate(repos.items(), start=1):
-        repo_id = repo.repo_id
+    for repo_index, (repo_id, repo) in enumerate(repos.items(), start=1):
         repo_logger_name = f"{logger.name}.repo.{repo_id.replace('.','_')}"
         repo_logger = logging.getLogger(repo_logger_name)
         try:
@@ -83,7 +81,7 @@ def sequential_run(
                 )
                 out[repo_id].status = RepoStatus.PATCHED
     logger.info("Action completed: exiting")
-    return out
+    return ActivityOutcome(repos=out)
 
 
 def thread_run(

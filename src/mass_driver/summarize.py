@@ -3,11 +3,10 @@ from collections import defaultdict
 from logging import Logger
 
 from mass_driver.models.activity import (
-    IndexedPatchResult,
-    IndexedPRResult,
+    ActivityOutcome,
 )
 from mass_driver.models.forge import PROutcome
-from mass_driver.models.repository import IndexedRepos
+from mass_driver.models.status import RepoStatus
 
 
 def group_by_outcome(result):
@@ -19,38 +18,46 @@ def group_by_outcome(result):
     return repo_by_type
 
 
-def summarize_source(result: IndexedRepos, logger: Logger):
+def summarize_source(result: ActivityOutcome, logger: Logger):
     """Summarize Source result"""
-    logger.info(f"Source results: discovered {len(result.keys())} repos")
+    repos_sourced = [
+        repo for repo in result.repos.values() if repo.status == RepoStatus.SOURCED
+    ]
+    logger.info(f"Source results: discovered {len(repos_sourced)} repos")
 
 
-def summarize_migration(
-    result: IndexedPatchResult, logger: Logger, details: bool = True
-):
+def summarize_migration(result: ActivityOutcome, logger: Logger, details: bool = True):
     """Summarize migration result"""
+    patched = [
+        (repo.repo_id, repo.patch)
+        for repo in result.repos.values()
+        if repo.patch is not None
+    ]
     repos_by_outcome = defaultdict(list)
-    for repo_id, repo_result in result.items():
+    for repo_id, repo_result in patched:
         repos_by_outcome[repo_result.outcome].append(repo_id)
     summarize_result(repos_by_outcome, "migration", logger)
     if details:
         print_migration(repos_by_outcome, logger)
 
 
-def summarize_forge(result: IndexedPRResult, logger: Logger, details: bool = True):
+def summarize_forge(result: ActivityOutcome, logger: Logger, details: bool = True):
     """Summarize forge result"""
+    forged = [repo for repo in result.repos.values() if repo.forge is not None]
     repos_by_outcome = defaultdict(list)
-    for repo_id, repo_result in result.items():
-        repos_by_outcome[repo_result.outcome].append(repo_id)
+    for repo_result in forged:
+        repos_by_outcome[repo_result.forged.outcome].append(repo_result.repo_id)
     summarize_result(repos_by_outcome, "forge", logger)
     print_prs(result, logger)
     if details:
         print_forge(repos_by_outcome, logger)
 
 
-def print_prs(result: IndexedPRResult, logger: Logger):
+def print_prs(result: ActivityOutcome, logger: Logger):
     """Print the list of PRs created"""
     success_prs = []
-    for f in result.values():
+    forged = [repo.forge for repo in result.repos.values() if repo.forge is not None]
+    for f in forged:
         if f.outcome == PROutcome.PR_CREATED and f.pr_html_url is not None:
             success_prs.append(f.pr_html_url)
     logger.info(f"{len(success_prs)} PRs created:")
