@@ -39,22 +39,3 @@ def test_driver_one(test_folder: Path, tmp_path):
     result, reference = massdrive_check_file(workdir)
     assert result == reference, "Massdriver result should match reference"
     # test-end marker
-
-
-# def test_counter_borked(
-#     tmp_path,
-#     datadir,
-#     shared_datadir,
-# ):
-#     """Scenario: Counter not an integer crashes"""
-#     # Given a sample repo to mass-drive
-#     # But counter is not digits
-#     repo_path = Path(tmp_path / "test_repo/")
-#     copy_folder(Path(shared_datadir / "sample_repo"), repo_path)
-#     config_fullpath = datadir / "counter_config2.toml"
-#     migration = MigrationLoaded.from_config(config_fullpath.read_text())
-#     with open(repo_path / migration.driver.counter_file, "w") as counter_fd:
-#         counter_fd.write("Hello World! Not an integer!")
-#     # When I run mass-driver
-#     massdrive(repo_path, config_fullpath)
-#     # TODO Then some error handling should occur

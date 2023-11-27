@@ -23,9 +23,8 @@ from mass_driver.forge_run import pause_until_ok
 from mass_driver.models.activity import (
     ActivityLoaded,
     ActivityOutcome,
-    IndexedReposOutcome,
 )
-from mass_driver.models.repository import SourcedRepo
+from mass_driver.models.repository import IndexedRepos, SourcedRepo
 from mass_driver.models.status import RepoOutcome, RepoStatus
 from mass_driver.review_run import review
 from mass_driver.summarize import summarize_forge, summarize_migration, summarize_source
@@ -86,13 +85,8 @@ def run_command(args: Namespace) -> ActivityOutcome:
         logger.exception(e)
         raise e
     # Source discovery to know what repos to patch/forge/scan
-    source_config = activity.source
-    repos_sourced = source_repolist_args(args)
     sum_logger = logging.getLogger("summarize")
-    if repos_sourced is None:  # No repo-list from CLI flags: call Source
-        repos_sourced = source_config.source.discover()
-        out = ActivityOutcome(repos=repos_sourced)
-        summarize_source(out, sum_logger)
+    out = maybe_discover_sources(args, activity.source, sum_logger)
     if needs_run(activity):
         run_variant = thread_run if args.parallel else sequential_run
         run_result = run_variant(
@@ -100,11 +94,11 @@ def run_command(args: Namespace) -> ActivityOutcome:
             out,
             not args.no_cache,
         )
-        if activity.migration is not None and run_result.migration_result is not None:
-            summarize_migration(run_result.migration_result, sum_logger)
+        if activity.migration is not None:
+            summarize_migration(run_result, sum_logger)
     else:
         logger.info("No clone needed: skipping")
-        run_result = ActivityOutcome(repos_sourced=repos_sourced)
+        run_result = out
     logger.info("Main phase complete!")
     if activity.forge is None:
         # Nothing else to do, just print completion and exit
@@ -117,8 +111,7 @@ def run_command(args: Namespace) -> ActivityOutcome:
         pause_until_ok("Type y/yes/continue to run the Forge\n")
     result = forge_main(activity.forge, run_result)
     maybe_save_outcome(args, result)
-    if result.forge_result is not None:
-        summarize_forge(result.forge_result, sum_logger)
+    summarize_forge(result, sum_logger)
     return result
 
 
@@ -166,20 +159,20 @@ def config_error_exit(e: ValidationError):
     raise e  # exit code = Simulate the argparse behaviour of exiting on bad args
 
 
-def source_repolist_args(args) -> Optional[IndexedReposOutcome]:
+def source_repolist_args(args) -> Optional[ActivityOutcome]:
     """Read the repo from args, if any"""
     repos = read_repolist(args)
-    if repos is not None:
-        repo_dict = {
-            url: RepoOutcome(
-                repo_id=url,
-                status=RepoStatus.SOURCED,
-                source=SourcedRepo(repo_id=url, clone_url=url),
-            )
-            for url in repos
-        }
-        return ActivityOutcome(repos=repo_dict) if repos else None
-    return None
+    if repos is None:
+        return None
+    repo_dict = {
+        url: RepoOutcome(
+            repo_id=url,
+            status=RepoStatus.SOURCED,
+            source=SourcedRepo(repo_id=url, clone_url=url),
+        )
+        for url in repos
+    }
+    return ActivityOutcome(repos=repo_dict)
 
 
 def read_repolist(args) -> Optional[list[str]]:
@@ -218,3 +211,25 @@ def needs_run(activity: ActivityLoaded) -> bool:
     got_forge_clone = activity.forge is not None and activity.forge.git_push_first
     # activity-running is only needed if we need some clone:
     return got_mig or got_scan or got_forge_clone
+
+
+def sourced_to_outcome(r: IndexedRepos) -> ActivityOutcome:
+    """Convert the result of sourcing back to a full activity"""
+    repos = {}
+    for repo_id, sourced_repo in r.items():
+        repos[repo_id] = RepoOutcome(
+            repo_id=repo_id, status=RepoStatus.SOURCED, source=sourced_repo
+        )
+    return ActivityOutcome(repos=repos)
+
+
+def maybe_discover_sources(args, source_config, sum_logger) -> ActivityOutcome:
+    """Discover sources, either CLI or properly"""
+    repos_sourced = source_repolist_args(args)
+    if repos_sourced is None:  # No repo-list from CLI flags: call Source
+        repos_sourced = source_config.source.discover()
+        out = sourced_to_outcome(repos_sourced)
+    else:
+        out = repos_sourced
+    summarize_source(out, sum_logger)
+    return out

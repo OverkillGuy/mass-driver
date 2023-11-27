@@ -32,7 +32,7 @@ commit_author_email = "smith@example.com"
 driver_name = "counter"
 
 # The dict will be loaded verbatim into the relevant PatchDriver
-driver_config = { counter_file = "counter.txt", target_count = 2}
+driver_config = { target_file = "counter.txt", target_count = 2}
 
 [mass-driver.forge]
 forge_name = "dummy"

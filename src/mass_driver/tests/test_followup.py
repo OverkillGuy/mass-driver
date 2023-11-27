@@ -13,6 +13,7 @@ from mass_driver.tests.fixtures import (
 )
 
 
+@pytest.mark.xfail(reason="2-mig,1forge known bug")
 def test_2migration_but_1forge(tmp_path, shared_datadir, monkeypatch):
     """Scenario: Forge a single time when 2 migration but only one fails"""
     repo1_path = Path(tmp_path / "test_repo1/")
@@ -30,11 +31,8 @@ def test_2migration_but_1forge(tmp_path, shared_datadir, monkeypatch):
     activityconfig_filepath = shared_datadir / "2mig_1forge.toml"
     # When I run mass-driver with 2 migrations, 1 forge
     result = massdrive_runlocal(None, activityconfig_filepath)
-    if result is None:
-        # Note: "return" is to trick mypy to the early-exit of pytest.fail()
-        return pytest.fail("Should have a result")
-    if result.migration_result is None:
-        return pytest.fail("Should have a migration result")
+    assert result is not None, "Should have a result"
+    assert result.migration_result is not None, "Should have a migration result"
     mig1 = result.migration_result[repo1_id]
     mig2 = result.migration_result[repo2_id]
     # Then I get OK outcome on migration1

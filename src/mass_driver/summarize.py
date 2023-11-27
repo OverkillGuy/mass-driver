@@ -46,7 +46,8 @@ def summarize_forge(result: ActivityOutcome, logger: Logger, details: bool = Tru
     forged = [repo for repo in result.repos.values() if repo.forge is not None]
     repos_by_outcome = defaultdict(list)
     for repo_result in forged:
-        repos_by_outcome[repo_result.forged.outcome].append(repo_result.repo_id)
+        assert repo_result.forge is not None, "Should have gotten only forged repos"
+        repos_by_outcome[repo_result.forge.outcome].append(repo_result.repo_id)
     summarize_result(repos_by_outcome, "forge", logger)
     print_prs(result, logger)
     if details:

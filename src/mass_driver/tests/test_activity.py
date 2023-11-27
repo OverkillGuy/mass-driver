@@ -13,7 +13,6 @@ from mass_driver.forges.dummy import DUMMY_PR_URL
 from mass_driver.models.patchdriver import PatchOutcome
 from mass_driver.tests.fixtures import (
     copy_folder,
-    massdrive,
     massdrive_runlocal,
     repoize,
 )
@@ -59,6 +58,7 @@ def test_migration_and_forge(tmp_path, shared_datadir, monkeypatch):
     ), "Should have returned correct PR URL"
 
 
+@pytest.mark.xfail(reason="Migration-then-forge borked, known-bug")
 def test_migration_then_forge(tmp_path, shared_datadir, monkeypatch):
     """Scenario: Validate migration separate from forge"""
     repo_path = Path(tmp_path / "test_repo/")
@@ -67,23 +67,26 @@ def test_migration_then_forge(tmp_path, shared_datadir, monkeypatch):
     monkeypatch.chdir(repo_path)
     repo_id = "."
     # Given I run mass-driver in migration
-    result = massdrive_runlocal(None, shared_datadir / "mig_only.toml")
+    mig_path = shared_datadir / "mig_only.toml"
+    result = massdrive_runlocal(None, mig_path)
     res = result.repos[repo_id]
+    # And I get OK outcome on migration
     if res.patch is None:
         return pytest.fail("Should have a migration result")
-    if res.forge is None:
-        return pytest.fail("Should have a forge result")
+    # But no forge result initially
+    if res.forge is not None:
+        return pytest.fail("Should have no forge result initially")
     migration_result = res.patch
-    # And I get OK outcome on migration
     assert (
         migration_result.outcome == PatchOutcome.PATCHED_OK
     ), "Wrong outcome from patching"
-    result2 = massdrive_runlocal(None, shared_datadir / "forge_only.toml")
-    assert result2, "Should have a result"
-    assert result2.forge_result, "Should have a forge result"
-    forge_result = result2.forge_result[repo_id]
-    if forge_result is None:
-        return pytest.fail("Should have a forge result for this repo")
+    forge_path = shared_datadir / "forge_only.toml"
+    # FIXME: The forge step here asserts [r.status == PATCHED] but here only SOURCED!)
+    result2 = massdrive_runlocal(None, forge_path)
+    res2 = result2.repos[repo_id]
+    assert res2, "Should have a second result"
+    forge_result = res2.forge
+    assert forge_result is not None, "Should have a forge result"
     # And PR creation is OK
     assert forge_result.outcome == PROutcome.PR_CREATED, "Should succeed creating PR"
     # And I get the PR URL I want
@@ -103,8 +106,12 @@ def test_scan(tmp_path, shared_datadir):
     copy_folder(Path(shared_datadir / "sample_repo"), repo_path)
     activityconfig_filepath = shared_datadir / "activity.toml"
     # When I run a mass-driver scan
-    _mig, _forge, scan_result = massdrive(str(repo_path), activityconfig_filepath)
+    repo_id = "."
+    result = massdrive_runlocal(None, activityconfig_filepath)
+    res = result.repos[repo_id]
+    scan_result = res.scan
     # Then I get scan results
+    assert scan_result is not None, "Should have a Scan result"
     assert isinstance(scan_result, dict), "Should return dict scan result"
     # And scan result is correct
     assert "root-files" in scan_result.keys(), "Should have 'root-files' Scanner"

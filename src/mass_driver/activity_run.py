@@ -46,7 +46,7 @@ def sequential_run(
         try:
             logger.info(f"[{repo_index:03d}/{repo_count:03d}] Processing {repo_id}...")
             cloned_repo, repo_gitobj = clone_repo(
-                repo, cache_folder, logger=repo_logger
+                repo.source, cache_folder, logger=repo_logger
             )
             out[repo_id].clone = cloned_repo
             out[repo_id].status = RepoStatus.CLONED
