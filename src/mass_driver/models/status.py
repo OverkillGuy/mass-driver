@@ -13,19 +13,14 @@ ScanResult = dict[str, dict]
 """The output of one or more scanner(s) on a single repo, indexed by scanner-name"""
 
 
-class RepoStatus(str, Enum):
-    """The status of a single Repository"""
+class Phase(str, Enum):
+    """The "Phase" a single Repository is going through"""
 
-    SOURCED = "SOURCED"
-    """Untouched from sourcing"""
-    CLONED = "CLONED"
-    """Cloned and branch adjusted as needed"""
-    SCANNED = "SCANNED"
-    """Repo has been scanned"""
-    PATCHED = "PATCHED"
-    """Patch has been applied"""
-    FORGED = "FORGED"
-    """Necessary forge from Patch has been raised"""
+    SOURCE = "SOURCE"
+    CLONE = "CLONE"
+    SCAN = "SCAN"
+    PATCH = "PATCH"
+    FORGE = "FORGE"
 
 
 class RepoOutcome(BaseModel):
@@ -33,7 +28,7 @@ class RepoOutcome(BaseModel):
 
     repo_id: str
     """The Repo's identifier among this run. Unique-ish string"""
-    status: RepoStatus
+    status: Phase
     """The status of the repo's processing"""
     source: SourcedRepo
     """The Repo's info from Source"""

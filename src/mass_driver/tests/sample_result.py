@@ -7,7 +7,7 @@ from mass_driver.models.activity import ActivityOutcome
 from mass_driver.models.forge import PROutcome, PRResult
 from mass_driver.models.patchdriver import PatchOutcome, PatchResult
 from mass_driver.models.repository import ClonedRepo, SourcedRepo
-from mass_driver.models.status import RepoOutcome, RepoStatus
+from mass_driver.models.status import Phase, RepoOutcome
 
 PATCH_ERRORS = 1
 ALREADY_PATCHED = 4
@@ -24,7 +24,7 @@ def generate_sample_results() -> ActivityOutcome:
     out = {
         f"repo-{i}": RepoOutcome(
             repo_id=f"repo-{i}",
-            status=RepoStatus.SOURCED,
+            status=Phase.SOURCE,
             source=SourcedRepo(
                 repo_id=f"repo-{i}", clone_url=f"git@example.com/repo-{i}.git"
             ),
@@ -42,7 +42,7 @@ def generate_sample_results() -> ActivityOutcome:
 
     for i, tmp_subdir in enumerate(tmp_subdirs):
         repo_id = f"repo-{i}"
-        out[repo_id].status = RepoStatus.CLONED
+        out[repo_id].status = Phase.CLONE
         out[repo_id].clone = ClonedRepo(
             repo_id=repo_id,
             clone_url=f"git@example.com/repo-{i}.git",
@@ -61,7 +61,7 @@ def generate_sample_results() -> ActivityOutcome:
     for i, outcome in enumerate(migrated_outcomes):
         repo_id = f"repo-{i}"
         out[repo_id].patch = PatchResult(outcome=PatchOutcome(outcome))
-        out[repo_id].status = RepoStatus.PATCHED
+        out[repo_id].status = Phase.PATCH
 
     forge_outcomes = ["PR_FAILED"] * PR_FAILED + ["PR_CREATED"] * PR_CREATED
 
@@ -73,7 +73,7 @@ def generate_sample_results() -> ActivityOutcome:
             if outcome == "PR_CREATED"
             else None,
         )
-        out[repo_id].status = RepoStatus.FORGED
+        out[repo_id].status = Phase.FORGE
 
     return ActivityOutcome(repos=out)
 

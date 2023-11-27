@@ -6,7 +6,7 @@ from mass_driver.models.activity import (
     ActivityOutcome,
 )
 from mass_driver.models.forge import PROutcome
-from mass_driver.models.status import RepoStatus
+from mass_driver.models.status import Phase
 
 
 def group_by_outcome(result):
@@ -21,7 +21,7 @@ def group_by_outcome(result):
 def summarize_source(result: ActivityOutcome, logger: Logger):
     """Summarize Source result"""
     repos_sourced = [
-        repo for repo in result.repos.values() if repo.status == RepoStatus.SOURCED
+        repo for repo in result.repos.values() if repo.status == Phase.SOURCE
     ]
     logger.info(f"Source results: discovered {len(repos_sourced)} repos")
 

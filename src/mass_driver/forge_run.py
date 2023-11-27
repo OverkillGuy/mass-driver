@@ -5,7 +5,7 @@ from mass_driver.models.activity import ActivityOutcome
 from mass_driver.models.forge import PROutcome, PRResult
 from mass_driver.models.migration import ForgeLoaded
 from mass_driver.models.patchdriver import PatchOutcome
-from mass_driver.models.status import RepoStatus
+from mass_driver.models.status import Phase
 from mass_driver.process_repo import forge_per_repo
 
 
@@ -18,7 +18,7 @@ def main(
     repos = [
         r
         for r in progress.repos.values()
-        if r.status == RepoStatus.PATCHED
+        if r.status == Phase.PATCH
         and r.patch is not None
         and r.patch.outcome == PatchOutcome.PATCHED_OK
     ]
@@ -38,7 +38,7 @@ def main(
             )
             result = forge_per_repo(config, repo_clone)
             out[repo_id].forge = result
-            out[repo_id].status = RepoStatus.FORGED
+            out[repo_id].status = Phase.FORGE
         except Exception as e:
             logging.error(f"Error processing repo '{repo_id}'")
             logging.error("Error was: {e}")
@@ -46,7 +46,7 @@ def main(
                 outcome=PROutcome.PR_FAILED,
                 details=f"Unhandled exception caught during patching. Error was: {e}",
             )
-            out[repo_id].status = RepoStatus.FORGED
+            out[repo_id].status = Phase.FORGE
             continue
     logging.info("Action completed: exiting")
     return ActivityOutcome(repos=out)

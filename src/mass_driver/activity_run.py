@@ -15,7 +15,7 @@ from mass_driver.models.activity import (
     ActivityOutcome,
 )
 from mass_driver.models.patchdriver import ExceptionRecord, PatchOutcome, PatchResult
-from mass_driver.models.status import RepoStatus, ScanResult
+from mass_driver.models.status import Phase, ScanResult
 from mass_driver.process_repo import clone_repo, migrate_repo, scan_repo
 
 LOGGER_PREFIX = "run"
@@ -49,7 +49,7 @@ def sequential_run(
                 repo.source, cache_folder, logger=repo_logger
             )
             out[repo_id].clone = cloned_repo
-            out[repo_id].status = RepoStatus.CLONED
+            out[repo_id].status = Phase.CLONE
         except Exception as e:
             repo_logger.info(f"Error cloning repo '{repo_id}'\nError was: {e}")
             # FIXME: Clone failure lacks cloned_repo entry, dropping visibility of fail
@@ -57,7 +57,7 @@ def sequential_run(
         if scan:
             scan_result = scan_repo(scan, cloned_repo)
             out[repo_id].scan = scan_result
-            out[repo_id].status = RepoStatus.SCANNED
+            out[repo_id].status = Phase.SCAN
         if migration:
             try:
                 # Ensure no driver persistence between repos
@@ -66,7 +66,7 @@ def sequential_run(
                     cloned_repo, repo_gitobj, migration_copy, logger=repo_logger
                 )
                 out[repo_id].patch = result
-                out[repo_id].status = RepoStatus.PATCHED
+                out[repo_id].status = Phase.PATCH
             except Exception as e:
                 repo_logger.error(f"Error migrating repo '{repo_id}'")
                 repo_logger.exception(e)
@@ -75,7 +75,7 @@ def sequential_run(
                     details="Unhandled exception caught during patching",
                     error=ExceptionRecord.from_exception(e),
                 )
-                out[repo_id].status = RepoStatus.PATCHED
+                out[repo_id].status = Phase.PATCH
     logger.info("Action completed: exiting")
     return ActivityOutcome(repos=out)
 
@@ -118,13 +118,13 @@ def thread_run(
             cloned_repo, scan_result, patch_result = future.result()
             logger.info(f"[{repo_index:04d}/{repo_count:04d}] Processed {repo_id}")
             out[repo_id].clone = cloned_repo
-            out[repo_id].status = RepoStatus.CLONED
+            out[repo_id].status = Phase.CLONE
             if scan_result is not None:
                 out[repo_id].scan = scan_result
-                out[repo_id].status = RepoStatus.SCANNED
+                out[repo_id].status = Phase.SCAN
             if patch_result is not None:
                 out[repo_id].patch = patch_result
-                out[repo_id].status = RepoStatus.PATCHED
+                out[repo_id].status = Phase.PATCH
     logger.info("Action completed: exiting")
     return ActivityOutcome(repos=out)
 

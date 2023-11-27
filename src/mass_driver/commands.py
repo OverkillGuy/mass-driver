@@ -25,7 +25,7 @@ from mass_driver.models.activity import (
     ActivityOutcome,
 )
 from mass_driver.models.repository import IndexedRepos, SourcedRepo
-from mass_driver.models.status import RepoOutcome, RepoStatus
+from mass_driver.models.status import Phase, RepoOutcome
 from mass_driver.review_run import review
 from mass_driver.summarize import summarize_forge, summarize_migration, summarize_source
 
@@ -167,7 +167,7 @@ def source_repolist_args(args) -> Optional[ActivityOutcome]:
     repo_dict = {
         url: RepoOutcome(
             repo_id=url,
-            status=RepoStatus.SOURCED,
+            status=Phase.SOURCE,
             source=SourcedRepo(repo_id=url, clone_url=url),
         )
         for url in repos
@@ -218,7 +218,7 @@ def sourced_to_outcome(r: IndexedRepos) -> ActivityOutcome:
     repos = {}
     for repo_id, sourced_repo in r.items():
         repos[repo_id] = RepoOutcome(
-            repo_id=repo_id, status=RepoStatus.SOURCED, source=sourced_repo
+            repo_id=repo_id, status=Phase.SOURCE, source=sourced_repo
         )
     return ActivityOutcome(repos=repos)
 
