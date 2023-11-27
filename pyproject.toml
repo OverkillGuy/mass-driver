@@ -48,16 +48,13 @@ sphinx-rtd-theme = "1.*"
 # Markdown parser for sphinx: Sphinx uses "RST" files, this adds markdown
 myst-parser = "*"
 # Automatic Python module docs (javadoc-style)
-sphinx-autodoc2 = "*"
+sphinx-autodoc2 = ">=0.5.0"
 # Display the output of a program in docs, cool for --help
 sphinxcontrib-programoutput = "^0.17"
 # Templated docs page like 'Drivers'
 sphinx-jinja = "*"
 # Generate Dash/Zeal "docsets" (offline dev-docs package) from HTML docs
 doc2dash = "*"
-# Transitional dep for sphinx-autodoc2, which breaks autodoc2 on v3
-# See https://github.com/sphinx-extensions2/sphinx-autodoc2/issues/31
-astroid = "==2.15.8"
 
 
 [build-system]
