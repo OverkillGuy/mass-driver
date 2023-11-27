@@ -14,7 +14,7 @@ from mass_driver.models.activity import (
     ActivityLoaded,
     ActivityOutcome,
 )
-from mass_driver.models.patchdriver import PatchOutcome, PatchResult
+from mass_driver.models.patchdriver import ExceptionRecord, PatchOutcome, PatchResult
 from mass_driver.models.status import RepoStatus, ScanResult
 from mass_driver.process_repo import clone_repo, migrate_repo, scan_repo
 
@@ -55,29 +55,25 @@ def sequential_run(
             # FIXME: Clone failure lacks cloned_repo entry, dropping visibility of fail
             continue
         if scan:
-            try:
-                scan_result = scan_repo(scan, cloned_repo)
-                out[repo_id].scan = scan_result
-                out[repo_id].status = RepoStatus.SCANNED
-            except Exception as e:
-                repo_logger.error(f"Error scanning repo '{repo_id}'")
-                repo_logger.error(f"Error was: {e}")
-                # Reaching here should be impossible (catch-all in scan)
+            scan_result = scan_repo(scan, cloned_repo)
+            out[repo_id].scan = scan_result
+            out[repo_id].status = RepoStatus.SCANNED
         if migration:
             try:
                 # Ensure no driver persistence between repos
                 migration_copy = deepcopy(migration)
-                result, excep = migrate_repo(
+                result = migrate_repo(
                     cloned_repo, repo_gitobj, migration_copy, logger=repo_logger
                 )
                 out[repo_id].patch = result
                 out[repo_id].status = RepoStatus.PATCHED
             except Exception as e:
                 repo_logger.error(f"Error migrating repo '{repo_id}'")
-                repo_logger.error(f"Error was: {e}")
+                repo_logger.exception(e)
                 out[repo_id].patch = PatchResult(
                     outcome=PatchOutcome.PATCH_ERROR,
-                    details=f"Unhandled exception caught during patching. Error was: {e}",
+                    details="Unhandled exception caught during patching",
+                    error=ExceptionRecord.from_exception(e),
                 )
                 out[repo_id].status = RepoStatus.PATCHED
     logger.info("Action completed: exiting")
@@ -143,25 +139,21 @@ def per_repo_process(repo_id, repo, activity, logger, cache_folder):
         raise e  # FIXME: Use custom exception for capturing error here
     scan_result: ScanResult | None = None
     if activity.scan is not None:
-        try:
-            scan_result = scan_repo(activity.scan, cloned_repo)
-        except Exception as e:
-            logger.error(f"Error scanning repo '{repo_id}'")
-            logger.error(f"Error was: {e}")
-            # Reaching here should be impossible (catch-all in scan)
+        scan_result = scan_repo(activity.scan, cloned_repo)
     patch_result: PatchResult | None = None
     if activity.migration:
         try:
             # Ensure no driver persistence between repos
             migration_copy = deepcopy(activity.migration)
-            patch_result, excep = migrate_repo(
+            patch_result = migrate_repo(
                 cloned_repo, repo_gitobj, migration_copy, logger=logger
             )
         except Exception as e:
             logger.error(f"Error migrating repo '{repo_id}'")
-            logger.error(f"Error was: {e}")
+            logger.exception(e)
             patch_result = PatchResult(
                 outcome=PatchOutcome.PATCH_ERROR,
-                details=f"Unhandled exception caught during patching. Error was: {e}",
-            )  # FIXME: Catch custom-exception into the PatchResult object
+                details="Unhandled exception caught during patching",
+                error=ExceptionRecord.from_exception(e),
+            )
     return (cloned_repo, scan_result, patch_result)

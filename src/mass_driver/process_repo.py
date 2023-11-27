@@ -4,7 +4,6 @@ Given a single repo, process SINGLE "activity" (clone OR migrate OR scan OR forg
 """
 
 import logging
-import traceback
 from pathlib import Path
 
 from mass_driver.git import (
@@ -17,7 +16,7 @@ from mass_driver.git import (
 )
 from mass_driver.models.forge import PROutcome, PRResult
 from mass_driver.models.migration import ForgeLoaded, MigrationLoaded
-from mass_driver.models.patchdriver import PatchOutcome, PatchResult
+from mass_driver.models.patchdriver import ExceptionRecord, PatchOutcome, PatchResult
 from mass_driver.models.repository import (
     ClonedRepo,
     SourcedRepo,
@@ -47,7 +46,7 @@ def migrate_repo(
     repo_gitobj: GitRepo,
     migration: MigrationLoaded,
     logger: logging.Logger,
-) -> tuple[PatchResult, Exception | None]:
+) -> PatchResult:
     """Process a repo with Mass Driver"""
     try:
         migration.driver._logger = logging.getLogger(
@@ -57,15 +56,16 @@ def migrate_repo(
     except Exception as e:
         result = PatchResult(
             outcome=PatchOutcome.PATCH_ERROR,
-            details=f"Unhandled exception caught during patching. Error was: {e}",
+            details="Unhandled exception caught during patching",
+            error=ExceptionRecord.from_exception(e),
         )
-        return (result, e)
+        return result
     logger.info(result.outcome.value)
     if result.outcome != PatchOutcome.PATCHED_OK:
-        return (result, None)
+        return result
     # Patched OK: Save the mutation
     commit(repo_gitobj, migration)
-    return (result, None)
+    return result
 
 
 def scan_repo(
@@ -79,10 +79,7 @@ def scan_repo(
             scan_result[scanner.name] = scanner.func(cloned_repo.cloned_path)
         except Exception as e:
             scan_result[scanner.name] = {
-                "scan_error": {
-                    "exception": str(e),
-                    "backtrace": traceback.format_exception(e),
-                }
+                "scan_error": ExceptionRecord.from_exception(e).dict()
             }
     return scan_result
 

@@ -5,6 +5,11 @@ The project uses semantic versioning (see [semver](https://semver.org)).
 
 ## [Unreleased]
 
+### Added
+
+- New `ExceptionRecord` class, used in field `PatchResult.error`, captures
+  exceptions found during execution, while remaining serializable.
+
 ## v0.18.0 - 2023-11-21
 
 ### Added
