@@ -5,6 +5,7 @@ from enum import Enum
 from pydantic import BaseModel, BaseSettings
 
 from mass_driver.models.repository import BranchName
+from mass_driver.models.status import Error
 
 PRStatus = dict[str, bool]
 """The status of a specific PR, as series of flags and bool-predicate.
@@ -69,5 +70,5 @@ class PRResult(BaseModel):
     """The kind of result that PR creation had"""
     pr_html_url: str | None = None
     """The HTML URL of the PR that was generated, if any"""
-    details: str | None = None
-    """Details of the PR creation of this repo, if any"""
+    error: Error | None = None
+    """Detail of the error, that applied during patching, if any"""

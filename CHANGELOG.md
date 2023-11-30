@@ -10,8 +10,12 @@ The project uses semantic versioning (see [semver](https://semver.org)).
 - **BREAKING**: `ActivityOutcome` rewritten from structure of arrays (dict,
   specifically), into an array-of-structure.
   - Allows for inspection of each repo's entire status, instead of slicing per
-  "activity". Per-repo granularity is required to offload activities to
-  individual workers, for better performance.
+    "activity". Per-repo granularity is required to offload activities to
+    individual workers, for better performance
+  - Each of the new per-repo `RepoOutcome` objects contains a top-level error +
+    a per-activity outcome containing error too, allowing for top-level status
+    reporting of error + detail of error for each phase (like "Forge failed for
+    this repo because the pre-requisite Clone activity failed")
 
 ### Added
 

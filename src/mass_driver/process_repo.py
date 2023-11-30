@@ -40,7 +40,6 @@ def clone_repo(
     return cloned_repo, repo_gitobj
 
 
-# TODO: Avoid passing out the exception, catch the trace in details kw (see scanner_run)
 def migrate_repo(
     cloned_repo: ClonedRepo,
     repo_gitobj: GitRepo,

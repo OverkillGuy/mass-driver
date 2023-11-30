@@ -21,10 +21,14 @@ lint:  # Use all linters on all files (not just staged for commit)
 test:
 	poetry run pytest
 
+.PHONY: clear
+clear:
+	-find .mass_driver/ -delete
+
 ACTION=run --no-pause
 FILE=clone.toml
 .PHONY: run
-run:  # Remember to export GITHUB_API_TOKEN beforehand
+run: clear  # Remember to export GITHUB_API_TOKEN beforehand (unless dummy forge)
 	poetry run mass-driver ${ACTION} ${FILE}
 
 .PHONY: docs
