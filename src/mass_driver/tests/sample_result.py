@@ -5,9 +5,10 @@ from tempfile import mkdtemp
 
 from mass_driver.models.activity import ActivityOutcome
 from mass_driver.models.forge import PROutcome, PRResult
+from mass_driver.models.outcome import RepoOutcome
 from mass_driver.models.patchdriver import PatchOutcome, PatchResult
 from mass_driver.models.repository import ClonedRepo, SourcedRepo
-from mass_driver.models.status import Phase, RepoOutcome
+from mass_driver.models.status import Phase
 
 PATCH_ERRORS = 1
 ALREADY_PATCHED = 4

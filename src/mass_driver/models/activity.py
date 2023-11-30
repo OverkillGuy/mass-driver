@@ -19,12 +19,8 @@ from mass_driver.models.migration import (  # Forge,
     load_driver,
     load_source,
 )
-from mass_driver.models.repository import RepoID
+from mass_driver.models.outcome import IndexedReposOutcome
 from mass_driver.models.scan import ScanFile, ScanLoaded, Scanner
-from mass_driver.models.status import RepoOutcome
-
-IndexedReposOutcome = dict[RepoID, RepoOutcome]
-"""A set of RepoOutcome, indexed by RepoID"""
 
 
 class ActivityFile(BaseModel):

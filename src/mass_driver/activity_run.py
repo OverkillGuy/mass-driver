@@ -14,8 +14,9 @@ from mass_driver.models.activity import (
     ActivityLoaded,
     ActivityOutcome,
 )
-from mass_driver.models.patchdriver import ExceptionRecord, PatchOutcome, PatchResult
-from mass_driver.models.status import Phase, ScanResult
+from mass_driver.models.outcome import RepoOutcome
+from mass_driver.models.patchdriver import PatchOutcome, PatchResult
+from mass_driver.models.status import Error, Phase
 from mass_driver.process_repo import clone_repo, migrate_repo, scan_repo
 
 LOGGER_PREFIX = "run"
@@ -51,31 +52,48 @@ def sequential_run(
             out[repo_id].clone = cloned_repo
             out[repo_id].status = Phase.CLONE
         except Exception as e:
-            repo_logger.info(f"Error cloning repo '{repo_id}'\nError was: {e}")
-            # FIXME: Clone failure lacks cloned_repo entry, dropping visibility of fail
+            repo_logger.error("Error while cloning the repo")
+            repo_logger.exception(e)
+            out[repo_id].clone = None
+            out[repo_id].status = Phase.CLONE
+            out[repo_id].error = Error.from_exception(activity=Phase.CLONE, exception=e)
             continue
+        # Clone was OK, proceed:
         if scan:
-            scan_result = scan_repo(scan, cloned_repo)
-            out[repo_id].scan = scan_result
+            # We mean to scan now...
             out[repo_id].status = Phase.SCAN
+            if out[repo_id].error is None:  # Only scan if no error before
+                out[repo_id].scan = scan_repo(scan, cloned_repo)
         if migration:
+            # We mean to patch now...
+            out[repo_id].status = Phase.PATCH
+            error = out[repo_id].error
+            if error is not None:
+                # Error in pre-requisite: skip patching, forwarding the (cloning?) error
+                out[repo_id].patch = PatchResult(
+                    outcome=PatchOutcome.PATCH_ERROR,
+                    details="Uncaught error before we got to patching",
+                    error=error,
+                )
+                continue  # Skip the actual patching due to error
+            # Properly patch now
             try:
                 # Ensure no driver persistence between repos
                 migration_copy = deepcopy(migration)
-                result = migrate_repo(
+                out[repo_id].patch = migrate_repo(
                     cloned_repo, repo_gitobj, migration_copy, logger=repo_logger
                 )
-                out[repo_id].patch = result
-                out[repo_id].status = Phase.PATCH
             except Exception as e:
-                repo_logger.error(f"Error migrating repo '{repo_id}'")
+                repo_logger.error("Migration error")
                 repo_logger.exception(e)
+                error = Error.from_exception(activity=Phase.PATCH, exception=e)
                 out[repo_id].patch = PatchResult(
                     outcome=PatchOutcome.PATCH_ERROR,
                     details="Unhandled exception caught during patching",
-                    error=ExceptionRecord.from_exception(e),
+                    error=error,
                 )
                 out[repo_id].status = Phase.PATCH
+                out[repo_id].error = error
     logger.info("Action completed: exiting")
     return ActivityOutcome(repos=out)
 
@@ -114,46 +132,60 @@ def thread_run(
             futures_map[future_obj] = repo_id
         # Submitted the jobs: iterate on completion
         for repo_index, future in enumerate(futures.as_completed(futures_map), start=1):
-            repo_id = futures_map[future]
-            cloned_repo, scan_result, patch_result = future.result()
             logger.info(f"[{repo_index:04d}/{repo_count:04d}] Processed {repo_id}")
-            out[repo_id].clone = cloned_repo
-            out[repo_id].status = Phase.CLONE
-            if scan_result is not None:
-                out[repo_id].scan = scan_result
-                out[repo_id].status = Phase.SCAN
-            if patch_result is not None:
-                out[repo_id].patch = patch_result
-                out[repo_id].status = Phase.PATCH
-    logger.info("Action completed: exiting")
+            repo_id = futures_map[future]
+            out[repo_id] = future.result()
+            logger.info("Action completed: exiting")
     return ActivityOutcome(repos=out)
 
 
-def per_repo_process(repo_id, repo, activity, logger, cache_folder):
+def per_repo_process(repo_id, repo, activity, logger, cache_folder) -> RepoOutcome:
     """Process a single repo, in-thread"""
+    out = deepcopy(repo)
     try:
-        logger.info(f"Processing {repo_id}...")
-        cloned_repo, repo_gitobj = clone_repo(repo, cache_folder, logger=logger)
+        cloned_repo, repo_gitobj = clone_repo(repo.source, cache_folder, logger=logger)
+        out.clone = cloned_repo
+        out.status = Phase.CLONE
     except Exception as e:
-        logger.info(f"Error cloning repo '{repo_id}'\nError was: {e}")
-        raise e  # FIXME: Use custom exception for capturing error here
-    scan_result: ScanResult | None = None
-    if activity.scan is not None:
-        scan_result = scan_repo(activity.scan, cloned_repo)
-    patch_result: PatchResult | None = None
-    if activity.migration:
-        try:
-            # Ensure no driver persistence between repos
-            migration_copy = deepcopy(activity.migration)
-            patch_result = migrate_repo(
-                cloned_repo, repo_gitobj, migration_copy, logger=logger
-            )
-        except Exception as e:
-            logger.error(f"Error migrating repo '{repo_id}'")
-            logger.exception(e)
-            patch_result = PatchResult(
-                outcome=PatchOutcome.PATCH_ERROR,
-                details="Unhandled exception caught during patching",
-                error=ExceptionRecord.from_exception(e),
-            )
-    return (cloned_repo, scan_result, patch_result)
+        logger.error("Error while cloning the repo")
+        logger.exception(e)
+        out.clone = None
+        out.status = Phase.CLONE
+        out.error = Error.from_exception(activity=Phase.CLONE, exception=e)
+    # Clone was OK, proceed:
+    if activity.scan:
+        # We mean to scan now...
+        out.status = Phase.SCAN
+        if out.error is None:  # Only scan if no error before
+            out.scan = scan_repo(activity.scan, cloned_repo)
+    if not activity.migration:
+        return out
+    # We mean to patch now...
+    out.status = Phase.PATCH
+    error = out.error
+    if error is not None:
+        # Error in pre-requisite: skip patching, forwarding the (cloning?) error
+        out.patch = PatchResult(
+            outcome=PatchOutcome.PATCH_ERROR,
+            details="Uncaught error before we got to patching",
+            error=error,
+        )
+    # Properly patch now
+    try:
+        # Ensure no driver persistence between repos
+        migration_copy = deepcopy(activity.migration)
+        out.patch = migrate_repo(
+            cloned_repo, repo_gitobj, migration_copy, logger=logger
+        )
+    except Exception as e:
+        logger.error("Migration error")
+        logger.exception(e)
+        error = Error.from_exception(activity=Phase.PATCH, exception=e)
+        out.patch = PatchResult(
+            outcome=PatchOutcome.PATCH_ERROR,
+            details="Unhandled exception caught during patching",
+            error=error,
+        )
+        out[repo_id].status = Phase.PATCH
+        out[repo_id].error = error
+    return out

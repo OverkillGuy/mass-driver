@@ -24,8 +24,9 @@ from mass_driver.models.activity import (
     ActivityLoaded,
     ActivityOutcome,
 )
+from mass_driver.models.outcome import RepoOutcome
 from mass_driver.models.repository import IndexedRepos, SourcedRepo
-from mass_driver.models.status import Phase, RepoOutcome
+from mass_driver.models.status import Phase
 from mass_driver.review_run import review
 from mass_driver.summarize import summarize_forge, summarize_migration, summarize_source
 

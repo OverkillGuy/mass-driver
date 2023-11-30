@@ -16,13 +16,13 @@ from mass_driver.git import (
 )
 from mass_driver.models.forge import PROutcome, PRResult
 from mass_driver.models.migration import ForgeLoaded, MigrationLoaded
-from mass_driver.models.patchdriver import ExceptionRecord, PatchOutcome, PatchResult
+from mass_driver.models.patchdriver import PatchOutcome, PatchResult
 from mass_driver.models.repository import (
     ClonedRepo,
     SourcedRepo,
 )
 from mass_driver.models.scan import ScanLoaded
-from mass_driver.models.status import ScanResult
+from mass_driver.models.status import Error, ExceptionRecord, Phase, ScanResult
 
 
 def clone_repo(
@@ -57,7 +57,7 @@ def migrate_repo(
         result = PatchResult(
             outcome=PatchOutcome.PATCH_ERROR,
             details="Unhandled exception caught during patching",
-            error=ExceptionRecord.from_exception(e),
+            error=Error.from_exception(activity=Phase.PATCH, exception=e),
         )
         return result
     logger.info(result.outcome.value)

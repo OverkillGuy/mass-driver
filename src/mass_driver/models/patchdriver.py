@@ -1,31 +1,11 @@
 """PatchDriver base object definition"""
 from enum import Enum
 from logging import Logger
-from traceback import format_exception
 
 from pydantic import BaseModel
 
 from mass_driver.models.repository import ClonedRepo
-
-
-class ExceptionRecord(BaseModel):
-    """A serialized version of an Exception"""
-
-    exception_type: str
-    """The type of exception thrown"""
-    exception_details: str
-    """The string version of the exception"""
-    backtrace: list[str]
-    """The exception backtrace as array of string"""
-
-    @classmethod
-    def from_exception(cls, e: Exception):
-        """Create a Problem object from Exception object"""
-        return cls(
-            exception_type=e.__class__.__name__,
-            exception_details=str(e),
-            backtrace=format_exception(e),
-        )
+from mass_driver.models.status import Error
 
 
 class PatchOutcome(str, Enum):
@@ -48,7 +28,7 @@ class PatchResult(BaseModel):
     """The kind of result that patching had"""
     details: str | None = None
     """Details of the PatchDriver as it patched this repo, if any"""
-    error: ExceptionRecord | None = None
+    error: Error | None = None
     """Detail of the error, that applied during patching, if any"""
 
 

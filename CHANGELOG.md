@@ -5,10 +5,24 @@ The project uses semantic versioning (see [semver](https://semver.org)).
 
 ## [Unreleased]
 
+### Changed
+
+- **BREAKING**: `ActivityOutcome` rewritten from structure of arrays (dict,
+  specifically), into an array-of-structure.
+  - Allows for inspection of each repo's entire status, instead of slicing per
+  "activity". Per-repo granularity is required to offload activities to
+  individual workers, for better performance.
+
 ### Added
 
 - New `ExceptionRecord` class, used in field `PatchResult.error`, captures
   exceptions found during execution, while remaining serializable.
+- New `Error` class for capturing for each repo, what went wrong in any phase
+
+### Fixed
+
+- Repos with migration failed (`PatchOutcome != PATCHED_OK`) no longer get
+  sent for Forge activity
 
 ## v0.18.0 - 2023-11-21
 
