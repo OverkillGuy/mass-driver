@@ -31,9 +31,8 @@ def clone_repo(
     """Clone a repo (if needed) and switch branch"""
     repo_gitobj = clone_if_remote(repo.clone_url, cache_path, logger=logger)
     switch_branch_then_pull(repo_gitobj, repo.force_pull, repo.upstream_branch)
-    repo_local_path = Path(repo_gitobj.working_dir)
     cloned_repo = ClonedRepo(
-        cloned_path=repo_local_path,
+        cloned_path=repo_gitobj.working_dir,
         current_branch=repo_gitobj.active_branch.name,
         **repo.dict(),
     )
@@ -75,7 +74,7 @@ def scan_repo(
     scan_result: ScanResult = {}
     for scanner in config.scanners:
         try:
-            scan_result[scanner.name] = scanner.func(cloned_repo.cloned_path)
+            scan_result[scanner.name] = scanner.func(Path(cloned_repo.cloned_path))
         except Exception as e:
             scan_result[scanner.name] = {
                 "scan_error": ExceptionRecord.from_exception(e).dict()
@@ -91,7 +90,7 @@ def forge_per_repo(
     repo_path = repo.cloned_path
     if repo_path is None:
         raise ValueError("Repo not cloned locally, can't create PR of it")
-    git_repo = GitRepo(path=str(repo_path))
+    git_repo = GitRepo(path=repo_path)
     if config.git_push_first:
         push(git_repo, config.head_branch)
     # Grab the repo's remote URL to feed it to the forge for ID

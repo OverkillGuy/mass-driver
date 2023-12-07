@@ -16,6 +16,11 @@ The project uses semantic versioning (see [semver](https://semver.org)).
     a per-activity outcome containing error too, allowing for top-level status
     reporting of error + detail of error for each phase (like "Forge failed for
     this repo because the pre-requisite Clone activity failed")
+- **BREAKING**: `ClonedRepo.cloned_path` is now `str`, not `DirectoryPath`.
+  - Weaker type means no check for existence of the actual folder, allowing
+    for URLs like `s3://`, avoiding actual `tmp_dir` use in local testing.
+  - **ACTION****: Update `PatchDriver`s, replacing `repo.cloned_path` with
+    `Path(repo.cloned_path)` in the `run(repo: ClonedRepo)` function.
 
 ### Added
 

@@ -1,6 +1,6 @@
 """Repositories for cloning and patching"""
 
-from pydantic import BaseModel, BaseSettings, DirectoryPath
+from pydantic import BaseModel, BaseSettings
 
 BranchName = str
 """A git branch name, assumed to exist remotely on the Forge"""
@@ -31,7 +31,7 @@ class SourcedRepo(BaseModel):
 class ClonedRepo(SourcedRepo):
     """A repository after it has been successfully cloned, branch configured"""
 
-    cloned_path: DirectoryPath
+    cloned_path: str
     """The filesystem path to the git cloned repo"""
     current_branch: BranchName
     """The name of the currently checked out branch"""
