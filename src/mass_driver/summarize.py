@@ -6,6 +6,8 @@ from mass_driver.models.activity import (
     ActivityOutcome,
 )
 from mass_driver.models.forge import PROutcome
+from mass_driver.models.outcome import RepoOutcome
+from mass_driver.models.patchdriver import PatchOutcome
 from mass_driver.models.status import Phase
 
 
@@ -117,3 +119,55 @@ def print_forge(repos_by_outcome, logger: Logger):
         logger.info(f"For {outcome}:")
         for repo in sorted(repos):
             logger.info(repo)
+
+
+def explain(repo: RepoOutcome, logger: Logger):
+    """Explain a single result repository"""
+    logger.info(f"Detailed results for repo ID '{repo.repo_id}'...")
+    logger.info(f"Latest phase: '{repo.status.value}'")
+    if repo.error is None:
+        logger.info("No overall error logged")
+    else:
+        error = repo.error
+        logger.info(
+            f"Overall error signaled! Error was at phase: {error.activity.value}"
+        )
+    if not repo.clone:
+        logger.info("No clone activity attempted")
+    elif repo.clone is not None and repo.clone.error is None:
+        logger.info(f"Cloned OK, to path {repo.clone.cloned_path}")
+    elif repo.clone is not None and repo.clone.error is not None:
+        logger.info(f"Clone failure, error was: {repo.clone.error}")
+    if not repo.patch:
+        logger.info("No patch activity attempted")
+    elif repo.patch:
+        patch = repo.patch
+        logger.info(f"Proceeded to Patch, with outcome {patch.outcome.value}")
+        if patch.outcome == PatchOutcome.PATCH_ERROR and patch.error is not None:
+            # An error: from now or previous phase?
+            error = patch.error
+            if error.activity == Phase.PATCH:
+                logger.info(f"Error was: {error}")
+            else:
+                logger.info(
+                    f"Error is cascaded from previous phase {error.activity.value}"
+                )
+    if repo.scan:
+        # FIXME: Update when Scan contains error
+        logger.info(f"Scanned OK, with {len(repo.scan.keys())} scanners")
+    elif not repo.scan:
+        logger.info("No scan activity attempted")
+    if not repo.forge:
+        logger.info("No forge activity attempted")
+    elif repo.forge:
+        forge = repo.forge
+        logger.info(f"Proceeded to Forge, with outcome {forge.outcome.value}")
+        if forge.outcome == PROutcome.PR_FAILED and forge.error is not None:
+            # An error: from now or previous phase?
+            error = forge.error
+            if error.activity == Phase.FORGE:
+                logger.info(f"Error was: {error}")
+            else:
+                logger.info(
+                    f"Error is cascaded from previous phase {error.activity.value}"
+                )

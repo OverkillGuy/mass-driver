@@ -2,6 +2,8 @@
 
 from pydantic import BaseModel, BaseSettings
 
+from mass_driver.models.status import Error
+
 BranchName = str
 """A git branch name, assumed to exist remotely on the Forge"""
 
@@ -26,6 +28,8 @@ class SourcedRepo(BaseModel):
     """Pull the given branch before handing it over (useful when reusing repos)"""
     patch_data: dict = {}
     """Arbitrary data dict from Source"""
+    error: Error | None = None
+    """An error regarding this repository"""
 
 
 class ClonedRepo(SourcedRepo):

@@ -1,0 +1,55 @@
+@startuml
+
+skinparam backgroundcolor white
+
+[*] --> SOURCED
+
+note bottom of SOURCED
+Repo was discovered via a Source
+Sets the repo.source field not-None
+end note
+
+state CLONED {
+
+SOURCED --> CLONE_OK
+SOURCED --> CLONE_ERROR
+}
+note bottom of CLONED
+Repo (attempted) Cloning, maybe successful
+Sets the repo.clone field not-None
+end note
+
+
+
+state PATCHED {
+
+
+CLONE_OK --> PATCHED_OK: Good patch
+CLONE_OK --> ALREADY_PATCHED
+ALREADY_PATCHED --> [*]
+CLONE_OK --> PATCH_DOES_NOT_APPLY
+PATCH_DOES_NOT_APPLY --> [*]
+
+CLONE_OK --> PATCH_ERROR: Bad patch
+CLONE_ERROR --> PATCH_ERROR: Cascade
+}
+note bottom of PATCHED
+Repo (attempted) Patching, maybe successful
+Sets the repo.patch field not-None
+Detail is repo.patch.outcome variants = PatchOutcome
+end note
+
+
+state FORGED {
+PATCHED_OK --> PR_CREATED: Good forge
+PATCHED_OK --> PR_FAILED: Bad forge
+PATCH_ERROR --> PR_FAILED: Cascade
+}
+note bottom of FORGED
+Repo (attempted) Forging, maybe successful
+Sets the repo.forge field not-None
+Detail is repo.forge.outcome variants = PROutcome
+end note
+
+
+@enduml
