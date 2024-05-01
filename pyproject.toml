@@ -55,10 +55,6 @@ sphinxcontrib-programoutput = "^0.17"
 sphinx-jinja = "*"
 # Generate Dash/Zeal "docsets" (offline dev-docs package) from HTML docs
 doc2dash = "*"
-# Transitional dep for sphinx-autodoc2, which breaks autodoc2 on v3
-# See https://github.com/sphinx-extensions2/sphinx-autodoc2/issues/31
-astroid = "==2.15.8"
-
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
