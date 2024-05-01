@@ -5,6 +5,11 @@ The project uses semantic versioning (see [semver](https://semver.org)).
 
 ## [Unreleased]
 
+### Added
+
+- Add `GlobFileEditor.before_run()` to run arbitrary code before processing the
+  first file
+
 ## v0.18.0 - 2023-11-21
 
 ### Added
