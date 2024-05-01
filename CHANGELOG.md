@@ -31,6 +31,8 @@ The project uses semantic versioning (see [semver](https://semver.org)).
   first file
 - New function `replace_many` in `patchdrivers.brick`, to replace many patterns
   in a string at once. Perfect for the kind of file `sed` replacement
+- `PatchDriver` Pydantic base class now allows extra fields ([Pydantic Extra
+  fields](https://docs.pydantic.dev/latest/concepts/models/#extra-fields))
 
 ### Fixed
 
