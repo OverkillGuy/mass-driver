@@ -163,3 +163,11 @@ def process_outcomes(
         outcome=PatchOutcome.PATCH_ERROR,
         details=f"No OK result to forward, but {len(errors)} errors",
     )
+
+
+def replace_many(file_contents: str, replacements: list[tuple[str, str]]) -> str:
+    """Process a file content through a list of old-new replacements"""
+    out_file = file_contents
+    for old_pattern, new_pattern in replacements:
+        out_file = out_file.replace(old_pattern, new_pattern)
+    return out_file

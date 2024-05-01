@@ -9,6 +9,8 @@ The project uses semantic versioning (see [semver](https://semver.org)).
 
 - Add `GlobFileEditor.before_run()` to run arbitrary code before processing the
   first file
+- New function `replace_many` in `patchdrivers.brick`, to replace many patterns
+  in a string at once. Perfect for the kind of file `sed` replacement
 
 ## v0.18.0 - 2023-11-21
 
