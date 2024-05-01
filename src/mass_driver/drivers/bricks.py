@@ -70,11 +70,15 @@ class GlobFileEditor(PatchDriver):
         """Process a file, returning the new content or a PatchResult"""
         raise NotImplementedError("Derive this function yourself")
 
+    def before_run(self, targets):
+        """Hook for preamble tasks before the main run function"""
+        pass
+
     def run(self, repo: ClonedRepo) -> PatchResult:
         """Edit the target file"""
         targets = sorted(Path(repo.cloned_path).glob(self.target_glob))
         self.logger.info(f"Found {len(targets)} files to edit")
-
+        self.before_run(targets)
         outcomes: dict[str, PatchResult] = {}
         for target_fullpath in targets:
             target_relpath = str(target_fullpath.relative_to(repo.cloned_path))

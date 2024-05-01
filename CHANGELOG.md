@@ -27,6 +27,8 @@ The project uses semantic versioning (see [semver](https://semver.org)).
 - New `ExceptionRecord` class, used in field `PatchResult.error`, captures
   exceptions found during execution, while remaining serializable.
 - New `Error` class for capturing for each repo, what went wrong in any phase
+- Add `GlobFileEditor.before_run()` to run arbitrary code before processing the
+  first file
 
 ### Fixed
 
