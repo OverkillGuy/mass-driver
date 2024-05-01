@@ -2,7 +2,7 @@
 from enum import Enum
 from logging import Logger
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Extra
 
 from mass_driver.models.repository import ClonedRepo
 
@@ -52,3 +52,4 @@ class PatchDriver(BaseModel):
 
         underscore_attrs_are_private = True
         """Ensure we can set internal non-serializeable fields via underscore"""
+        extra = Extra.allow
