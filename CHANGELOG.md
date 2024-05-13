@@ -5,7 +5,9 @@ The project uses semantic versioning (see [semver](https://semver.org)).
 
 ## [Unreleased]
 
-### Changed
+## v0.18.x
+
+### Updated
 
 - Updated `pydantic` and refactor from `v1` to `^2.7`
 - Updated `astroid` lib to `^3.2.0`
@@ -15,6 +17,9 @@ The project uses semantic versioning (see [semver](https://semver.org)).
   - Update next `python` version used in tests from beta to latest `3.12` release
   - Update docs build to run on `3.12`
   - Split docs into `build` and `deploy` jobs so docs are tested/made at PR.
+- CHANGELOG doc template updated to hide unreleased changes in doc build.
+
+## [End Unreleased]
 
 ### Added
 

@@ -13,5 +13,5 @@ end-before: "## [Unreleased]"
 
 ```{include} ../../CHANGELOG.md
 ---
-start-after: "## [Unreleased]"
+start-after: "## [End Unreleased]"
 ```
