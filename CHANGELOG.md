@@ -5,6 +5,16 @@ The project uses semantic versioning (see [semver](https://semver.org)).
 
 ## [Unreleased]
 
+### Changed
+
+- Updated `pydantic` and refactor from `v1` to `^2.7`
+- Updated `astroid` lib to `^3.2.0`
+- Github actions
+  - Updated all actions to use node `20` where needed
+    - See [Github announcement](https://github.blog/changelog/2023-09-22-github-actions-transitioning-from-node-16-to-node-20/)
+  - Update next `python` version used in tests from beta to latest `3.12` release
+  - Update docs build to run on `3.12`
+
 ### Added
 
 - New "deleter" PatchDriver, deletes file(s) specified if found.
