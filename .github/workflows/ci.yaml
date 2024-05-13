@@ -44,11 +44,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Set Up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: "3.11"
       - name: Poetry setup
         uses: Gr1N/setup-poetry@v9
       - run: poetry install --with=test
       - name: Run the linters
-        uses: pre-commit/action@v3.0.0
+        uses: pre-commit/action@v3.0.1
