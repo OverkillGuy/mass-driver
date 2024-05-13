@@ -26,12 +26,11 @@ GitPython = "*"
 # [1]: https://github.com/PyGithub/PyGithub/issues/2472#issuecomment-1482378022
 PyGithub = "==2.1.1"
 # Mass-driver settings
-
-# Note: Linters not defined in this file but .pre-commit-config.yaml, which
-# installs/manages each tool in its own isolated virtualenv
 pydantic = "^2.7.1"
 pydantic-settings = "^2.2.1"
 
+# Note: Linters not defined in this file but .pre-commit-config.yaml, which
+# installs/manages each tool in its own isolated virtualenv
 [tool.poetry.group.test.dependencies]
 pytest = "7.*"
 # Test coverage
@@ -56,11 +55,9 @@ sphinxcontrib-programoutput = "^0.17"
 sphinx-jinja = "*"
 # Generate Dash/Zeal "docsets" (offline dev-docs package) from HTML docs
 doc2dash = "*"
-
 # Transitional dep for sphinx-autodoc2, which breaks autodoc2 on v3
 # See https://github.com/sphinx-extensions2/sphinx-autodoc2/issues/31
 astroid = "^3.2.0"
-
 
 [tool.poetry.group.dev.dependencies]
 bump-pydantic = "^0.8.0"

@@ -7,7 +7,13 @@ The project uses semantic versioning (see [semver](https://semver.org)).
 
 ## v0.18.x
 
-### Updated
+### Added
+
+- `dev` dependencies group in `pyproject.yoml` including:
+  - `bump-pydantic` used in the pydantic v2 migration
+  - `pre-commit` for anyone who hasn't got it
+
+### Fixed
 
 - Updated `pydantic` and refactor from `v1` to `^2.7`
 - Updated `astroid` lib to `^3.2.0`
