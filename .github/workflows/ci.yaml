@@ -17,18 +17,18 @@ jobs:
         python-version: ["3.11", "3.12.2"]
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Install git
         uses: awalsh128/cache-apt-pkgs-action@latest
         with:
           packages: git
           version: "@latest"
       - name: Set Up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
       - name: Poetry setup
-        uses: Gr1N/setup-poetry@v8
+        uses: Gr1N/setup-poetry@v9
       - run: poetry install --with=test
       - name: Configure Git user (for tests)
         run: |
@@ -42,13 +42,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Set Up Python
         uses: actions/setup-python@v4
         with:
           python-version: "3.11"
       - name: Poetry setup
-        uses: Gr1N/setup-poetry@v8
+        uses: Gr1N/setup-poetry@v9
       - run: poetry install --with=test
       - name: Run the linters
         uses: pre-commit/action@v3.0.0
