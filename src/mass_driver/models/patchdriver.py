@@ -2,7 +2,7 @@
 from enum import Enum
 from logging import Logger
 
-from pydantic import BaseModel
+from pydantic import ConfigDict, BaseModel
 
 from mass_driver.models.repository import ClonedRepo
 
@@ -46,9 +46,3 @@ class PatchDriver(BaseModel):
     def logger(self):
         """Grab the logger of this driver, as passed dynamically via mass-driver code"""
         return self._logger
-
-    class Config:
-        """Pydantic config of the PatchDriver class"""
-
-        underscore_attrs_are_private = True
-        """Ensure we can set internal non-serializeable fields via underscore"""

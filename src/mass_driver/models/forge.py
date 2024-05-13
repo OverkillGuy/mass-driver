@@ -2,9 +2,10 @@
 
 from enum import Enum
 
-from pydantic import BaseModel, BaseSettings
+from pydantic import BaseModel
 
 from mass_driver.models.repository import BranchName
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 PRStatus = dict[str, bool]
 """The status of a specific PR, as series of flags and bool-predicate.
@@ -45,12 +46,7 @@ class Forge(BaseSettings):
         """
         raise NotImplementedError("Forge base class can't list PR status, use derived")
 
-    class Config:
-        """Configuration of the Forge class"""
-
-        underscore_attrs_are_private = True
-        """Ensure that _api is treated private"""
-        env_prefix = "FORGE_"
+    model_config = SettingsConfigDict(env_prefix="FORGE_")
 
 
 class PROutcome(str, Enum):

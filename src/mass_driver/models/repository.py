@@ -1,6 +1,7 @@
 """Repositories for cloning and patching"""
 
-from pydantic import BaseModel, BaseSettings, DirectoryPath
+from pydantic import BaseModel, DirectoryPath
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 BranchName = str
 """A git branch name, assumed to exist remotely on the Forge"""
@@ -51,9 +52,4 @@ class Source(BaseSettings):
         """Discover a list of repositories"""
         raise NotImplementedError("Source base class can't discover, use derived")
 
-    class Config:
-        """Configuration of the Source class"""
-
-        underscore_attrs_are_private = True
-        """Ensure that _api is treated private"""
-        env_prefix = "SOURCE_"
+    model_config = SettingsConfigDict(env_prefix="SOURCE_")

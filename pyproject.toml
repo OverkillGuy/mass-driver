@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "mass_driver"
-version = "0.18.0"
+version = "0.19.0"
 description = "Send bulk repo change requests"
 authors = ["Jb Doyon <jb@jiby.tech>"]
 readme = "README.md"
@@ -26,10 +26,11 @@ GitPython = "*"
 # [1]: https://github.com/PyGithub/PyGithub/issues/2472#issuecomment-1482378022
 PyGithub = "==2.1.1"
 # Mass-driver settings
-pydantic = "1.*"
 
 # Note: Linters not defined in this file but .pre-commit-config.yaml, which
 # installs/manages each tool in its own isolated virtualenv
+pydantic = "^2.7.1"
+pydantic-settings = "^2.2.1"
 
 [tool.poetry.group.test.dependencies]
 pytest = "7.*"
@@ -59,6 +60,10 @@ doc2dash = "*"
 # See https://github.com/sphinx-extensions2/sphinx-autodoc2/issues/31
 astroid = "==2.15.8"
 
+
+
+[tool.poetry.group.dev.dependencies]
+bump-pydantic = "^0.8.0"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
