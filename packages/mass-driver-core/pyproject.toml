@@ -1,0 +1,9 @@
+[project]
+name = "mass-driver-plugins"
+version = "0.18.0-a1"
+requires-python = ">=3.11"
+dependencies = ["pydantic >= 1.10.18"]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"

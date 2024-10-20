@@ -1,0 +1,115 @@
+[project]
+name = "mass_driver"
+version = "0.18.0"
+description = "Send bulk repo change requests"
+authors = [{name= "Jb Doyon", email= "jb@jiby.tech"}]
+readme = "README.md"
+license = "GPL-3.0-or-later"
+documentation = "https://jiby.tech/mass-driver"
+repository = "https://github.com/OverkillGuy/mass-driver"
+keywords = ["repo-automation"]
+classifiers = [
+    "Topic :: Software Development :: Code Generators",
+    "Development Status :: 3 - Alpha",
+]
+requires-python = ">=3.11"
+dependencies = [
+    "gitpython == 3.1.43",
+    "mass-driver-core",
+    "mass-driver-plugins",
+]
+
+# For these deps, look in the workspaces to the side of this package
+[tool.uv.sources]
+mass-driver-core = { workspace = true }
+mass-driver-plugins = { workspace = true }
+
+
+# TODO: Confirm ranges of dependencies
+[project.optional-dependencies]
+docs = [
+    "sphinx == 7.3.7",
+    "sphinx-rtd-theme == 1.3.0",
+    "myst-parser == 3.0.1",
+    "sphinx-autodoc2 == 0.5.0",
+    "sphinxcontrib-programoutput == 0.17",
+    "sphinx-jinja == 2.0.2",
+    "doc2dash == 3.1.0",]
+test = [
+    "pytest == 7.4.4",
+    "pytest-cov == 5.0.0",
+    "pytest-clarity == 1.0.1",
+    "pytest-datadir == 1.5.0",]
+
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+# Make isort work with Black
+# Avoids conflicting imports
+# As per https://pycqa.github.io/isort/docs/configuration/black_compatibility/#using-a-config-file-such-as-isortcfg
+
+
+[tool.pytest.ini_options]
+addopts = """-vv \
+      --doctest-modules \
+      --cov=mass_driver \
+      --cov-report=xml:test_results/coverage.xml \
+      --cov-report=html:test_results/coverage.html \
+      --cov-report=term \
+      --junit-xml=test_results/results.xml"""
+
+[tool.ruff]
+# Always fix what you can, without needing CLI flags
+fix = true
+unfixable = [
+    "ERA", # do not autoremove commented out code
+]
+# Black compat:
+line-length = 88
+extend-exclude = ["docs/*"]
+
+
+# Enable pycodestyle (`E`) and Pyflakes (`F`) codes by default.
+# Add I = isort (import sorter), to remove need for isort itself
+# And D = pydocstyle for docstrings
+select = ["E", "F", "I", "D"]
+# D400/D415 = First line (of dosctrings) should end with [.?!]
+# E501 = "line-too-long", fixed by black already
+extend-ignore = ["D400", "D415", "E501"]
+
+# Allow autofix for all enabled rules (when `--fix`) is provided.
+fixable = ["A", "B", "C", "D", "E", "F", "G", "I", "N", "Q", "S", "T", "W", "ANN", "ARG", "BLE", "COM", "DJ", "DTZ", "EM", "ERA", "EXE", "FBT", "ICN", "INP", "ISC", "NPY", "PD", "PGH", "PIE", "PL", "PT", "PTH", "PYI", "RET", "RSE", "RUF", "SIM", "SLF", "TCH", "TID", "TRY", "UP", "YTT"]
+# Use Google-style docstrings
+pydocstyle = {convention = "google"}
+
+[tool.mypy]
+python_version = "3.11"
+check_untyped_defs = true
+
+
+[project.scripts]
+mass-driver = "mass_driver.cli:main"
+
+[project.plugins.'massdriver.divers']
+counter = 'mass_driver.drivers.counter:Counter'
+precommit = 'mass_driver.drivers.precommit:PrecommitAutoupdate'
+shell = 'mass_driver.drivers.shell:ShellDriver'
+stamper = 'mass_driver.drivers.stamper:Stamper'
+
+[project.plugins.'massdriver.forges']
+dummy = 'mass_driver.forges.dummy:DummyForge'
+github = 'mass_driver.forges.github:GithubPersonalForge'
+github-app = 'mass_driver.forges.github:GithubAppForge'
+
+[project.plugins.'massdriver.sources']
+repo-list = 'mass_driver.sources.simple:RepolistSource'
+repo-filelist = 'mass_driver.sources.simple:RepoFilelistSource'
+template-filelist = 'mass_driver.sources.simple:TemplateFileSource'
+csv-filelist = 'mass_driver.sources.simple:CSVFileSource'
+github-search = 'mass_driver.sources.github_source:GithubPersonalSource'
+github-app-search = 'mass_driver.sources.github_source:GithubAppSource'
+
+[project.plugins.'massdriver.scanners']
+root-files = 'mass_driver.scanners.basic_scanners:rootlevel_files'
+dockerfile-from = 'mass_driver.scanners.basic_scanners:dockerfile_from_scanner'

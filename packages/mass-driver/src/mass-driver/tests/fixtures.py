@@ -6,7 +6,6 @@ import shutil
 from pathlib import Path
 
 from git import Repo
-
 from mass_driver.cli import cli as massdriver_cli
 from mass_driver.models.activity import ActivityOutcome
 from mass_driver.models.patchdriver import PatchOutcome

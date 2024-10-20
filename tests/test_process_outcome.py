@@ -9,8 +9,8 @@ Feature: Processing many files' outcomes
 import logging
 
 import pytest
-from mass_driver.drivers.bricks import process_outcomes
-from mass_driver.models.patchdriver import PatchOutcome, PatchResult
+from mass_driver_plugins.drivers.bricks import process_outcomes
+from mass_driver_core.models.patchdriver import PatchOutcome, PatchResult
 
 LOGGER = logging.getLogger()
 

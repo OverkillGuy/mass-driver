@@ -11,12 +11,12 @@ end-before: "## Using the scanners"
 ## Creating a Source
 
 Sources are mass-driver plugins that map to
-{py:obj}`mass_driver.models.repository.Source`. Let's create one.
+{py:obj}`mass_driver_core.models.repository.Source`. Let's create one.
 
 First, we import relevant bits:
 
 ```python
-from mass_driver.models.repository import IndexedRepos, SourcedRepo, RepoUrl, Source
+from mass_driver_core.models.repository import IndexedRepos, SourcedRepo, RepoUrl, Source
 ```
 
 Remembering that:
@@ -34,11 +34,11 @@ pyobject: RepolistSource
 ```
 
 This class, taking a parameter `repos`, generates
-{py:obj}`~mass_driver.models.repository.SourcedRepo` objects when calling
-{py:meth}`~mass_driver.models.repository.Source.discover`, as a dictionary
-indexed by {py:obj}`~mass_driver.models.repository.RepoID` (basically a string).
+{py:obj}`~mass_driver_core.models.repository.SourcedRepo` objects when calling
+{py:meth}`~mass_driver_core.models.repository.Source.discover`, as a dictionary
+indexed by {py:obj}`~mass_driver_core.models.repository.RepoID` (basically a string).
 
-The only constraint on {py:obj}`~mass_driver.models.repository.RepoID` (type
+The only constraint on {py:obj}`~mass_driver_core.models.repository.RepoID` (type
 being an alias of `str`) is that the string key is unique, so in this case we
 use the `git clone` URL, which is guaranteed unique. Smarter Sources will use
 something shorter, as adequate.
@@ -55,9 +55,9 @@ types never print their content when represented as string, requiring a call to
 `my_secret_field.get_secret_value()` to actually disclose the secret.
 :::
 
-Note the `patch_data` field of {py:obj}`~mass_driver.models.repository.SourcedRepo`,
+Note the `patch_data` field of {py:obj}`~mass_driver_core.models.repository.SourcedRepo`,
 unused in this sample Source, is an arbitrary dictionary under the
-{py:obj}`~mass_driver.models.repository.Source`'s control, perfect to provide
+{py:obj}`~mass_driver_core.models.repository.Source`'s control, perfect to provide
 per-repo data extracted from the source that will be relevant to make migration
 against; For instance the file name to fix from some reporting tool...
 

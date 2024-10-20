@@ -7,7 +7,6 @@ Feature: Unified 'Activities' for separable migration-then-forge
 from pathlib import Path
 
 import pytest
-
 from mass_driver.forge_run import PROutcome
 from mass_driver.forges.dummy import DUMMY_PR_URL
 from mass_driver.models.patchdriver import PatchOutcome
