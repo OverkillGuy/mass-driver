@@ -5,10 +5,8 @@ import sys
 from argparse import Namespace
 from typing import Callable, Optional
 
-from pydantic import ValidationError
-
-from mass_driver.activity_run import sequential_run, thread_run
-from mass_driver.discovery import (
+from mass_driver_core.activity import ActivityLoaded, ActivityOutcome
+from mass_driver_core.discovery import (
     discover_drivers,
     discover_forges,
     discover_scanners,
@@ -18,10 +16,12 @@ from mass_driver.discovery import (
     get_forge_entrypoint,
     get_source_entrypoint,
 )
+from mass_driver_core.repository import IndexedRepos, SourcedRepo
+from pydantic import ValidationError
+
+from mass_driver.activity_run import sequential_run, thread_run
 from mass_driver.forge_run import main as forge_main
 from mass_driver.forge_run import pause_until_ok
-from mass_driver.models.activity import ActivityLoaded, ActivityOutcome
-from mass_driver.models.repository import IndexedRepos, SourcedRepo
 from mass_driver.review_run import review
 from mass_driver.summarize import summarize_forge, summarize_migration, summarize_source
 

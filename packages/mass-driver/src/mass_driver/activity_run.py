@@ -7,20 +7,21 @@ import logging
 from concurrent import futures
 from copy import deepcopy
 
-from mass_driver.git import (
-    get_cache_folder,
-)
-from mass_driver.models.activity import (
+from mass_driver_core.activity import (
     ActivityLoaded,
     ActivityOutcome,
     IndexedPatchResult,
     IndexedScanResult,
     ScanResult,
 )
-from mass_driver.models.patchdriver import PatchOutcome, PatchResult
-from mass_driver.models.repository import (
+from mass_driver_core.patchdriver import PatchOutcome, PatchResult
+from mass_driver_core.repository import (
     IndexedClonedRepos,
     IndexedRepos,
+)
+
+from mass_driver.git import (
+    get_cache_folder,
 )
 from mass_driver.process_repo import clone_repo, migrate_repo, scan_repo
 

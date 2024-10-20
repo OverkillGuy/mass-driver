@@ -1,6 +1,7 @@
 """Test a couple of Sources"""
 
-from mass_driver.models.repository import SourcedRepo
+from mass_driver_core.repository import SourcedRepo
+
 from mass_driver.tests.fixtures import massdrive_runlocal
 
 

@@ -2,7 +2,7 @@
 import logging
 from collections import defaultdict
 
-from mass_driver.models.forge import Forge
+from mass_driver_core.forge import Forge
 
 ERROR_STATUS = "error fetching status"
 

@@ -5,8 +5,7 @@ from pathlib import Path
 from tempfile import mkdtemp
 
 from git import Repo as GitRepo
-
-from mass_driver.models.migration import MigrationLoaded
+from mass_driver_core.migration import MigrationLoaded
 
 DEFAULT_CACHE = Path(".mass_driver/repos/")
 

@@ -7,6 +7,16 @@ import logging
 import traceback
 from pathlib import Path
 
+from mass_driver_core.activity import ScanResult
+from mass_driver_core.forge import PROutcome, PRResult
+from mass_driver_core.migration import ForgeLoaded, MigrationLoaded
+from mass_driver_core.patchdriver import PatchOutcome, PatchResult
+from mass_driver_core.repository import (
+    ClonedRepo,
+    SourcedRepo,
+)
+from mass_driver_core.scan import ScanLoaded
+
 from mass_driver.git import (
     GitRepo,
     clone_if_remote,
@@ -15,15 +25,6 @@ from mass_driver.git import (
     push,
     switch_branch_then_pull,
 )
-from mass_driver.models.activity import ScanResult
-from mass_driver.models.forge import PROutcome, PRResult
-from mass_driver.models.migration import ForgeLoaded, MigrationLoaded
-from mass_driver.models.patchdriver import PatchOutcome, PatchResult
-from mass_driver.models.repository import (
-    ClonedRepo,
-    SourcedRepo,
-)
-from mass_driver.models.scan import ScanLoaded
 
 
 def clone_repo(

@@ -1,9 +1,10 @@
 """The main run-command of Forges, creating mass-PRs from existing branhces"""
 import logging
 
-from mass_driver.models.activity import ActivityOutcome, IndexedPRResult
-from mass_driver.models.forge import PROutcome, PRResult
-from mass_driver.models.migration import ForgeLoaded
+from mass_driver_core.activity import ActivityOutcome, IndexedPRResult
+from mass_driver_core.forge import PROutcome, PRResult
+from mass_driver_core.migration import ForgeLoaded
+
 from mass_driver.process_repo import forge_per_repo
 
 

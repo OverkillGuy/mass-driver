@@ -3,10 +3,10 @@
 from pathlib import Path
 from tempfile import mkdtemp
 
-from mass_driver.models.activity import ActivityOutcome
-from mass_driver.models.forge import PROutcome, PRResult
-from mass_driver.models.patchdriver import PatchOutcome, PatchResult
-from mass_driver.models.repository import ClonedRepo, SourcedRepo
+from mass_driver_core.activity import ActivityOutcome
+from mass_driver_core.forge import PROutcome, PRResult
+from mass_driver_core.patchdriver import PatchOutcome, PatchResult
+from mass_driver_core.repository import ClonedRepo, SourcedRepo
 
 PATCH_ERRORS = 1
 ALREADY_PATCHED = 4

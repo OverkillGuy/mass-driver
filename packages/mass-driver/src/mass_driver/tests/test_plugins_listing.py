@@ -8,11 +8,10 @@ Feature: Plugin discovery
 """
 
 import pytest
-
-from mass_driver.discovery import get_driver, get_forge, get_source
-from mass_driver.models.forge import Forge
-from mass_driver.models.patchdriver import PatchDriver
-from mass_driver.models.repository import Source
+from mass_driver_core.discovery import get_driver, get_forge, get_source
+from mass_driver_core.forge import Forge
+from mass_driver_core.patchdriver import PatchDriver
+from mass_driver_core.repository import Source
 
 
 @pytest.mark.parametrize("driver_name", ["shell", "precommit", "counter"])

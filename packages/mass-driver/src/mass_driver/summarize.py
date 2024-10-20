@@ -2,12 +2,12 @@
 from collections import defaultdict
 from logging import Logger
 
-from mass_driver.models.activity import (
+from mass_driver_core.activity import (
     IndexedPatchResult,
     IndexedPRResult,
 )
-from mass_driver.models.forge import PROutcome
-from mass_driver.models.repository import IndexedRepos
+from mass_driver_core.forge import PROutcome
+from mass_driver_core.repository import IndexedRepos
 
 
 def group_by_outcome(result):
