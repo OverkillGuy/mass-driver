@@ -5,7 +5,7 @@ from pathlib import Path
 
 from pydantic import FilePath
 
-from mass_driver.models.repository import IndexedRepos, RepoUrl, Source, SourcedRepo
+from mass_driver_core.repository import IndexedRepos, RepoUrl, Source, SourcedRepo
 
 
 class RepolistSource(Source):

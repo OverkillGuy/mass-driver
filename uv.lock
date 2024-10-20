@@ -432,7 +432,7 @@ wheels = [
 
 [[package]]
 name = "mass-driver"
-version = "0.18.0"
+version = "0.18.0a1"
 source = { editable = "packages/mass-driver" }
 dependencies = [
     { name = "gitpython" },

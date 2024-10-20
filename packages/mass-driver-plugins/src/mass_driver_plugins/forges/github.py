@@ -5,7 +5,7 @@ import re
 from github import Auth, Github, GithubIntegration
 from pydantic import SecretStr
 
-from mass_driver.models.forge import BranchName, Forge
+from mass_driver_core.forge import BranchName, Forge
 
 
 class GithubBaseForge(Forge):

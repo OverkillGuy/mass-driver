@@ -1,6 +1,6 @@
 [project]
 name = "mass_driver"
-version = "0.18.0"
+version = "0.18.0-a1"
 description = "Send bulk repo change requests"
 authors = [{name= "Jb Doyon", email= "jb@jiby.tech"}]
 readme = "README.md"
