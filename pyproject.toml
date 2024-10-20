@@ -1,8 +1,8 @@
-[tool.poetry]
+[project]
 name = "mass_driver"
 version = "0.18.0"
 description = "Send bulk repo change requests"
-authors = ["Jb Doyon <jb@jiby.tech>"]
+authors = [{name= "Jb Doyon", email= "jb@jiby.tech"}]
 readme = "README.md"
 license = "GPL-3.0-or-later"
 documentation = "https://jiby.tech/mass-driver"
@@ -12,54 +12,33 @@ classifiers = [
     "Topic :: Software Development :: Code Generators",
     "Development Status :: 3 - Alpha",
 ]
+requires-python = ">=3.11"
+dependencies = [
+    "gitpython == 3.1.43",
+    "pydantic == 1.10.18",
+    "pygithub == 2.1.1",
+]
 
-[tool.poetry.scripts]
-mass-driver = "mass_driver.cli:main"
+# TODO: Confirm ranges of dependencies
+[project.optional-dependencies]
+docs = [
+    "sphinx == 7.3.7",
+    "sphinx-rtd-theme == 1.3.0",
+    "myst-parser == 3.0.1",
+    "sphinx-autodoc2 == 0.5.0",
+    "sphinxcontrib-programoutput == 0.17",
+    "sphinx-jinja == 2.0.2",
+    "doc2dash == 3.1.0",]
+test = [
+    "pytest == 7.4.4",
+    "pytest-cov == 5.0.0",
+    "pytest-clarity == 1.0.1",
+    "pytest-datadir == 1.5.0",]
 
-[tool.poetry.dependencies]
-python = "^3.11"
-# Manipulate git repos: Clone, diff, commit patches...
-GitPython = "*"
-# Github Forge support.
-# Pinned exactly to follow advice from maintainer around
-# unstable semantic versioning[1]
-# [1]: https://github.com/PyGithub/PyGithub/issues/2472#issuecomment-1482378022
-PyGithub = "==2.1.1"
-# Mass-driver settings
-pydantic = "1.*"
-
-# Note: Linters not defined in this file but .pre-commit-config.yaml, which
-# installs/manages each tool in its own isolated virtualenv
-
-[tool.poetry.group.test.dependencies]
-pytest = "7.*"
-# Test coverage
-pytest-cov = "*"
-# Clearer assertion failures (colorful diff)
-pytest-clarity = "1.*"
-# Test-specific data folder
-pytest-datadir = "*"
-
-[tool.poetry.group.docs.dependencies]
-# Main documentation-as-code (HTML/PDF generator)
-Sphinx = "7.*"
-# Read the docs (pretty) theme for sphinx
-sphinx-rtd-theme = "1.*"
-# Markdown parser for sphinx: Sphinx uses "RST" files, this adds markdown
-myst-parser = "*"
-# Automatic Python module docs (javadoc-style)
-sphinx-autodoc2 = "*"
-# Display the output of a program in docs, cool for --help
-sphinxcontrib-programoutput = "^0.17"
-# Templated docs page like 'Drivers'
-sphinx-jinja = "*"
-# Generate Dash/Zeal "docsets" (offline dev-docs package) from HTML docs
-doc2dash = "*"
 
 [build-system]
-requires = ["poetry-core>=1.0.0"]
-build-backend = "poetry.core.masonry.api"
-
+requires = ["hatchling"]
+build-backend = "hatchling.build"
 # Make isort work with Black
 # Avoids conflicting imports
 # As per https://pycqa.github.io/isort/docs/configuration/black_compatibility/#using-a-config-file-such-as-isortcfg
@@ -102,18 +81,22 @@ pydocstyle = {convention = "google"}
 python_version = "3.11"
 check_untyped_defs = true
 
-[tool.poetry.plugins.'massdriver.drivers']
+
+[project.scripts]
+mass-driver = "mass_driver.cli:main"
+
+[project.plugins.'massdriver.divers']
 counter = 'mass_driver.drivers.counter:Counter'
 precommit = 'mass_driver.drivers.precommit:PrecommitAutoupdate'
 shell = 'mass_driver.drivers.shell:ShellDriver'
 stamper = 'mass_driver.drivers.stamper:Stamper'
 
-[tool.poetry.plugins.'massdriver.forges']
+[project.plugins.'massdriver.forges']
 dummy = 'mass_driver.forges.dummy:DummyForge'
 github = 'mass_driver.forges.github:GithubPersonalForge'
 github-app = 'mass_driver.forges.github:GithubAppForge'
 
-[tool.poetry.plugins.'massdriver.sources']
+[project.plugins.'massdriver.sources']
 repo-list = 'mass_driver.sources.simple:RepolistSource'
 repo-filelist = 'mass_driver.sources.simple:RepoFilelistSource'
 template-filelist = 'mass_driver.sources.simple:TemplateFileSource'
@@ -121,6 +104,6 @@ csv-filelist = 'mass_driver.sources.simple:CSVFileSource'
 github-search = 'mass_driver.sources.github_source:GithubPersonalSource'
 github-app-search = 'mass_driver.sources.github_source:GithubAppSource'
 
-[tool.poetry.plugins.'massdriver.scanners']
+[project.plugins.'massdriver.scanners']
 root-files = 'mass_driver.scanners.basic_scanners:rootlevel_files'
 dockerfile-from = 'mass_driver.scanners.basic_scanners:dockerfile_from_scanner'
