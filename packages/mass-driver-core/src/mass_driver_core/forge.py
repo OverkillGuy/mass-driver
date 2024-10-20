@@ -4,7 +4,7 @@ from enum import Enum
 
 from pydantic import BaseModel, BaseSettings
 
-from mass_driver.models.repository import BranchName
+from mass_driver_core.repository import BranchName
 
 PRStatus = dict[str, bool]
 """The status of a specific PR, as series of flags and bool-predicate.

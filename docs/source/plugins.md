@@ -7,10 +7,10 @@ The components are available via the following entrypoint name:
 
 | Mass-driver Component                                   | Python entrypoint     |
 |---------------------------------------------------------|-----------------------|
-| {py:class}`~mass_driver.models.patchdriver.PatchDriver` | `massdriver.drivers`  |
-| {py:class}`~mass_driver.models.forge.forge`             | `massdriver.forges`   |
-| {py:class}`~mass_driver.models.scan.ScannerFunc`        | `massdriver.scanners` |
-| {py:class}`~mass_driver.models.repository.Source`       | `massdriver.sources`  |
+| {py:class}`~mass_driver_core.patchdriver.PatchDriver` | `massdriver.drivers`  |
+| {py:class}`~mass_driver_core.forge.forge`             | `massdriver.forges`   |
+| {py:class}`~mass_driver_core.scan.ScannerFunc`        | `massdriver.scanners` |
+| {py:class}`~mass_driver_core.repository.Source`       | `massdriver.sources`  |
 
 We've packaged separately some plugins in
 [mass-driver-plugins](https://github.com/OverkillGuy/mass-driver-plugins), have

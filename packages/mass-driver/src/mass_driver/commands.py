@@ -5,6 +5,8 @@ import sys
 from argparse import Namespace
 from typing import Callable, Optional
 
+from pydantic import ValidationError
+
 from mass_driver.activity_run import sequential_run, thread_run
 from mass_driver.discovery import (
     discover_drivers,
@@ -22,7 +24,6 @@ from mass_driver.models.activity import ActivityLoaded, ActivityOutcome
 from mass_driver.models.repository import IndexedRepos, SourcedRepo
 from mass_driver.review_run import review
 from mass_driver.summarize import summarize_forge, summarize_migration, summarize_source
-from pydantic import ValidationError
 
 
 def drivers_command(args: Namespace):

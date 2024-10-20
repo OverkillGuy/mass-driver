@@ -3,10 +3,10 @@
 from importlib.metadata import EntryPoint, EntryPoints, entry_points
 from typing import Callable
 
-from mass_driver.models.forge import Forge
-from mass_driver.models.patchdriver import PatchDriver
-from mass_driver.models.repository import Source
-from mass_driver.models.scan import Scanner
+from mass_driver_core.forge import Forge
+from mass_driver_core.patchdriver import PatchDriver
+from mass_driver_core.repository import Source
+from mass_driver_core.scan import Scanner
 
 ENTRYPOINT = "massdriver"
 """The entrypoint we discover all types of plugins from"""

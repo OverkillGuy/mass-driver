@@ -17,12 +17,12 @@ But if you want to do something more elaborate, you'll want your own
 ### Defining a PatchDriver
 
 Simply create a class that inherits from
-{py:class}`mass_driver.models.patchdriver.PatchDriver`, storing any kind of configuration as
+{py:class}`mass_driver_core.patchdriver.PatchDriver`, storing any kind of configuration as
 slots, and exposing a single `run` method:
 
 ```python
-from mass_driver.models.patchdriver import PatchDriver, PatchResult, PatchOutcome
-from mass_driver.models.repository import ClonedRepo
+from mass_driver_core.patchdriver import PatchDriver, PatchResult, PatchOutcome
+from mass_driver_core.repository import ClonedRepo
 
 class PerlPackageBumper(PatchDriver):
     """Bump version of Perl packages"""
@@ -132,6 +132,6 @@ with these text files, and runs mass-driver over it.
 For more granular, custom testing, the fixture
 {py:func}`mass_driver.tests.fixtures.massdrive`, can run mass-driver CLI in a
 prepackaged way, returning just
-{py:class}`mass_driver.models.activity.MigrationOutcome` +
-{py:class}`mass_driver.models.activity.ForgeResult` (if any forge defined) +
-{py:class}`mass_driver.models.activity.ScanResult` (if any scans defined).
+{py:class}`mass_driver_core.activity.MigrationOutcome` +
+{py:class}`mass_driver_core.activity.ForgeResult` (if any forge defined) +
+{py:class}`mass_driver_core.activity.ScanResult` (if any scans defined).

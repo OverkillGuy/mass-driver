@@ -3,8 +3,8 @@
 Simplest code we could implement that demonstrates PatchDriver capabilities.
 """
 
-from mass_driver.drivers.bricks import SingleFileEditor
-from mass_driver.models.patchdriver import PatchOutcome, PatchResult
+from mass_driver_plugins.drivers.bricks import SingleFileEditor
+from mass_driver_core.patchdriver import PatchOutcome, PatchResult
 
 
 class Counter(SingleFileEditor):

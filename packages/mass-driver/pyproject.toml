@@ -90,26 +90,3 @@ check_untyped_defs = true
 
 [project.scripts]
 mass-driver = "mass_driver.cli:main"
-
-[project.plugins.'massdriver.divers']
-counter = 'mass_driver.drivers.counter:Counter'
-precommit = 'mass_driver.drivers.precommit:PrecommitAutoupdate'
-shell = 'mass_driver.drivers.shell:ShellDriver'
-stamper = 'mass_driver.drivers.stamper:Stamper'
-
-[project.plugins.'massdriver.forges']
-dummy = 'mass_driver.forges.dummy:DummyForge'
-github = 'mass_driver.forges.github:GithubPersonalForge'
-github-app = 'mass_driver.forges.github:GithubAppForge'
-
-[project.plugins.'massdriver.sources']
-repo-list = 'mass_driver.sources.simple:RepolistSource'
-repo-filelist = 'mass_driver.sources.simple:RepoFilelistSource'
-template-filelist = 'mass_driver.sources.simple:TemplateFileSource'
-csv-filelist = 'mass_driver.sources.simple:CSVFileSource'
-github-search = 'mass_driver.sources.github_source:GithubPersonalSource'
-github-app-search = 'mass_driver.sources.github_source:GithubAppSource'
-
-[project.plugins.'massdriver.scanners']
-root-files = 'mass_driver.scanners.basic_scanners:rootlevel_files'
-dockerfile-from = 'mass_driver.scanners.basic_scanners:dockerfile_from_scanner'

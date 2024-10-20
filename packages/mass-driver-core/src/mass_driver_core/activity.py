@@ -6,9 +6,9 @@ Encompasses both Migrations and Forge activities.
 from pydantic import BaseModel
 from tomllib import loads
 
-from mass_driver.discovery import get_scanner
-from mass_driver.models.forge import PRResult
-from mass_driver.models.migration import (  # Forge,
+from mass_driver_core.discovery import get_scanner
+from mass_driver_core.forge import PRResult
+from mass_driver_core.migration import (  # Forge,
     TOML_PROJECTKEY,
     ForgeFile,
     ForgeLoaded,
@@ -20,9 +20,9 @@ from mass_driver.models.migration import (  # Forge,
     load_driver,
     load_source,
 )
-from mass_driver.models.patchdriver import PatchResult
-from mass_driver.models.repository import IndexedClonedRepos, IndexedRepos, RepoID
-from mass_driver.models.scan import ScanFile, ScanLoaded, Scanner
+from mass_driver_core.patchdriver import PatchResult
+from mass_driver_core.repository import IndexedClonedRepos, IndexedRepos, RepoID
+from mass_driver_core.scan import ScanFile, ScanLoaded, Scanner
 
 IndexedPatchResult = dict[RepoID, PatchResult]
 """A set of PatchResults, indexed by original repo URL given as input"""

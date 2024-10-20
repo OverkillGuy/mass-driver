@@ -3,7 +3,7 @@ name = "mass-driver-plugins"
 version = "0.18.0-a1"
 requires-python = ">=3.11"
 dependencies = [
-    "pygithub == 2.11.1",
+    "pygithub == 2.1.1",
     "mass-driver-core",
 ]
 

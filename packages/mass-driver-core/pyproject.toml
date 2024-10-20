@@ -1,8 +1,11 @@
 [project]
-name = "mass-driver-plugins"
+name = "mass-driver-core"
 version = "0.18.0-a1"
 requires-python = ">=3.11"
-dependencies = ["pydantic >= 1.10.18"]
+dependencies = [
+    "pydantic == 1.10.18",
+#    "pydantic-settings >= 2.6.0",  (Needed from pydantic >=2.0)
+]
 
 [build-system]
 requires = ["hatchling"]

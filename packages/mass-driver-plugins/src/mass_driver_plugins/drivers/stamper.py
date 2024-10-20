@@ -2,8 +2,8 @@
 
 from pathlib import Path
 
-from mass_driver.models.patchdriver import PatchDriver, PatchOutcome, PatchResult
-from mass_driver.models.repository import ClonedRepo
+from mass_driver_core.patchdriver import PatchDriver, PatchOutcome, PatchResult
+from mass_driver_core.repository import ClonedRepo
 
 
 class Stamper(PatchDriver):

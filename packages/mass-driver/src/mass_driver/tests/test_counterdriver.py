@@ -20,6 +20,7 @@ bumping is not needed.
 from pathlib import Path
 
 import pytest
+
 from mass_driver.tests.fixtures import copy_folder, massdrive_check_file
 
 # Go from this filename.py to folder:

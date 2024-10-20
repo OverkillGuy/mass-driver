@@ -14,10 +14,10 @@ language: gherkin
 ---
 ```
 
-In practice, we can assume a {py:obj}`~mass_driver.models.source.Source` that
+In practice, we can assume a {py:obj}`~mass_driver_core.source.Source` that
 can discover repos using `libxml`, and a
-{py:obj}`~mass_driver.models.patchdriver.PatchDriver` for bumping packages,
-triggering a PR via {py:obj}`~mass_driver.models.forge.Forge`.
+{py:obj}`~mass_driver_core.patchdriver.PatchDriver` for bumping packages,
+triggering a PR via {py:obj}`~mass_driver_core.forge.Forge`.
 
 ## Migration Lifecycle
 
@@ -35,5 +35,5 @@ language: gherkin
 ---
 ```
 
-This is the dream of {py:obj}`~mass_driver.models.source.Source` plugins, as
+This is the dream of {py:obj}`~mass_driver_core.source.Source` plugins, as
 described in [Sources](./sources)

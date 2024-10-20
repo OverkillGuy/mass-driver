@@ -4,7 +4,7 @@ from logging import Logger
 
 from pydantic import BaseModel, Extra
 
-from mass_driver.models.repository import ClonedRepo
+from mass_driver_core.repository import ClonedRepo
 
 
 class PatchOutcome(str, Enum):

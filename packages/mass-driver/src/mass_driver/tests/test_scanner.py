@@ -9,6 +9,7 @@ Feature: Scanner test fixtures
 from pathlib import Path
 
 import pytest
+
 from mass_driver.tests.fixtures import copy_folder, massdrive_scan_check
 
 # Go from this filename.py to folder:
