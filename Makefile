@@ -6,7 +6,7 @@ all: install lint test docs build install-hooks
 
 .PHONY: install
 install:
-	poetry install
+	uv sync --all-extras
 
 # Enforce the pre-commit hooks
 .PHONY: install-hooks
@@ -19,18 +19,18 @@ lint:  # Use all linters on all files (not just staged for commit)
 
 .PHONY: test
 test:
-	poetry run pytest
+	uv run pytest
 
 ACTION=run --no-pause
 FILE=clone.toml
 .PHONY: run
 run:  # Remember to export GITHUB_API_TOKEN beforehand
-	poetry run mass-driver ${ACTION} ${FILE}
+	uv run mass-driver ${ACTION} ${FILE}
 
 .PHONY: docs
 docs: clean-docs
 	cd docs && make html
-	poetry run doc2dash \
+	uv run doc2dash \
 		--force \
 		--name mass-driver \
 		docs/build/html \
@@ -47,7 +47,7 @@ docs-serve:
 
 .PHONY: build
 build:
-	poetry build
+	uv build
 
 .PHONY: docker-build-release
 docker-build-release:
@@ -60,22 +60,24 @@ docker-build-release:
 docker-build-dev:
 	docker build -t ${DOCKER_IMAGE_NAME}-dev .
 
-# Make a release commit + tag, creating Changelog entry
-# Set BUMP variable to any of poetry-supported (major, minor, patch)
-# or number (1.2.3 etc), see 'poetry version' docs for details
-.PHONY: release
-# Default the bump to a patch (v1.2.3 -> v1.2.4)
-release: BUMP=patch
-release:
-# Set the new version Makefile variable after the version bump
-	$(eval NEW_VERSION := $(shell poetry version --short ${BUMP}))
-	sed -i \
-		"s/\(## \[Unreleased\]\)/\1\n\n## v${NEW_VERSION} - $(shell date -I)/" \
-		CHANGELOG.md
-	git add CHANGELOG.md pyproject.toml
-	git commit -m "Bump to version v${NEW_VERSION}"
-	git tag -a v${NEW_VERSION} \
-		-m "Release v${NEW_VERSION}"
+# Disabled because "uv" doesn't have bump facilities
+# See https://github.com/astral-sh/uv/issues/6298
+# # Make a release commit + tag, creating Changelog entry
+# # Set BUMP variable to any of poetry-supported (major, minor, patch)
+# # or number (1.2.3 etc), see 'poetry version' docs for details
+# .PHONY: release
+# # Default the bump to a patch (v1.2.3 -> v1.2.4)
+# release: BUMP=patch
+# release:
+# # Set the new version Makefile variable after the version bump
+# 	$(eval NEW_VERSION := $(shell poetry version --short ${BUMP}))
+# 	sed -i \
+# 		"s/\(## \[Unreleased\]\)/\1\n\n## v${NEW_VERSION} - $(shell date -I)/" \
+# 		CHANGELOG.md
+# 	git add CHANGELOG.md pyproject.toml
+# 	git commit -m "Bump to version v${NEW_VERSION}"
+# 	git tag -a v${NEW_VERSION} \
+# 		-m "Release v${NEW_VERSION}"
 
 # Less commonly used commands
 
@@ -94,7 +96,7 @@ update:
 # From the poetry.lock. Mostly for CI use.
 .PHONY: export-requirements
 export-requirements:
-	poetry run pip freeze > requirements.txt
+	uv run pip freeze > requirements.txt
 
 # Install poetry from pip
 # IMPORTANT: Make sure "pip" resolves to a virtualenv
