@@ -11,7 +11,7 @@ The project uses semantic versioning (see [semver](https://semver.org)).
   specifically), into an array-of-structure.
   - Allows for inspection of each repo's entire status, instead of slicing per
     "activity". Per-repo granularity is required to offload activities to
-    individual workers, for better performance
+    individual workers, for future performance improvements via concurrency.
   - Each of the new per-repo `RepoOutcome` objects contains a top-level error +
     a per-activity outcome containing error too, allowing for top-level status
     reporting of error + detail of error for each phase (like "Forge failed for
@@ -19,8 +19,9 @@ The project uses semantic versioning (see [semver](https://semver.org)).
 - **BREAKING**: `ClonedRepo.cloned_path` is now `str`, not `DirectoryPath`.
   - Weaker type means no check for existence of the actual folder, allowing
     for URLs like `s3://`, avoiding actual `tmp_dir` use in local testing.
-  - **ACTION****: Update `PatchDriver`s, replacing `repo.cloned_path` with
-    `Path(repo.cloned_path)` in the `run(repo: ClonedRepo)` function.
+  - **ACTION REQUIRED****: Update your `PatchDriver`s, replacing
+    `repo.cloned_path` with `Path(repo.cloned_path)` in the `run(repo:
+    ClonedRepo)` function.
 
 ### Added
 
