@@ -1,10 +1,10 @@
 {% for plugin_type, plugins_discovered in plugins | items %}
 {% if plugin_type in ["drivers", "forges", "sources"] %}
 {# Class-based plugin #}
-### {{ plugin_type | capitalize }}
+## {{ plugin_type | capitalize }}
 
 {% for name, details in plugins_discovered | items %}
-#### {{ name }}
+### {{ name }}
 
 Plugin name: `{{name}}`
 
@@ -22,10 +22,10 @@ Plugin name: `{{name}}`
 {% endif %}
 {% endfor %}
 
-### Scanners
+## Scanners
 {# Function-based plugin #}
 {% for name, details in plugins['scanners'] | items %}
-#### {{ name }}
+### {{ name }}
 
 Plugin name: `{{name}}`
 
