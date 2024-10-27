@@ -28,9 +28,6 @@ PyGithub = "==2.1.1"
 # Mass-driver settings
 pydantic = "1.*"
 
-# Note: Linters not defined in this file but .pre-commit-config.yaml, which
-# installs/manages each tool in its own isolated virtualenv
-
 [tool.poetry.group.test.dependencies]
 pytest = "7.*"
 # Test coverage
@@ -56,13 +53,10 @@ sphinx-jinja = "*"
 # Generate Dash/Zeal "docsets" (offline dev-docs package) from HTML docs
 doc2dash = "*"
 
+
 [build-system]
 requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
-
-# Make isort work with Black
-# Avoids conflicting imports
-# As per https://pycqa.github.io/isort/docs/configuration/black_compatibility/#using-a-config-file-such-as-isortcfg
 
 
 [tool.pytest.ini_options]
@@ -78,14 +72,13 @@ log_level = "INFO"
 [tool.ruff]
 # Always fix what you can, without needing CLI flags
 fix = true
+line-length = 88  # Like black
+extend-exclude = ["docs/*"]
+
+[tool.ruff.lint]
 unfixable = [
     "ERA", # do not autoremove commented out code
 ]
-# Black compat:
-line-length = 88
-extend-exclude = ["docs/*"]
-
-
 # Enable pycodestyle (`E`) and Pyflakes (`F`) codes by default.
 # Add I = isort (import sorter), to remove need for isort itself
 # And D = pydocstyle for docstrings

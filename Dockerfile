@@ -1,15 +1,17 @@
 FROM python:3.11-bookworm
 
 # Bring poetry, our package manager, and pre-commit hooks
-ARG POETRY_VERSION=1.6.1
-ARG PRECOMMIT_VERSION=3.3.3
-
+ARG POETRY_VERSION=1.8.1
+ARG PRECOMMIT_VERSION=3.6.2
 RUN pip install --no-cache-dir \
     poetry==${POETRY_VERSION} \
     pre-commit==${PRECOMMIT_VERSION}
 
-# Already in docker, no venv needed
-ENV POETRY_VIRTUALENVS_CREATE=false
+
+# We may be in docker, but the package's dependecies we install may clash with
+# the poetry/pre-commit dependencies (mostly requests version).
+# Set up a venv anyway here:
+ENV POETRY_VIRTUALENVS_CREATE=true
 
 
 # Workaround critical-level CVEs in Python image

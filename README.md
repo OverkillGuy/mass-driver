@@ -407,4 +407,4 @@ license details.
 ### Templated repository
 
 This repository was created by the copier template available at
-gh:OverkillGuy/python-template, using version v1.3.1.
+gh:OverkillGuy/python-template, using version v1.7.1.

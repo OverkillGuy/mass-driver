@@ -6,11 +6,31 @@
 # do matter a lot, and you'll want to keep Poetry.lock tracked = keep
 # commented
 
+# Avoid arbitrary git changes invalidating docker context
+.git
+
+################################################################################
+# Global ignore list, common in BOTH .dockerignore, and .gitignore
+# Make sure that whatever is done below is copied to the other file
+################################################################################
+
+# Mass-driver tool uses this path to store/cache data
+.mass_driver/
+
+# Do not track the code-extracted docs page from 'make docs'
+docs/source/apidocs/
+
 test_results/
 
-## Python gitignore from github/gitignored#14f8a8b
-## See https://raw.githubusercontent.com/github/gitignore/14f8a8b4c51ecc00b18905a95c117954e6c77b9d/Python.gitignore
+# Prevent accidental cache invalidation by ignoring text editor temp and backup
+*~
+*.swp
 
+
+#################### Python gitignore from github/gitignore ####################
+## Download via:
+## wget -O data/Python.gitignore \
+##     https://raw.githubusercontent.com/github/gitignore/main/Python.gitignore
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -107,7 +127,22 @@ ipython_config.py
 #   install all needed dependencies.
 #Pipfile.lock
 
-# PEP 582; used by e.g. github.com/David-OConnor/pyflow
+# poetry
+#   Similar to Pipfile.lock, it is generally recommended to include poetry.lock in version control.
+#   This is especially recommended for binary packages to ensure reproducibility, and is more
+#   commonly ignored for libraries.
+#   https://python-poetry.org/docs/basic-usage/#commit-your-poetrylock-file-to-version-control
+#poetry.lock
+
+# pdm
+#   Similar to Pipfile.lock, it is generally recommended to include pdm.lock in version control.
+#pdm.lock
+#   pdm stores project-wide configurations in .pdm.toml, but it is recommended to not include it
+#   in version control.
+#   https://pdm.fming.dev/#use-with-ide
+.pdm.toml
+
+# PEP 582; used by e.g. github.com/David-OConnor/pyflow and github.com/pdm-project/pdm
 __pypackages__/
 
 # Celery stuff
@@ -149,3 +184,18 @@ dmypy.json
 
 # Cython debug symbols
 cython_debug/
+
+# PyCharm
+#  JetBrains specific template is maintained in a separate JetBrains.gitignore that can
+#  be found at https://github.com/github/gitignore/blob/main/Global/JetBrains.gitignore
+#  and can be added to the global gitignore or merged into this file.  For a more nuclear
+#  option (not recommended) you can uncomment the following to ignore the entire idea folder.
+#.idea/
+
+################ Above is Python gitignore from github/gitignore ###############
+
+
+################################################################################
+# End of shared block between .dockerignore and .gitignore.
+# Make sure that whatever is done above is copied to the other file
+################################################################################
