@@ -1,6 +1,5 @@
 """The status of a single Repo's processing"""
 
-
 from enum import Enum
 from traceback import format_exception
 

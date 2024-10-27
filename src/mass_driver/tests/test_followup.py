@@ -1,4 +1,5 @@
 """Check the retention: 2 migrations, 1 successful, creates 1 PR"""
+
 from pathlib import Path
 
 import pytest

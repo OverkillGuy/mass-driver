@@ -1,6 +1,5 @@
 """Generic shell command driver"""
 
-
 import subprocess
 
 from mass_driver.models.patchdriver import PatchDriver, PatchOutcome, PatchResult

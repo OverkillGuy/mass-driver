@@ -1,4 +1,5 @@
 """Summarize the result of a run, even a previous one"""
+
 from collections import defaultdict
 from logging import Logger
 

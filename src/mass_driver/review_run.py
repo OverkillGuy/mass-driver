@@ -1,4 +1,5 @@
 """Check the status of created PRs, in bulk"""
+
 import logging
 from collections import defaultdict
 

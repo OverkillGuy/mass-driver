@@ -1,4 +1,5 @@
 """Command line entrypoint for mass-driver"""
+
 import logging
 import sys
 from argparse import ArgumentParser, FileType

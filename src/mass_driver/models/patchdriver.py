@@ -1,4 +1,5 @@
 """PatchDriver base object definition"""
+
 from enum import Enum
 from logging import Logger
 

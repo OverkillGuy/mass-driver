@@ -172,18 +172,18 @@ def forge_error_during_forge(repo: RepoOutcome) -> RepoOutcome:
 
 
 SAMPLE_DATA = generate()
-import logging
-import sys
+# import logging
+# import sys
 
-from mass_driver.summarize import explain
-from mass_driver import summarize as s
+# from mass_driver import summarize as s
+# from mass_driver.summarize import explain
 
-logging.basicConfig(stream=sys.stdout, level=logging.INFO)
+# logging.basicConfig(stream=sys.stdout, level=logging.INFO)
 
-logger = logging.getLogger("summary")
+# logger = logging.getLogger("summary")
 
 
-explain(SAMPLE_DATA.repos["repo-1"], logger)
-s.summarize_source(SAMPLE_DATA, logger)
-s.summarize_migration(SAMPLE_DATA, logger, details=False)
-s.summarize_forge(SAMPLE_DATA, logger, details=False)
+# explain(SAMPLE_DATA.repos["repo-1"], logger)
+# s.summarize_source(SAMPLE_DATA, logger)
+# s.summarize_migration(SAMPLE_DATA, logger, details=False)
+# s.summarize_forge(SAMPLE_DATA, logger, details=False)

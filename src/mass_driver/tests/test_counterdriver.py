@@ -15,7 +15,6 @@ bumping is not needed.
 
 """
 
-
 # test-start marker
 from pathlib import Path
 
