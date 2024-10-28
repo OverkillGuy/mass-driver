@@ -195,7 +195,7 @@ def maybe_save_outcome(args: Namespace, outcome: ActivityOutcome):
 
 def save_outcome(outcome: ActivityOutcome, out_file):
     """Save the output to given JSON file handle"""
-    out_file.write(outcome.json(indent=2))
+    out_file.write(outcome.model_dump_json(indent=2))
     out_file.write("\n")
 
 

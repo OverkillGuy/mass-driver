@@ -1,6 +1,7 @@
 """Repositories for cloning and patching"""
 
-from pydantic import BaseModel, BaseSettings
+from pydantic import BaseModel
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 from mass_driver.models.status import Error
 
@@ -51,13 +52,8 @@ IndexedClonedRepos = dict[RepoID, ClonedRepo]
 class Source(BaseSettings):
     """Base class for Sources of SourcedRepo, on which to apply patching or scan"""
 
+    model_config = SettingsConfigDict(env_prefix="SOURCE_")
+
     def discover(self) -> IndexedRepos:
         """Discover a list of repositories"""
         raise NotImplementedError("Source base class can't discover, use derived")
-
-    class Config:
-        """Configuration of the Source class"""
-
-        underscore_attrs_are_private = True
-        """Ensure that _api is treated private"""
-        env_prefix = "SOURCE_"

@@ -16,11 +16,11 @@ class MigrationFile(BaseModel):
 
     commit_message: str
     """The git commit message body to use when committing the migration"""
-    commit_author_name: str | None
+    commit_author_name: str | None = None
     """Override the default (global) git commit author name"""
-    commit_author_email: str | None
+    commit_author_email: str | None = None
     """Override the default (global) git commit author email"""
-    branch_name: str | None
+    branch_name: str | None = None
     """The branch name, if any, to use when committing the PatchDriver"""
     driver_name: str
     """The plugin-name of the PatchDriver to use, via plugin discovery"""
@@ -49,13 +49,13 @@ def load_migration(migration_config: str) -> MigrationFile:
             "Migration Config file given invalid: "
             f"Missing top-level '{TOML_PROJECTKEY}' key"
         )
-    return MigrationFile.parse_obj(migration_dict[TOML_PROJECTKEY])
+    return MigrationFile.model_validate(migration_dict[TOML_PROJECTKEY])
 
 
 def driver_from_config(config: MigrationFile) -> PatchDriver:
     """Create PatchDriver instance from config file (TOML)"""
     driver_class = get_driver(config.driver_name)
-    return driver_class.parse_obj(config.driver_config)
+    return driver_class.model_validate(config.driver_config)
 
 
 def load_driver(config: MigrationFile) -> MigrationLoaded:
@@ -66,7 +66,7 @@ def load_driver(config: MigrationFile) -> MigrationLoaded:
         if config.branch_name is None
         else config.branch_name
     )
-    migration = MigrationLoaded(driver=driver, **(config.dict()))
+    migration = MigrationLoaded(driver=driver, **(config.model_dump()))
     migration.branch_name = branch_name_override
     return migration
 
@@ -114,7 +114,7 @@ def load_forge_toml(forge_config: str) -> ForgeFile:
         raise ValueError(
             "Config file given invalid: " f"Missing top-level '{TOML_PROJECTKEY}' key"
         )
-    return ForgeFile.parse_obj(forge_dict[TOML_PROJECTKEY])
+    return ForgeFile.model_validate(forge_dict[TOML_PROJECTKEY])
 
 
 def forge_from_config(config: ForgeFile) -> ForgeLoaded:
@@ -123,7 +123,7 @@ def forge_from_config(config: ForgeFile) -> ForgeLoaded:
     forge_obj = forge_class(**config.forge_config)
     return ForgeLoaded(
         forge=forge_obj,
-        **(config.dict()),
+        **(config.model_dump()),
     )
 
 
@@ -163,16 +163,16 @@ def load_sourceconfig(source_config: str) -> SourceConfigFile:
             "SourceConfig file given invalid: "
             f"Missing top-level '{TOML_PROJECTKEY}' key"
         )
-    return SourceConfigFile.parse_obj(source_dict[TOML_PROJECTKEY])
+    return SourceConfigFile.model_validate(source_dict[TOML_PROJECTKEY])
 
 
 def source_from_config(config: SourceConfigFile) -> Source:
     """Create Source instance from config file (TOML)"""
     source_class = get_source(config.source_name)
-    return source_class.parse_obj(config.source_config)
+    return source_class.model_validate(config.source_config)
 
 
 def load_source(config: SourceConfigFile) -> SourceConfigLoaded:
     """Look up source and validate configuration (de-opaquify)"""
     source = source_from_config(config)
-    return SourceConfigLoaded(source=source, **(config.dict()))
+    return SourceConfigLoaded(source=source, **(config.model_dump()))

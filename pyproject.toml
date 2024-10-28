@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "mass_driver"
-version = "0.18.0"
+version = "0.19.0a1"
 description = "Send bulk repo change requests"
 authors = ["Jb Doyon <jb@jiby.tech>"]
 readme = "README.md"
@@ -25,8 +25,10 @@ GitPython = "*"
 # unstable semantic versioning[1]
 # [1]: https://github.com/PyGithub/PyGithub/issues/2472#issuecomment-1482378022
 PyGithub = "==2.1.1"
-# Mass-driver settings
-pydantic = "1.*"
+# Mass-driver object models
+pydantic = "2.*"
+# Setting objects (with envvars/docker secrets support)
+pydantic-settings = "*"
 
 [tool.poetry.group.test.dependencies]
 pytest = "7.*"

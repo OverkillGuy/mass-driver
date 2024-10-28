@@ -34,7 +34,7 @@ def clone_repo(
     cloned_repo = ClonedRepo(
         cloned_path=repo_gitobj.working_dir,
         current_branch=repo_gitobj.active_branch.name,
-        **repo.dict(),
+        **repo.model_dump(),
     )
     return cloned_repo, repo_gitobj
 
@@ -77,7 +77,7 @@ def scan_repo(
             scan_result[scanner.name] = scanner.func(Path(cloned_repo.cloned_path))
         except Exception as e:
             scan_result[scanner.name] = {
-                "scan_error": ExceptionRecord.from_exception(e).dict()
+                "scan_error": ExceptionRecord.from_exception(e).model_dump()
             }
     return scan_result
 

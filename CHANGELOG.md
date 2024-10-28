@@ -7,6 +7,9 @@ The project uses semantic versioning (see [semver](https://semver.org)).
 
 ### Changed
 
+- **BREAKING**: Upgraded pydantic to v2
+  - Check for downstream breakage, and use [pydantic v2 migration
+    guide](https://docs.pydantic.dev/latest/migration) to fix
 - **BREAKING**: `ActivityOutcome` rewritten from structure of arrays (dict,
   specifically), into an array-of-structure.
   - Allows for inspection of each repo's entire status, instead of slicing per

@@ -13,7 +13,7 @@ from mass_driver.models.patchdriver import PatchOutcome
 
 
 def repoize(path: Path):
-    """Create a git repo with inital commit at path"""
+    """Create a git repo with initial commit at path"""
     repo = Repo.init(path, bare=False, initial_branch="main")
     repo.index.add("*")
     repo.index.commit("Initial commit from template")

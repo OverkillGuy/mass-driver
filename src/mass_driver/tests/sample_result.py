@@ -118,7 +118,7 @@ def clone_ok(repo: RepoOutcome) -> RepoOutcome:
     repo_path = "/tmp/" + repo.repo_id
     repo.status = Phase.CLONE
     repo.clone = ClonedRepo(
-        cloned_path=repo_path, current_branch="main", **repo.source.dict()
+        cloned_path=repo_path, current_branch="main", **repo.source.model_dump()
     )
     return repo
 

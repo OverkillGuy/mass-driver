@@ -2,7 +2,8 @@
 
 from enum import Enum
 
-from pydantic import BaseModel, BaseSettings
+from pydantic import BaseModel
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 from mass_driver.models.repository import BranchName
 from mass_driver.models.status import Error
@@ -17,6 +18,8 @@ completed (unreviewed, draft, review-rejected, merge conflicts...)
 
 class Forge(BaseSettings):
     """Base class for git Forges like Github"""
+
+    model_config = SettingsConfigDict(env_prefix="FORGE_")
 
     def create_pr(
         self,
@@ -45,13 +48,6 @@ class Forge(BaseSettings):
         the PRs by status, from most completed to least completed.
         """
         raise NotImplementedError("Forge base class can't list PR status, use derived")
-
-    class Config:
-        """Configuration of the Forge class"""
-
-        underscore_attrs_are_private = True
-        """Ensure that _api is treated private"""
-        env_prefix = "FORGE_"
 
 
 class PROutcome(str, Enum):

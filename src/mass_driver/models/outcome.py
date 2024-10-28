@@ -27,6 +27,7 @@ class RepoOutcome(BaseModel):
     """The result of Forge, if any"""
     error: Error | None = None
     """The record of an error during a specific phase, if any happened"""
+    # TODO: Consider an array of activity history, with property-based activity access
 
 
 IndexedReposOutcome = dict[RepoID, RepoOutcome]
