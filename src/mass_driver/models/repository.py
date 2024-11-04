@@ -40,6 +40,8 @@ class ClonedRepo(SourcedRepo):
     """The filesystem path to the git cloned repo"""
     current_branch: BranchName
     """The name of the currently checked out branch"""
+    commit_hash: str
+    """The hash of the commit that we cloned"""
 
 
 IndexedRepos = dict[RepoID, SourcedRepo]
