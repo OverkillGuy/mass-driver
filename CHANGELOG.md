@@ -25,6 +25,7 @@ The project uses semantic versioning (see [semver](https://semver.org)).
   - **ACTION REQUIRED****: Update your `PatchDriver`s, replacing
     `repo.cloned_path` with `Path(repo.cloned_path)` in the `run(repo:
     ClonedRepo)` function.
+- New `--debug` argument to the `run` command, to get a `breakpoint` early on
 - Updated to python-template v1.7.2 (from 1.3.0)
 
 ### Added

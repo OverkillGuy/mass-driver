@@ -79,6 +79,11 @@ def run_subparser(subparser):
         "run",
         help="Run mass-driver, migration/forge activity across repos",
     )
+    run.add_argument(
+        "--debug",
+        help="Run mass-driver through a debugger, because it broke for you",
+        action="store_true",
+    )
     activity_arg(run)
     jsonout_args(run)
     run.add_argument(

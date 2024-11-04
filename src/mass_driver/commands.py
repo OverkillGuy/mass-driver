@@ -78,6 +78,8 @@ def run_command(args: Namespace) -> ActivityOutcome:
     logging.basicConfig(stream=sys.stdout, level=logging.INFO)
     logger = logging.getLogger("run")
     logger.info("Run mode!")
+    if args.debug:
+        breakpoint()
     activity_str = args.activity_file.read()
     try:
         activity = ActivityLoaded.from_config(activity_str)
