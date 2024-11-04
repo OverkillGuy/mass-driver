@@ -71,6 +71,12 @@ addopts = """-vv \
       --junit-xml=test_results/results.xml"""
 log_level = "INFO"
 
+[tool.coverage.run]
+omit = [
+  "src/mass_driver/tests/**",
+  "tests/**",
+]
+
 [tool.ruff]
 # Always fix what you can, without needing CLI flags
 fix = true
