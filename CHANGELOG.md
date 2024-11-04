@@ -42,6 +42,7 @@ The project uses semantic versioning (see [semver](https://semver.org)).
 
 ### Fixed
 
+- Activity files that are not valid TOML no longer crash mass-driver
 - Repos with migration failed (`PatchOutcome != PATCHED_OK`) no longer get
   sent for Forge activity
 

@@ -6,6 +6,7 @@ from argparse import Namespace
 from typing import Callable, Optional
 
 from pydantic import ValidationError
+from tomllib import TOMLDecodeError
 
 from mass_driver.activity_run import sequential_run, thread_run
 from mass_driver.discovery import (
@@ -83,6 +84,10 @@ def run_command(args: Namespace) -> ActivityOutcome:
     except ValidationError as e:
         config_error_exit(e)
     except ImportError as e:
+        logger.exception(e)
+        raise e
+    except TOMLDecodeError as e:
+        logger.error("Error reading the given mass-driver activity file")
         logger.exception(e)
         raise e
     # Source discovery to know what repos to patch/forge/scan
