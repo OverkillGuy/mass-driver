@@ -18,7 +18,8 @@ from mass_driver.tests.fixtures import (
 )
 
 
-def test_migration_and_forge(tmp_path, shared_datadir, monkeypatch):
+@pytest.mark.parametrize("parallel", [False, True])
+def test_migration_and_forge(tmp_path, shared_datadir, monkeypatch, parallel):
     """Feature: Validate the Forge CLI
 
          As the mass-driver dev
@@ -36,7 +37,8 @@ def test_migration_and_forge(tmp_path, shared_datadir, monkeypatch):
     repo_id = "."
     activityconfig_filepath = shared_datadir / "activity.toml"
     # When I run mass-driver
-    result = massdrive_runlocal(None, activityconfig_filepath)
+    args = ["--parallel"] if parallel else None
+    result = massdrive_runlocal(None, activityconfig_filepath, extra_args=args)
     res = result.repos[repo_id]
     if res.patch is None:
         return pytest.fail("Should have a migration result")
@@ -95,7 +97,8 @@ def test_migration_then_forge(tmp_path, shared_datadir, monkeypatch):
     ), "Should have returned correct PR URL"
 
 
-def test_scan(tmp_path, shared_datadir):
+@pytest.mark.parametrize("parallel", [False, True])
+def test_scan(tmp_path, shared_datadir, parallel):
     """Feature: Scan repositories
 
     As a mass-driver user
@@ -107,7 +110,8 @@ def test_scan(tmp_path, shared_datadir):
     activityconfig_filepath = shared_datadir / "activity.toml"
     # When I run a mass-driver scan
     repo_id = "."
-    result = massdrive_runlocal(None, activityconfig_filepath)
+    args = ["--parallel"] if parallel else None
+    result = massdrive_runlocal(None, activityconfig_filepath, extra_args=args)
     res = result.repos[repo_id]
     scan_result = res.scan
     # Then I get scan results

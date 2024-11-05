@@ -26,7 +26,9 @@ def copy_folder(repo_data, tmp_path):
 
 
 def massdrive_runlocal(
-    repo_url: str | None, activity_configfilepath: Path
+    repo_url: str | None,
+    activity_configfilepath: Path,
+    extra_args: list[str] | None = None,
 ) -> ActivityOutcome:
     """Run 'mass-driver run' with a local repo and activity config
 
@@ -40,6 +42,8 @@ def massdrive_runlocal(
     ]
     if repo_url is not None:
         massdrive_args.extend(["--repo-path", repo_url])
+    if extra_args is not None:
+        massdrive_args.extend(extra_args)
     return massdriver_cli(massdrive_args)
 
 
