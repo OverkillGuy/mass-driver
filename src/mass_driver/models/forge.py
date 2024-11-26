@@ -37,18 +37,6 @@ class Forge(BaseSettings):
         """Get the status of a single given PR, used as key to group PRs by status"""
         raise NotImplementedError("Forge base class can't get PR status, use derived")
 
-    @property
-    def pr_statuses(self) -> list[str]:
-        """A list of possible PR statuses that will be returned by get_pr_status.
-
-        List is sorted from most complete (accepted-and-merged) to least completed (not
-        merged, not review-approved, has merge-conflicts).
-
-        The returned list's ordering is used by the view-pr mass-driver command to show
-        the PRs by status, from most completed to least completed.
-        """
-        raise NotImplementedError("Forge base class can't list PR status, use derived")
-
 
 class PROutcome(str, Enum):
     """The category of result after using a Forge over a single repository"""

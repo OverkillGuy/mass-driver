@@ -8,8 +8,8 @@ The project uses semantic versioning (see [semver](https://semver.org)).
 ### Changed
 
 - **BREAKING**: Upgraded pydantic to v2
-  - Check for downstream breakage, and use [pydantic v2 migration
-    guide](https://docs.pydantic.dev/latest/migration) to fix
+  - **ACTION REQUIRED** Check your package for Pydantic warnings, follow the
+  [pydantic v2 migration guide](https://docs.pydantic.dev/latest/migration).
 - **BREAKING**: `ActivityOutcome` rewritten from structure of arrays (dict,
   specifically), into an array-of-structure.
   - Allows for inspection of each repo's entire status, instead of slicing per
@@ -19,12 +19,18 @@ The project uses semantic versioning (see [semver](https://semver.org)).
     a per-activity outcome containing error too, allowing for top-level status
     reporting of error + detail of error for each phase (like "Forge failed for
     this repo because the pre-requisite Clone activity failed")
+  - **ACTION REQUIRED**: Review any script depending on the JSON result of
+    `ActivityOutcome` object.
 - **BREAKING**: `ClonedRepo.cloned_path` is now `str`, not `DirectoryPath`.
   - Weaker type means no check for existence of the actual folder, allowing
     for URLs like `s3://`, avoiding actual `tmp_dir` use in local testing.
   - **ACTION REQUIRED****: Update your `PatchDriver`s, replacing
     `repo.cloned_path` with `Path(repo.cloned_path)` in the `run(repo:
     ClonedRepo)` function.
+- **BREAKING**: `Forge` plugins no longer require the `pr_statuses` property
+  - PRs will be ranked during the `review-pr` command based on the number of PRs
+    of each `Forge`-defined status.
+  - **ACTION REQUIRED**: Remove `pr_statuses` property from your Forge plugins
 - New `--debug` argument to the `run` command, to get a `breakpoint` early on
 - Updated to python-template v1.7.2 (from 1.3.0)
 
