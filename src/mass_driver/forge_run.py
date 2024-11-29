@@ -43,6 +43,5 @@ def main(
 def pause_until_ok(message: str):
     """Halt until keyboard input is a variant of YES"""
     while True:
-        typed_text = input(message)
-        if typed_text.lower() in ["y", "yes", "ok", "c", "continue"]:
+        if input(message).lower() in ["y", "ye", "yes", "ok", "c", "continue"]:
             break
