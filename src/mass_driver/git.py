@@ -37,6 +37,8 @@ def clone_if_remote(
         repo_name = Path(repo_path).name
 
     clone_target = cache_folder / org / repo_name
+    logger.info(clone_target)
+
     if clone_target.is_dir():
         logger.info("Given a URL for we cloned already: no cloning")
         return GitRepo(clone_target)
