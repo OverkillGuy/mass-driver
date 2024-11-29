@@ -19,13 +19,21 @@ def clone_if_remote(
         logger.info("Given an existing (local) repo: no cloning")
         # Clone it into cache anyway
         return GitRepo(path=repo_path)  # TODO: Actually clone-move the repo on the way.
+
     # SSH clone URL e.g: git@github.com:OverkillGuy/python-template
-    if ":" in repo_path:  # Presence of : is proxy for SSH clone URL
+    # https clone url e.g. https://mobius-gitlab.bt.com/platform/tribe/shared/main/shared-vpc.git
+    if repo_path.startswith("git@"):  # It's an SSH clone URL
         *_junk, repo_blurb = repo_path.split(":")
         org, repo_name = repo_blurb.split("/")
+    elif repo_path.startswith("http"): # it's an HTTP(s) clone URL
+        http_junk, repo_blurb = repo_path.split("://")
+        path = repo_blurb.split("/")
+        org = path[:-1]
+        repo_name = path[-1]
     else:
         org = "local"
         repo_name = Path(repo_path).name
+
     clone_target = cache_folder / org / repo_name
     if clone_target.is_dir():
         logger.info("Given a URL for we cloned already: no cloning")
