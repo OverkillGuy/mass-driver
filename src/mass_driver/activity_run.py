@@ -54,7 +54,6 @@ def sequential_run(
         repo_logger = logging.getLogger(repo_logger_name)
         try:
             repo_logger.info(f"[{repo_index:03d}/{repo_count:03d}] Processing {repo_id}...")
-            repo_logger.info(f"{}")
             cloned_repo, repo_gitobj = clone_repo(
                 repo, cache_folder, logger=repo_logger
             )
