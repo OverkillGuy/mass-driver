@@ -36,8 +36,8 @@ def clone_if_remote(
         org = "local"
         repo_name = Path(repo_path).name
 
-    clone_target = cache_folder / org / repo_name
-    logger.info(clone_target)
+    clone_target = org[1:] / repo_name
+    logger.info(f"Using {clone_target} to store repo {repo_name}")
 
     if clone_target.is_dir():
         logger.info("Given a URL for we cloned already: no cloning")
