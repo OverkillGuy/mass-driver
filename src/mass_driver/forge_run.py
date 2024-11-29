@@ -1,5 +1,6 @@
 """The main run-command of Forges, creating mass-PRs from existing branhces"""
 import logging
+import sys
 
 from mass_driver.models.activity import ActivityOutcome, IndexedPRResult
 from mass_driver.models.forge import PROutcome, PRResult
@@ -43,5 +44,8 @@ def main(
 def pause_until_ok(message: str):
     """Halt until keyboard input is a variant of YES"""
     while True:
-        if input(message).lower() in ["y", "ye", "yes", "ok", "c", "continue"]:
+        user_in = input(message).lower()
+        if user_in in ["y", "ye", "yes", "ok", "c", "continue"]:
             break
+        elif user_in in ["n", "no"]:
+            sys.exit(0)
