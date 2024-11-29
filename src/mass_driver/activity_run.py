@@ -7,9 +7,6 @@ import logging
 from concurrent import futures
 from copy import deepcopy
 
-from mass_driver.git import (
-    get_cache_folder,
-)
 from mass_driver.models.activity import (
     ActivityLoaded,
     ActivityOutcome,
@@ -37,7 +34,6 @@ def sequential_run(
     repo_count = len(repos.keys())
     migration = activity.migration
     scan = activity.scan
-    cache_folder = get_cache_folder(cache, logger=logger)
     cloned_repos: IndexedClonedRepos = {}
     scanner_results: IndexedScanResult | None = None
     patch_results: IndexedPatchResult | None = None
@@ -55,7 +51,7 @@ def sequential_run(
         try:
             repo_logger.info(f"[{repo_index:03d}/{repo_count:03d}] Processing {repo_id}...")
             cloned_repo, repo_gitobj = clone_repo(
-                repo, cache_folder, logger=repo_logger
+                repo, logger=repo_logger
             )
             cloned_repos[repo_id] = cloned_repo
         except Exception as e:

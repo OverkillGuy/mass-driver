@@ -11,9 +11,7 @@ from mass_driver.models.migration import MigrationLoaded
 DEFAULT_CACHE = Path(".mass_driver/repos/")
 
 
-def clone_if_remote(
-    repo_path: str, cache_folder: Path, logger: logging.Logger
-) -> GitRepo:
+def clone_if_remote(repo_path: str, logger: logging.Logger) -> GitRepo:
     """Build a GitRepo; If repo_path isn't a directory, clone it"""
     if Path(repo_path).is_dir():
         logger.info("Given an existing (local) repo: no cloning")
@@ -49,17 +47,6 @@ def clone_if_remote(
         multi_options=["--depth=1"],
     )
     return cloned
-
-
-def get_cache_folder(cache: bool, logger: logging.Logger) -> Path:
-    """Create a cache folder, either locally or in temp"""
-    cache_folder = DEFAULT_CACHE
-    if not cache:
-        cache_folder = Path(mkdtemp(suffix=".cache"))
-        logger.info(
-            f"Using repo cache folder: {cache_folder}/ (Won't wipe it on exit!)"
-        )
-    return cache_folder
 
 
 def commit(repo: GitRepo, migration: MigrationLoaded):
