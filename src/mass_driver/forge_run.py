@@ -29,7 +29,7 @@ def main(
             pr_results[repo_id] = result
         except Exception as e:
             logging.error(f"Error processing repo '{repo_id}'")
-            logging.error("Error was: {e}")
+            logging.error(f"Error was: {e}")
             pr_results[repo_id] = PRResult(
                 outcome=PROutcome.PR_FAILED,
                 details=f"Unhandled exception caught during patching. Error was: {e}",
@@ -42,8 +42,7 @@ def main(
 
 def pause_until_ok(message: str):
     """Halt until keyboard input is a variant of YES"""
-    continue_asking = True
-    while continue_asking:
+    while True:
         typed_text = input(message)
         if typed_text.lower() in ["y", "yes", "ok", "c", "continue"]:
-            continue_asking = False
+            break
