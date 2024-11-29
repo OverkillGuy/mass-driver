@@ -8,8 +8,6 @@ from git import Repo as GitRepo
 
 from mass_driver.models.migration import MigrationLoaded
 
-DEFAULT_CACHE = Path(".mass_driver/repos/")
-
 
 def clone_if_remote(repo_path: str, logger: logging.Logger) -> GitRepo:
     """Build a GitRepo; If repo_path isn't a directory, clone it"""
@@ -34,7 +32,7 @@ def clone_if_remote(repo_path: str, logger: logging.Logger) -> GitRepo:
         org = "local"
         repo_name = Path(repo_path).name
 
-    clone_target = org[1:] / repo_name
+    clone_target = f".mass_driver/{org[1:]}/{repo_name}"
     logger.info(f"Using {clone_target} to store repo {repo_name}")
 
     if clone_target.is_dir():
