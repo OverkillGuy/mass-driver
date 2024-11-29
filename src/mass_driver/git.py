@@ -27,7 +27,10 @@ def clone_if_remote(
     elif repo_path.startswith("http"): # it's an HTTP(s) clone URL
         http_junk, repo_blurb = repo_path.split("://")
         path = repo_blurb.split("/")
-        org = path[:-1]
+        path_list = path[:-1]
+        org = ""
+        for bit in path_list:
+            org = org + f"/{bit}"
         repo_name = path[-1]
     else:
         org = "local"
