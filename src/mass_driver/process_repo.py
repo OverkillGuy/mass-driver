@@ -27,10 +27,10 @@ from mass_driver.models.scan import ScanLoaded
 
 
 def clone_repo(
-    repo: SourcedRepo, cache_path: Path, logger: logging.Logger
+    repo: SourcedRepo, logger: logging.Logger
 ) -> tuple[ClonedRepo, GitRepo]:
     """Clone a repo (if needed) and switch branch"""
-    repo_gitobj = clone_if_remote(repo.clone_url, cache_path, logger=logger)
+    repo_gitobj = clone_if_remote(repo_path=repo.clone_url, logger=logger)
     switch_branch_then_pull(repo_gitobj, repo.force_pull, repo.upstream_branch)
     repo_local_path = Path(repo_gitobj.working_dir)
     cloned_repo = ClonedRepo(
