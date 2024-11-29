@@ -21,7 +21,6 @@ def clone_if_remote(
         return GitRepo(path=repo_path)  # TODO: Actually clone-move the repo on the way.
 
     # SSH clone URL e.g: git@github.com:OverkillGuy/python-template
-    # https clone url e.g. https://mobius-gitlab.bt.com/platform/tribe/shared/main/shared-vpc.git
     if repo_path.startswith("git@"):  # It's an SSH clone URL
         *_junk, repo_blurb = repo_path.split(":")
         org, repo_name = repo_blurb.split("/")
