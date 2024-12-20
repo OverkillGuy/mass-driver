@@ -19,11 +19,13 @@ from mass_driver.discovery import (
     get_forge_entrypoint,
     get_source_entrypoint,
 )
+from mass_driver.errors import ActivityLoadingException
 from mass_driver.forge_run import main as forge_main
 from mass_driver.forge_run import pause_until_ok
 from mass_driver.models.activity import (
     ActivityLoaded,
     ActivityOutcome,
+    bad_activity_error,
 )
 from mass_driver.models.outcome import RepoOutcome
 from mass_driver.models.repository import IndexedRepos, SourcedRepo
@@ -83,13 +85,20 @@ def run_command(args: Namespace) -> ActivityOutcome:
     activity_str = args.activity_file.read()
     try:
         activity = ActivityLoaded.from_config(activity_str)
-    except ValidationError as e:
-        config_error_exit(e)
-    except ImportError as e:
-        logger.exception(e)
+    except ActivityLoadingException as e:
+        errors = e.args[0]
+        for error in errors:
+            logger.error(error)
         raise e
     except TOMLDecodeError as e:
         logger.error("Error reading the given mass-driver activity file")
+        logger.exception(e)
+        raise e
+    except (ValidationError, ImportError, Exception) as e:
+        logger.exception(e)
+        raise e
+    except Exception as e:
+        logger.error("Unknown exception thrown during mass-driver activity file read")
         logger.exception(e)
         raise e
     # Source discovery to know what repos to patch/forge/scan
@@ -135,36 +144,19 @@ def scanners_command(args: Namespace):
 def review_pr_command(args: Namespace):
     """Review a list of Pull Requests"""
     logging.info("Pull request review mode!")
-    # FIXME: ALl this can crash, you know!
-    forge_class = get_forge(args.forge)
-    forge = forge_class()  # Credentials via env
+    try:
+        forge_class = get_forge(args.forge)
+        forge = forge_class()  # Credentials via env
+    except ValidationError as e:
+        errors = bad_activity_error(e, "Forge")
+        for error in errors:
+            logging.error(error)
+        return 1
     pr_list = args.pr
     if args.pr_filelist:
         pr_list = args.pr_filelist.read().strip().split("\n")
     review(pr_list, forge)
     return 0
-
-
-def config_error_exit(e: ValidationError):
-    """Exit in case of bad config models"""
-    model_class = e.model.__base__
-    try:
-        # Assume the class failing validation has env prefix
-        env_prefix = model_class.Config.env_prefix
-    except Exception:
-        logging.error("Missing config", exc_info=e)
-        raise
-    # We have a valid env_prefix now, use it to show missing envvar
-    model_class_name = model_class.__name__
-    for error in e.errors():
-        if error["type"] == "value_error.missing":
-            envvars = [env_prefix + var.upper() for var in error["loc"]]
-            logging.error(
-                f"Missing {model_class_name} config: Set envvar(s) {', '.join(envvars)}"
-            )
-        else:
-            logging.error(f"{model_class_name} config validation error: {error}")
-    raise e  # exit code = Simulate the argparse behaviour of exiting on bad args
 
 
 def source_repolist_args(args) -> Optional[ActivityOutcome]:

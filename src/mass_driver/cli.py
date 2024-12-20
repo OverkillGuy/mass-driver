@@ -5,7 +5,7 @@ import sys
 from argparse import ArgumentParser, FileType
 from typing import Callable
 
-from mass_driver import commands
+from mass_driver import commands, errors
 
 
 def gen_parser() -> ArgumentParser:
@@ -155,8 +155,13 @@ def cli(arguments: list[str]):
     pargs = parser.parse_args(arguments)
     try:
         return pargs.func(pargs)  # Dispatch to the subcommand func (drivers/run)
-    except Exception:
-        logging.error("Uncaught exception")  # , exc_info=e   # No catching backtrace!
+    except errors.ActivityLoadingException:
+        # Assumed handled in the func itself
+        logging.info("Halting due to activity-loading error")
+        return False
+    except Exception as e:
+        logging.error("Uncaught exception")
+        logging.exception(e)
         return False
 
 

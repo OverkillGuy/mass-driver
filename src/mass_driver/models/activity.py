@@ -3,10 +3,11 @@
 Encompasses both Migrations and Forge activities.
 """
 
-from pydantic import BaseModel
+from pydantic import BaseModel, ValidationError
 from tomllib import loads
 
 from mass_driver.discovery import get_scanner
+from mass_driver.errors import ActivityLoadingException
 from mass_driver.models.migration import (  # Forge,
     TOML_PROJECTKEY,
     ForgeFile,
@@ -62,25 +63,63 @@ def load_activity_toml(activity_config: str) -> ActivityFile:
             "Activity Config given invalid: "
             f"Missing top-level '{TOML_PROJECTKEY}' key"
         )
-    return ActivityFile.model_validate(activity_dict[TOML_PROJECTKEY])
+    return ActivityFile.parse_obj(activity_dict[TOML_PROJECTKEY])
 
 
 def load_activity(activity: ActivityFile) -> ActivityLoaded:
-    """Load up all plugins of an Activity"""
+    """Load up all plugins of an Activity
+
+    Raises:
+        ActivityLoadingException: Failure to load the full activity, like missing
+          forge/source/patchdriver config, possibly via envvar
+
+    """
+    errors = []
     if activity.source is not None:
-        source_loaded = load_source(activity.source)
+        try:
+            source_loaded = load_source(activity.source)
+        except ValidationError as e:
+            errors.extend(bad_activity_error(e, "Source"))
     if activity.scan is not None:
-        scan_loaded = load_scan(activity.scan)
+        try:
+            scan_loaded = load_scan(activity.scan)
+        except ValidationError as e:
+            errors.extend(bad_activity_error(e, "Scan", uses_envvars=False))
     if activity.migration is not None:
-        migration_loaded = load_driver(activity.migration)
+        try:
+            migration_loaded = load_driver(activity.migration)
+        except ValidationError as e:
+            errors.extend(bad_activity_error(e, "PatchDriver", uses_envvars=False))
     if activity.forge is not None:
-        forge_loaded = forge_from_config(activity.forge)
+        try:
+            forge_loaded = forge_from_config(activity.forge)
+        except ValidationError as e:
+            errors.extend(bad_activity_error(e, "Forge"))
+    if errors:
+        raise ActivityLoadingException(errors)
     return ActivityLoaded(
         source=source_loaded if activity.source is not None else None,
         scan=scan_loaded if activity.scan is not None else None,
         migration=migration_loaded if activity.migration is not None else None,
         forge=forge_loaded if activity.forge is not None else None,
     )
+
+
+def bad_activity_error(
+    e: ValidationError, object_name: str, uses_envvars: bool = True
+) -> list[str]:
+    """Deal with a loading/validation error of sub-activities"""
+    env_prefix = object_name.upper() + "_"
+    out = []
+    for error in e.errors():
+        if error["type"] == "missing" and uses_envvars:
+            envvars = [env_prefix + var.upper() for var in error["loc"]]
+            out.append(
+                f"Missing {object_name} config: Set envvar(s) {', '.join(envvars)}"
+            )
+        else:
+            out.append(f"{object_name} config validation error: {error}")
+    return out
 
 
 def load_scan(s: ScanFile):
