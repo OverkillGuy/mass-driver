@@ -76,6 +76,7 @@ def run_command(args: Namespace) -> ActivityOutcome:
     try:
         activity = ActivityLoaded.from_config(activity_str)
     except ValidationError as e:
+        print(activity_str)
         config_error_exit(e)
     except ImportError as e:
         logger.exception(e)
