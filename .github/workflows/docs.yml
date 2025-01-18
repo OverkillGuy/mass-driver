@@ -30,7 +30,7 @@ jobs:
       - name: Python install
         uses: actions/setup-python@v5
         with:
-          python-version: '3.12'
+          python-version: '3.13'
       - name: Poetry setup
         uses: Gr1N/setup-poetry@v9
       - run: poetry install --with=docs
