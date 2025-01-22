@@ -38,7 +38,7 @@ class ShellDriver(PatchDriver):
         if cmd.stderr.strip():
             self.logger.error(cmd.stderr)
         return (
-            PatchResult(PatchOutcome.PATCHED_OK)
+            PatchResult(outcome=PatchOutcome.PATCHED_OK)
             if cmd.returncode == 0
             else PatchResult(outcome=PatchOutcome.PATCH_ERROR, details=cmd.stderr)
         )

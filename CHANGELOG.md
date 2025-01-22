@@ -14,6 +14,10 @@ The project uses semantic versioning (see [semver](https://semver.org)).
 - `PatchDriver` Pydantic base class now allows extra fields ([Pydantic Extra
   fields](https://docs.pydantic.dev/latest/concepts/models/#extra-fields))
 
+### Fixed
+
+- `ShellDriver` crash caused by incorrect construction of `PatchOutcome` object.
+
 ## v0.18.0 - 2023-11-21
 
 ### Added
