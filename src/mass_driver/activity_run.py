@@ -75,6 +75,7 @@ def sequential_run(
                 )
                 patch_results[repo_id] = result
             except Exception as e:
+                repo_logger.error(f"Called migrate_repo with {cloned_repo} {repo_gitobj} {migration_copy} {repo_logger}")
                 repo_logger.error(f"Error migrating repo '{repo_id}'")
                 repo_logger.error(f"Error was: {e}")
                 patch_results[repo_id] = PatchResult(
