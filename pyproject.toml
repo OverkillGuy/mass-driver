@@ -1,8 +1,8 @@
 [tool.poetry]
 name = "mass_driver"
-version = "0.19.0"
+version = "0.19.1"
 description = "Send bulk repo change requests"
-authors = ["Jb Doyon <jb@jiby.tech>"]
+authors = ["Jb Doyon <jb@jiby.tech>", "Ben West <ben.west.500@gmail.com>"]
 readme = "README.md"
 license = "GPL-3.0-or-later"
 documentation = "https://jiby.tech/mass-driver"

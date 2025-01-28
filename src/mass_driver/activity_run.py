@@ -4,6 +4,7 @@ Variants for sequential or parallel
 """
 
 import logging
+import os
 from concurrent import futures
 from copy import deepcopy
 
@@ -116,7 +117,7 @@ def thread_run(
     logger.info(f"Processing {repo_count} with {' and '.join(what_array)}, via Threads")
 
     futures_map = {}
-    with futures.ThreadPoolExecutor(max_workers=8) as executor:
+    with futures.ThreadPoolExecutor(max_workers=int(os.environ.get("MASS_DRIVER_THREADS", 8))) as executor:
         for repo_id, repo in repos.items():
             future_obj = executor.submit(
                 per_repo_process,
