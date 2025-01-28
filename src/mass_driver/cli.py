@@ -149,7 +149,8 @@ def cli(arguments: list[str]):
     pargs = parser.parse_args(arguments)
     try:
         return pargs.func(pargs)  # Dispatch to the subcommand func (drivers/run)
-    except Exception:
+    except Exception as e:
+        logging.exception(e)
         logging.error("Uncaught exception")  # , exc_info=e   # No catching backtrace!
         return False
 

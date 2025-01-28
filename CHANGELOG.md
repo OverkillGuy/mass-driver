@@ -5,6 +5,10 @@ The project uses semantic versioning (see [semver](https://semver.org)).
 
 ## [Unreleased]
 
+### Fixed
+
+- Uncaught exceptions of the CLI are no longer shamefully hidden.
+
 ## v0.19.0 - 2025-01-22
 
 ### Added
