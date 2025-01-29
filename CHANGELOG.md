@@ -5,6 +5,10 @@ The project uses semantic versioning (see [semver](https://semver.org)).
 
 ## [Unreleased]
 
+### Added
+
+- New "deleter" PatchDriver, deletes file(s) specified if found.
+
 ### Fixed
 
 - Uncaught exceptions of the CLI are no longer shamefully hidden.
