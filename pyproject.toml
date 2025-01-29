@@ -104,7 +104,6 @@ check_untyped_defs = true
 
 [tool.poetry.plugins.'massdriver.drivers']
 counter = 'mass_driver.drivers.counter:Counter'
-precommit = 'mass_driver.drivers.precommit:PrecommitAutoupdate'
 shell = 'mass_driver.drivers.shell:ShellDriver'
 stamper = 'mass_driver.drivers.stamper:Stamper'
 deleter = 'mass_driver.drivers.deleter:FileDeleter'

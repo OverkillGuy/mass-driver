@@ -13,6 +13,12 @@ The project uses semantic versioning (see [semver](https://semver.org)).
 
 - Uncaught exceptions of the CLI are no longer shamefully hidden.
 
+### Removed
+
+- The under-cooked "precommit" PatchDriver is removed, useless and left broken
+  for a long time. If you need it, use a ShellDriver with `pre-commit
+  autoupdate` command instead
+
 ## v0.19.0 - 2025-01-22
 
 ### Added
