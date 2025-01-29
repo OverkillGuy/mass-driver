@@ -5,6 +5,7 @@ from logging import Logger
 from mass_driver.models.activity import (
     IndexedPatchResult,
     IndexedPRResult,
+    IndexedScanResult
 )
 from mass_driver.models.forge import PROutcome
 from mass_driver.models.repository import IndexedRepos
@@ -22,6 +23,20 @@ def group_by_outcome(result):
 def summarize_source(result: IndexedRepos, logger: Logger):
     """Summarize Source result"""
     logger.info(f"Source results: discovered {len(result.keys())} repos")
+
+
+def summarize_scan(result: IndexedScanResult, logger: Logger) -> None:
+    """
+    Log the scan result
+    Args:
+        result: The scan results
+        logger: The logger to write to
+
+    Returns:
+        None - Just writes to the logger.
+    """
+    for repo_id, repo_result in result.items():
+        logger.info(f"Scanned {repo_id} with result:\n{repo_result}\n")
 
 
 def summarize_migration(

@@ -23,7 +23,7 @@ from mass_driver.forge_run import pause_until_ok
 from mass_driver.models.activity import ActivityLoaded, ActivityOutcome
 from mass_driver.models.repository import IndexedRepos, SourcedRepo
 from mass_driver.review_run import review
-from mass_driver.summarize import summarize_forge, summarize_migration, summarize_source
+from mass_driver.summarize import summarize_forge, summarize_migration, summarize_source, summarize_scan
 
 
 def drivers_command(args: Namespace):
@@ -97,6 +97,10 @@ def run_command(args: Namespace) -> ActivityOutcome:
         )
         if activity.migration is not None and run_result.migration_result is not None:
             summarize_migration(run_result.migration_result, sum_logger)
+
+        if activity.scan is not None and run_result.scan_result is not None:
+            summarize_scan(run_result.scan_result, sum_logger)
+
     else:
         logger.info("No clone needed: skipping")
         run_result = ActivityOutcome(repos_sourced=repos_sourced)
