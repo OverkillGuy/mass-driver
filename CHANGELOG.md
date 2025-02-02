@@ -31,11 +31,11 @@ The project uses semantic versioning (see [semver](https://semver.org)).
   - PRs will be ranked during the `review-pr` command based on the number of PRs
     of each `Forge`-defined status.
   - **ACTION REQUIRED**: Remove `pr_statuses` property from your Forge plugins
-- New `--debug` argument to the `run` command, to get a `breakpoint` early on
 - Updated to python-template v1.7.2 (from 1.3.0)
 
 ### Added
 
+- New `--debug` argument to the `run` command, to get a `breakpoint` early on
 - New `ExceptionRecord` class, used in field `PatchResult.error`, captures
   exceptions found during execution, while remaining serializable.
 - New `Error` class for capturing for each repo, what went wrong in any phase
