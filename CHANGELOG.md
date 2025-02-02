@@ -5,6 +5,8 @@ The project uses semantic versioning (see [semver](https://semver.org)).
 
 ## [Unreleased]
 
+## v0.20.0 - 2025-02-02
+
 ### Added
 
 - New "deleter" PatchDriver, deletes file(s) specified if found.
