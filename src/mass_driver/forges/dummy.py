@@ -33,8 +33,3 @@ class DummyForge(Forge):
     def get_pr_status(self, pr_url) -> str:
         """Get the PR by ID on forge_repo"""
         return "merged"
-
-    @property
-    def pr_statuses(self) -> list[str]:
-        """List the possible PR status returned by get_pr_status, sorted by completion"""
-        return ["merged", "open"]

@@ -72,12 +72,15 @@ def push(repo: GitRepo, branch_name: str):
     remote.push(refspec=branch_name)
 
 
-def switch_branch_then_pull(repo: GitRepo, pull: bool, branch_name: str | None = None):
-    """Switch branch then pull"""
+def switch_branch_then_pull(
+    repo: GitRepo, pull: bool, branch_name: str | None = None
+) -> str:
+    """Switch branch then pull, returning the commit hash"""
     if branch_name is not None:
         repo.git.checkout(branch_name)
     if pull:
         repo.remote().pull()
+    return repo.head.object.hexsha
 
 
 def get_default_branch(r: GitRepo) -> str:

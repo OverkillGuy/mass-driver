@@ -1,10 +1,12 @@
 """PatchDriver base object definition"""
+
 from enum import Enum
 from logging import Logger
 
-from pydantic import BaseModel, Extra
+from pydantic import BaseModel, ConfigDict
 
 from mass_driver.models.repository import ClonedRepo
+from mass_driver.models.status import Error
 
 
 class PatchOutcome(str, Enum):
@@ -27,6 +29,8 @@ class PatchResult(BaseModel):
     """The kind of result that patching had"""
     details: str | None = None
     """Details of the PatchDriver as it patched this repo, if any"""
+    error: Error | None = None
+    """Detail of the error, that applied during patching, if any"""
 
 
 class PatchDriver(BaseModel):
@@ -34,6 +38,7 @@ class PatchDriver(BaseModel):
 
     _logger: Logger
     """The logger object for this driver. Given dynamically by migration"""
+    model_config = ConfigDict(extra="allow")
 
     def run(self, repo: ClonedRepo) -> PatchResult:
         """Apply the update to given (cloned) Git Repository.
@@ -46,10 +51,3 @@ class PatchDriver(BaseModel):
     def logger(self):
         """Grab the logger of this driver, as passed dynamically via mass-driver code"""
         return self._logger
-
-    class Config:
-        """Pydantic config of the PatchDriver class"""
-
-        underscore_attrs_are_private = True
-        """Ensure we can set internal non-serializeable fields via underscore"""
-        extra = Extra.allow

@@ -13,7 +13,7 @@ from mass_driver.models.patchdriver import PatchOutcome
 
 
 def repoize(path: Path):
-    """Create a git repo with inital commit at path"""
+    """Create a git repo with initial commit at path"""
     repo = Repo.init(path, bare=False, initial_branch="main")
     repo.index.add("*")
     repo.index.commit("Initial commit from template")
@@ -26,7 +26,9 @@ def copy_folder(repo_data, tmp_path):
 
 
 def massdrive_runlocal(
-    repo_url: str | None, activity_configfilepath: Path
+    repo_url: str | None,
+    activity_configfilepath: Path,
+    extra_args: list[str] | None = None,
 ) -> ActivityOutcome:
     """Run 'mass-driver run' with a local repo and activity config
 
@@ -40,6 +42,8 @@ def massdrive_runlocal(
     ]
     if repo_url is not None:
         massdrive_args.extend(["--repo-path", repo_url])
+    if extra_args is not None:
+        massdrive_args.extend(extra_args)
     return massdriver_cli(massdrive_args)
 
 
@@ -53,8 +57,8 @@ def massdrive(repo_url: str, activity_configfilepath: Path, repo_is_path: bool =
     the local path as a git repo or not. This means if giving a proper git
     cloneable URL, set `repo_is_path=False`.
 
-    Note:
-        See pytest-datadir's "datadir" fixture for convenient data linking
+    See Also:
+        Pytest-datadir's "datadir" fixture for convenient data linking
 
     Returns:
         A tuple of (PatchResult, ForgeResult, ScanResult) returned by mass-driver for
@@ -63,17 +67,9 @@ def massdrive(repo_url: str, activity_configfilepath: Path, repo_is_path: bool =
     if repo_is_path:
         repoize(Path(repo_url))
     result = massdrive_runlocal(repo_url, activity_configfilepath)
-    scan_result = (
-        result.scan_result[repo_url] if result.scan_result is not None else None
-    )
-    mig_result = (
-        result.migration_result[repo_url]
-        if result.migration_result is not None
-        else None
-    )
-    for_result = (
-        result.forge_result[repo_url] if result.forge_result is not None else None
-    )
+    scan_result = result.repos[repo_url].scan
+    mig_result = result.repos[repo_url].patch
+    for_result = result.repos[repo_url].forge
     return mig_result, for_result, scan_result
 
 

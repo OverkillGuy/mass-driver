@@ -1,4 +1,5 @@
 """Scanners for repos"""
+
 from pathlib import Path
 from typing import Any, Callable, NamedTuple
 

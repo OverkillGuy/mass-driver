@@ -1,6 +1,7 @@
 """Patterns of PatchDriver that are reusable"""
 
 from logging import Logger
+from pathlib import Path
 
 from mass_driver.models.patchdriver import PatchDriver, PatchOutcome, PatchResult
 from mass_driver.models.repository import ClonedRepo
@@ -24,7 +25,7 @@ class SingleFileEditor(PatchDriver):
 
     def run(self, repo: ClonedRepo) -> PatchResult:
         """Edit the target file"""
-        target_fullpath = repo.cloned_path / self.target_file
+        target_fullpath = Path(repo.cloned_path) / self.target_file
         if not target_fullpath.is_file():
             return PatchResult(
                 outcome=PatchOutcome.PATCH_DOES_NOT_APPLY,
@@ -75,7 +76,7 @@ class GlobFileEditor(PatchDriver):
 
     def run(self, repo: ClonedRepo) -> PatchResult:
         """Edit the target file"""
-        targets = sorted(repo.cloned_path.glob(self.target_glob))
+        targets = sorted(Path(repo.cloned_path).glob(self.target_glob))
         self.logger.info(f"Found {len(targets)} files to edit")
         self.before_run(targets)
         outcomes: dict[str, PatchResult] = {}

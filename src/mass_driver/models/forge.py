@@ -2,9 +2,11 @@
 
 from enum import Enum
 
-from pydantic import BaseModel, BaseSettings
+from pydantic import BaseModel
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 from mass_driver.models.repository import BranchName
+from mass_driver.models.status import Error
 
 PRStatus = dict[str, bool]
 """The status of a specific PR, as series of flags and bool-predicate.
@@ -16,6 +18,8 @@ completed (unreviewed, draft, review-rejected, merge conflicts...)
 
 class Forge(BaseSettings):
     """Base class for git Forges like Github"""
+
+    model_config = SettingsConfigDict(env_prefix="FORGE_")
 
     def create_pr(
         self,
@@ -32,25 +36,6 @@ class Forge(BaseSettings):
     def get_pr_status(self, pr: str) -> str:
         """Get the status of a single given PR, used as key to group PRs by status"""
         raise NotImplementedError("Forge base class can't get PR status, use derived")
-
-    @property
-    def pr_statuses(self) -> list[str]:
-        """A list of possible PR statuses that will be returned by get_pr_status.
-
-        List is sorted from most complete (accepted-and-merged) to least completed (not
-        merged, not review-approved, has merge-conflicts).
-
-        The returned list's ordering is used by the view-pr mass-driver command to show
-        the PRs by status, from most completed to least completed.
-        """
-        raise NotImplementedError("Forge base class can't list PR status, use derived")
-
-    class Config:
-        """Configuration of the Forge class"""
-
-        underscore_attrs_are_private = True
-        """Ensure that _api is treated private"""
-        env_prefix = "FORGE_"
 
 
 class PROutcome(str, Enum):
@@ -69,5 +54,5 @@ class PRResult(BaseModel):
     """The kind of result that PR creation had"""
     pr_html_url: str | None = None
     """The HTML URL of the PR that was generated, if any"""
-    details: str | None = None
-    """Details of the PR creation of this repo, if any"""
+    error: Error | None = None
+    """Detail of the error, that applied during patching, if any"""

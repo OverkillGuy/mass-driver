@@ -4,7 +4,6 @@ Given a single repo, process SINGLE "activity" (clone OR migrate OR scan OR forg
 """
 
 import logging
-import traceback
 from pathlib import Path
 
 from mass_driver.git import (
@@ -15,7 +14,6 @@ from mass_driver.git import (
     push,
     switch_branch_then_pull,
 )
-from mass_driver.models.activity import ScanResult
 from mass_driver.models.forge import PROutcome, PRResult
 from mass_driver.models.migration import ForgeLoaded, MigrationLoaded
 from mass_driver.models.patchdriver import PatchOutcome, PatchResult
@@ -24,6 +22,7 @@ from mass_driver.models.repository import (
     SourcedRepo,
 )
 from mass_driver.models.scan import ScanLoaded
+from mass_driver.models.status import Error, ExceptionRecord, Phase, ScanResult
 
 
 def clone_repo(
@@ -31,23 +30,22 @@ def clone_repo(
 ) -> tuple[ClonedRepo, GitRepo]:
     """Clone a repo (if needed) and switch branch"""
     repo_gitobj = clone_if_remote(repo.clone_url, cache_path, logger=logger)
-    switch_branch_then_pull(repo_gitobj, repo.force_pull, repo.upstream_branch)
-    repo_local_path = Path(repo_gitobj.working_dir)
+    commit = switch_branch_then_pull(repo_gitobj, repo.force_pull, repo.upstream_branch)
     cloned_repo = ClonedRepo(
-        cloned_path=repo_local_path,
+        cloned_path=str(repo_gitobj.working_dir),
         current_branch=repo_gitobj.active_branch.name,
-        **repo.dict(),
+        commit_hash=commit,
+        **repo.model_dump(),
     )
     return cloned_repo, repo_gitobj
 
 
-# TODO: Avoid passing out the exception, catch the trace in details kw (see scanner_run)
 def migrate_repo(
     cloned_repo: ClonedRepo,
     repo_gitobj: GitRepo,
     migration: MigrationLoaded,
     logger: logging.Logger,
-) -> tuple[PatchResult, Exception | None]:
+) -> PatchResult:
     """Process a repo with Mass Driver"""
     try:
         migration.driver._logger = logging.getLogger(
@@ -57,15 +55,16 @@ def migrate_repo(
     except Exception as e:
         result = PatchResult(
             outcome=PatchOutcome.PATCH_ERROR,
-            details=f"Unhandled exception caught during patching. Error was: {e}",
+            details="Unhandled exception caught during patching",
+            error=Error.from_exception(activity=Phase.PATCH, exception=e),
         )
-        return (result, e)
+        return result
     logger.info(result.outcome.value)
     if result.outcome != PatchOutcome.PATCHED_OK:
-        return (result, None)
+        return result
     # Patched OK: Save the mutation
     commit(repo_gitobj, migration)
-    return (result, None)
+    return result
 
 
 def scan_repo(
@@ -76,13 +75,10 @@ def scan_repo(
     scan_result: ScanResult = {}
     for scanner in config.scanners:
         try:
-            scan_result[scanner.name] = scanner.func(cloned_repo.cloned_path)
+            scan_result[scanner.name] = scanner.func(Path(cloned_repo.cloned_path))
         except Exception as e:
             scan_result[scanner.name] = {
-                "scan_error": {
-                    "exception": str(e),
-                    "backtrace": traceback.format_exception(e),
-                }
+                "scan_error": ExceptionRecord.from_exception(e).model_dump()
             }
     return scan_result
 
@@ -95,7 +91,7 @@ def forge_per_repo(
     repo_path = repo.cloned_path
     if repo_path is None:
         raise ValueError("Repo not cloned locally, can't create PR of it")
-    git_repo = GitRepo(path=str(repo_path))
+    git_repo = GitRepo(path=repo_path)
     if config.git_push_first:
         push(git_repo, config.head_branch)
     # Grab the repo's remote URL to feed it to the forge for ID

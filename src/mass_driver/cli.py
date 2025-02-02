@@ -1,10 +1,11 @@
 """Command line entrypoint for mass-driver"""
+
 import logging
 import sys
 from argparse import ArgumentParser, FileType
 from typing import Callable
 
-from mass_driver import commands
+from mass_driver import commands, errors
 
 
 def gen_parser() -> ArgumentParser:
@@ -52,8 +53,9 @@ def activity_arg(subparser: ArgumentParser):
 def jsonout_args(subparser: ArgumentParser):
     """Add the output files argument"""
     subparser.add_argument(
-        "--json-outfile",
-        help="If set, store the output to JSON file with this name",
+        "-o",
+        "--output",
+        help="Filepath where to store the output JSON file, summarizing progress",
         type=FileType("w"),
     )
 
@@ -77,6 +79,11 @@ def run_subparser(subparser):
     run = subparser.add_parser(
         "run",
         help="Run mass-driver, migration/forge activity across repos",
+    )
+    run.add_argument(
+        "--debug",
+        help="Run mass-driver through a debugger, because it broke for you",
+        action="store_true",
     )
     activity_arg(run)
     jsonout_args(run)
@@ -149,9 +156,13 @@ def cli(arguments: list[str]):
     pargs = parser.parse_args(arguments)
     try:
         return pargs.func(pargs)  # Dispatch to the subcommand func (drivers/run)
+    except errors.ActivityLoadingException:
+        # Assumed handled in the func itself
+        logging.info("Halting due to activity-loading error")
+        return False
     except Exception as e:
+        logging.error("Uncaught exception")
         logging.exception(e)
-        logging.error("Uncaught exception")  # , exc_info=e   # No catching backtrace!
         return False
 
 

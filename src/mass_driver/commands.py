@@ -6,6 +6,7 @@ from argparse import Namespace
 from typing import Callable, Optional
 
 from pydantic import ValidationError
+from tomllib import TOMLDecodeError
 
 from mass_driver.activity_run import sequential_run, thread_run
 from mass_driver.discovery import (
@@ -18,10 +19,17 @@ from mass_driver.discovery import (
     get_forge_entrypoint,
     get_source_entrypoint,
 )
+from mass_driver.errors import ActivityLoadingException
 from mass_driver.forge_run import main as forge_main
 from mass_driver.forge_run import pause_until_ok
-from mass_driver.models.activity import ActivityLoaded, ActivityOutcome
+from mass_driver.models.activity import (
+    ActivityLoaded,
+    ActivityOutcome,
+    bad_activity_error,
+)
+from mass_driver.models.outcome import RepoOutcome
 from mass_driver.models.repository import IndexedRepos, SourcedRepo
+from mass_driver.models.status import Phase
 from mass_driver.review_run import review
 from mass_driver.summarize import summarize_forge, summarize_migration, summarize_source
 
@@ -72,33 +80,42 @@ def run_command(args: Namespace) -> ActivityOutcome:
     logging.basicConfig(stream=sys.stdout, level=logging.INFO)
     logger = logging.getLogger("run")
     logger.info("Run mode!")
+    if args.debug:
+        breakpoint()
     activity_str = args.activity_file.read()
     try:
         activity = ActivityLoaded.from_config(activity_str)
-    except ValidationError as e:
-        config_error_exit(e)
-    except ImportError as e:
+    except ActivityLoadingException as e:
+        errors = e.args[0]
+        for error in errors:
+            logger.error(error)
+        raise e
+    except TOMLDecodeError as e:
+        logger.error("Error reading the given mass-driver activity file")
+        logger.exception(e)
+        raise e
+    except (ValidationError, ImportError, Exception) as e:
+        logger.exception(e)
+        raise e
+    except Exception as e:
+        logger.error("Unknown exception thrown during mass-driver activity file read")
         logger.exception(e)
         raise e
     # Source discovery to know what repos to patch/forge/scan
-    source_config = activity.source
-    repos_sourced = source_repolist_args(args)
     sum_logger = logging.getLogger("summarize")
-    if repos_sourced is None:  # No repo-list from CLI flags: call Source
-        repos_sourced = source_config.source.discover()
-        summarize_source(repos_sourced, sum_logger)
+    out = maybe_discover_sources(args, activity.source, sum_logger)
     if needs_run(activity):
         run_variant = thread_run if args.parallel else sequential_run
         run_result = run_variant(
             activity,
-            repos_sourced,
+            out,
             not args.no_cache,
         )
-        if activity.migration is not None and run_result.migration_result is not None:
-            summarize_migration(run_result.migration_result, sum_logger)
+        if activity.migration is not None:
+            summarize_migration(run_result, sum_logger)
     else:
         logger.info("No clone needed: skipping")
-        run_result = ActivityOutcome(repos_sourced=repos_sourced)
+        run_result = out
     logger.info("Main phase complete!")
     if activity.forge is None:
         # Nothing else to do, just print completion and exit
@@ -111,8 +128,7 @@ def run_command(args: Namespace) -> ActivityOutcome:
         pause_until_ok("Type y/yes/continue to run the Forge\n")
     result = forge_main(activity.forge, run_result)
     maybe_save_outcome(args, result)
-    if result.forge_result is not None:
-        summarize_forge(result.forge_result, sum_logger)
+    summarize_forge(result, sum_logger)
     return result
 
 
@@ -128,9 +144,14 @@ def scanners_command(args: Namespace):
 def review_pr_command(args: Namespace):
     """Review a list of Pull Requests"""
     logging.info("Pull request review mode!")
-    # FIXME: ALl this can crash, you know!
-    forge_class = get_forge(args.forge)
-    forge = forge_class()  # Credentials via env
+    try:
+        forge_class = get_forge(args.forge)
+        forge = forge_class()  # Credentials via env
+    except ValidationError as e:
+        errors = bad_activity_error(e, "Forge")
+        for error in errors:
+            logging.error(error)
+        return 1
     pr_list = args.pr
     if args.pr_filelist:
         pr_list = args.pr_filelist.read().strip().split("\n")
@@ -138,38 +159,20 @@ def review_pr_command(args: Namespace):
     return 0
 
 
-def config_error_exit(e: ValidationError):
-    """Exit in case of bad config models"""
-    model_class = e.model.__base__
-    try:
-        # Assume the class failing validation has env prefix
-        env_prefix = model_class.Config.env_prefix
-    except Exception:
-        logging.error("Missing config", exc_info=e)
-        raise
-    # We have a valid env_prefix now, use it to show missing envvar
-    model_class_name = model_class.__name__
-    for error in e.errors():
-        if error["type"] == "value_error.missing":
-            envvars = [env_prefix + var.upper() for var in error["loc"]]
-            logging.error(
-                f"Missing {model_class_name} config: Set envvar(s) {', '.join(envvars)}"
-            )
-        else:
-            logging.error(f"{model_class_name} config validation error: {error}")
-    raise e  # exit code = Simulate the argparse behaviour of exiting on bad args
-
-
-def source_repolist_args(args) -> Optional[IndexedRepos]:
+def source_repolist_args(args) -> Optional[ActivityOutcome]:
     """Read the repo from args, if any"""
     repos = read_repolist(args)
-    if repos is not None:
-        return (
-            {url: SourcedRepo(repo_id=url, clone_url=url) for url in repos}
-            if repos
-            else None
+    if repos is None:
+        return None
+    repo_dict = {
+        url: RepoOutcome(
+            repo_id=url,
+            status=Phase.SOURCE,
+            source=SourcedRepo(repo_id=url, clone_url=url),
         )
-    return None
+        for url in repos
+    }
+    return ActivityOutcome(repos=repo_dict)
 
 
 def read_repolist(args) -> Optional[list[str]]:
@@ -183,15 +186,15 @@ def read_repolist(args) -> Optional[list[str]]:
 
 def maybe_save_outcome(args: Namespace, outcome: ActivityOutcome):
     """Consider saving the outcome"""
-    if not args.json_outfile:
+    if not args.output:
         return
-    save_outcome(outcome, args.json_outfile)
+    save_outcome(outcome, args.output)
     logging.info("Saved outcome to given JSON file")
 
 
 def save_outcome(outcome: ActivityOutcome, out_file):
     """Save the output to given JSON file handle"""
-    out_file.write(outcome.json(indent=2))
+    out_file.write(outcome.model_dump_json(indent=2))
     out_file.write("\n")
 
 
@@ -208,3 +211,25 @@ def needs_run(activity: ActivityLoaded) -> bool:
     got_forge_clone = activity.forge is not None and activity.forge.git_push_first
     # activity-running is only needed if we need some clone:
     return got_mig or got_scan or got_forge_clone
+
+
+def sourced_to_outcome(r: IndexedRepos) -> ActivityOutcome:
+    """Convert the result of sourcing back to a full activity"""
+    repos = {}
+    for repo_id, sourced_repo in r.items():
+        repos[repo_id] = RepoOutcome(
+            repo_id=repo_id, status=Phase.SOURCE, source=sourced_repo
+        )
+    return ActivityOutcome(repos=repos)
+
+
+def maybe_discover_sources(args, source_config, sum_logger) -> ActivityOutcome:
+    """Discover sources, either CLI or properly"""
+    repos_sourced = source_repolist_args(args)
+    if repos_sourced is None:  # No repo-list from CLI flags: call Source
+        repos_sourced = source_config.source.discover()
+        out = sourced_to_outcome(repos_sourced)
+    else:
+        out = repos_sourced
+    summarize_source(out, sum_logger)
+    return out

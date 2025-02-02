@@ -21,7 +21,7 @@ class Stamper(PatchDriver):
 
     def run(self, repo: ClonedRepo) -> PatchResult:
         """Create the file on given repo, creating folder the way"""
-        target_path_abs = repo.cloned_path / Path(self.filepath_to_create)
+        target_path_abs = Path(repo.cloned_path) / self.filepath_to_create
         # Create parent folders on the way
         target_path_abs.parent.mkdir(parents=True, exist_ok=True)
         if target_path_abs.is_file():

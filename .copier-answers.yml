@@ -1,9 +1,10 @@
 # Changes here will be overwritten by Copier; NEVER EDIT MANUALLY
-_commit: v1.3.1
+_commit: v1.8.0
 _src_path: gh:OverkillGuy/python-template
 author_email: jb@jiby.tech
 author_name: Jb Doyon
 description: Send bulk PR requests
+dynamic_versioning: false
 package_name: mass_driver
 project_name: Mass Driver
 project_slug: mass-driver

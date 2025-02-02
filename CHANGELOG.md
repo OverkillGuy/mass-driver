@@ -5,6 +5,56 @@ The project uses semantic versioning (see [semver](https://semver.org)).
 
 ## [Unreleased]
 
+### Changed
+
+- **BREAKING**: Upgraded pydantic to v2
+  - **ACTION REQUIRED** Check your package for Pydantic warnings, follow the
+  [pydantic v2 migration guide](https://docs.pydantic.dev/latest/migration).
+- **BREAKING**: Rename `--json-outfile` flag to `--output` (`-o` abbreviation).
+- **BREAKING**: `ActivityOutcome` rewritten from structure of arrays (dict,
+  specifically), into an array-of-structure.
+  - Allows for inspection of each repo's entire status, instead of slicing per
+    "activity". Per-repo granularity is required to offload activities to
+    individual workers, for future performance improvements via concurrency.
+  - Each of the new per-repo `RepoOutcome` objects contains a top-level error +
+    a per-activity outcome containing error too, allowing for top-level status
+    reporting of error + detail of error for each phase (like "Forge failed for
+    this repo because the pre-requisite Clone activity failed")
+  - **ACTION REQUIRED**: Review any script depending on the JSON result of
+    `ActivityOutcome` object.
+- **BREAKING**: `ClonedRepo.cloned_path` is now `str`, not `DirectoryPath`.
+  - Weaker type means no check for existence of the actual folder, allowing
+    for URLs like `s3://`, avoiding actual `tmp_dir` use in local testing.
+  - **ACTION REQUIRED****: Update your `PatchDriver`s, replacing
+    `repo.cloned_path` with `Path(repo.cloned_path)` in the `run(repo:
+    ClonedRepo)` function.
+- **BREAKING**: `Forge` plugins no longer require the `pr_statuses` property
+  - PRs will be ranked during the `review-pr` command based on the number of PRs
+    of each `Forge`-defined status.
+  - **ACTION REQUIRED**: Remove `pr_statuses` property from your Forge plugins
+- Updated to python-template v1.8.0 (from 1.3.0)
+
+### Added
+
+- New `--debug` argument to the `run` command, to get a `breakpoint` early on
+- New `ExceptionRecord` class, used in field `PatchResult.error`, captures
+  exceptions found during execution, while remaining serializable.
+- New `Error` class for capturing for each repo, what went wrong in any phase
+- `ClonedRepo` now includes `commit_hash` string, to know what you cloned
+- Add `GlobFileEditor.before_run()` to run arbitrary code before processing the
+  first file
+- New function `replace_many` in `patchdrivers.brick`, to replace many patterns
+  in a string at once. Perfect for the kind of file `sed` replacement
+- `PatchDriver` Pydantic base class now allows extra fields by default ([Pydantic Extra fields](https://docs.pydantic.dev/latest/concepts/models/#extra-fields))
+- Test fixture `massdriver_runlocal` now takes `extra_args` optional argument to
+  allow any CLI flags to be used in tests
+
+### Fixed
+
+- Activity files that are not valid TOML no longer crash mass-driver
+- Repos with migration failed (`PatchOutcome != PATCHED_OK`) no longer get
+  sent for Forge activity
+
 ## v0.20.0 - 2025-02-02
 
 ### Added

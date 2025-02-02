@@ -75,7 +75,7 @@ class CSVFileSource(Source):
             reader = csv.DictReader(csv_file, **reader_args)
             for row in reader:
                 # Grab all the SourcedRepo-matching fields off CSV row
-                repo_fields = set(SourcedRepo.__fields__) - {"patch_data"}
+                repo_fields = set(SourcedRepo.model_fields) - {"patch_data"}
                 csv_repo_fields = {k: row[k] for k in repo_fields if k in row}
                 # Anything NOT in SourcedRepo fields goes to patch_data = {fieldname:csv-value}
                 csv_extra_fields = row.keys() - repo_fields

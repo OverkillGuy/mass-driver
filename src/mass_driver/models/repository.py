@@ -1,6 +1,9 @@
 """Repositories for cloning and patching"""
 
-from pydantic import BaseModel, BaseSettings, DirectoryPath
+from pydantic import BaseModel
+from pydantic_settings import BaseSettings, SettingsConfigDict
+
+from mass_driver.models.status import Error
 
 BranchName = str
 """A git branch name, assumed to exist remotely on the Forge"""
@@ -26,15 +29,19 @@ class SourcedRepo(BaseModel):
     """Pull the given branch before handing it over (useful when reusing repos)"""
     patch_data: dict = {}
     """Arbitrary data dict from Source"""
+    error: Error | None = None
+    """An error regarding this repository"""
 
 
 class ClonedRepo(SourcedRepo):
     """A repository after it has been successfully cloned, branch configured"""
 
-    cloned_path: DirectoryPath
+    cloned_path: str
     """The filesystem path to the git cloned repo"""
     current_branch: BranchName
     """The name of the currently checked out branch"""
+    commit_hash: str
+    """The hash of the commit that we cloned"""
 
 
 IndexedRepos = dict[RepoID, SourcedRepo]
@@ -47,13 +54,8 @@ IndexedClonedRepos = dict[RepoID, ClonedRepo]
 class Source(BaseSettings):
     """Base class for Sources of SourcedRepo, on which to apply patching or scan"""
 
+    model_config = SettingsConfigDict(env_prefix="SOURCE_")
+
     def discover(self) -> IndexedRepos:
         """Discover a list of repositories"""
         raise NotImplementedError("Source base class can't discover, use derived")
-
-    class Config:
-        """Configuration of the Source class"""
-
-        underscore_attrs_are_private = True
-        """Ensure that _api is treated private"""
-        env_prefix = "SOURCE_"
