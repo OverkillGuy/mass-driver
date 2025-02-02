@@ -63,7 +63,7 @@ def load_activity_toml(activity_config: str) -> ActivityFile:
             "Activity Config given invalid: "
             f"Missing top-level '{TOML_PROJECTKEY}' key"
         )
-    return ActivityFile.parse_obj(activity_dict[TOML_PROJECTKEY])
+    return ActivityFile.model_validate(activity_dict[TOML_PROJECTKEY])
 
 
 def load_activity(activity: ActivityFile) -> ActivityLoaded:

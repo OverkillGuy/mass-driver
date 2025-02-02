@@ -32,7 +32,7 @@ def clone_repo(
     repo_gitobj = clone_if_remote(repo.clone_url, cache_path, logger=logger)
     commit = switch_branch_then_pull(repo_gitobj, repo.force_pull, repo.upstream_branch)
     cloned_repo = ClonedRepo(
-        cloned_path=repo_gitobj.working_dir,
+        cloned_path=str(repo_gitobj.working_dir),
         current_branch=repo_gitobj.active_branch.name,
         commit_hash=commit,
         **repo.model_dump(),

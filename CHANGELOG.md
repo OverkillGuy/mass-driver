@@ -10,6 +10,7 @@ The project uses semantic versioning (see [semver](https://semver.org)).
 - **BREAKING**: Upgraded pydantic to v2
   - **ACTION REQUIRED** Check your package for Pydantic warnings, follow the
   [pydantic v2 migration guide](https://docs.pydantic.dev/latest/migration).
+- **BREAKING**: Rename `--json-outfile` flag to `--output` (`-o` abbreviation).
 - **BREAKING**: `ActivityOutcome` rewritten from structure of arrays (dict,
   specifically), into an array-of-structure.
   - Allows for inspection of each repo's entire status, instead of slicing per
@@ -31,7 +32,6 @@ The project uses semantic versioning (see [semver](https://semver.org)).
   - PRs will be ranked during the `review-pr` command based on the number of PRs
     of each `Forge`-defined status.
   - **ACTION REQUIRED**: Remove `pr_statuses` property from your Forge plugins
-- **BREAKING**: Rename `--json-outfile` flag to `--output` (`-o` abbreviation).
 - Updated to python-template v1.7.2 (from 1.3.0)
 
 ### Added
