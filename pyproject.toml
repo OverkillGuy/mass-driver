@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "mass_driver"
-version = "0.19.1"
+version = "0.20.0"
 description = "Send bulk repo change requests"
 authors = ["Jb Doyon <jb@jiby.tech>", "Ben West <ben.west.500@gmail.com>"]
 readme = "README.md"
@@ -17,7 +17,7 @@ classifiers = [
 mass-driver = "mass_driver.cli:main"
 
 [tool.poetry.dependencies]
-python = "^3.11"
+python = "^3.13"
 # Manipulate git repos: Clone, diff, commit patches...
 GitPython = "*"
 # Github Forge support.
