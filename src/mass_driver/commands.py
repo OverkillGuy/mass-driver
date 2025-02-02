@@ -186,9 +186,9 @@ def read_repolist(args) -> Optional[list[str]]:
 
 def maybe_save_outcome(args: Namespace, outcome: ActivityOutcome):
     """Consider saving the outcome"""
-    if not args.json_outfile:
+    if not args.output:
         return
-    save_outcome(outcome, args.json_outfile)
+    save_outcome(outcome, args.output)
     logging.info("Saved outcome to given JSON file")
 
 

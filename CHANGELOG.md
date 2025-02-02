@@ -31,6 +31,7 @@ The project uses semantic versioning (see [semver](https://semver.org)).
   - PRs will be ranked during the `review-pr` command based on the number of PRs
     of each `Forge`-defined status.
   - **ACTION REQUIRED**: Remove `pr_statuses` property from your Forge plugins
+- **BREAKING**: Rename `--json-outfile` flag to `--output` (`-o` abbreviation).
 - Updated to python-template v1.7.2 (from 1.3.0)
 
 ### Added

@@ -53,8 +53,9 @@ def activity_arg(subparser: ArgumentParser):
 def jsonout_args(subparser: ArgumentParser):
     """Add the output files argument"""
     subparser.add_argument(
-        "--json-outfile",
-        help="If set, store the output to JSON file with this name",
+        "-o",
+        "--output",
+        help="Filepath where to store the output JSON file, summarizing progress",
         type=FileType("w"),
     )
 
