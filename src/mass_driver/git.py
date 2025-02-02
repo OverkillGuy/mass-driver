@@ -2,31 +2,37 @@
 
 import logging
 from pathlib import Path
-from tempfile import mkdtemp
-
 from git import Repo as GitRepo
 
 from mass_driver.models.migration import MigrationLoaded
 
-DEFAULT_CACHE = Path(".mass_driver/repos/")
 
-
-def clone_if_remote(
-    repo_path: str, cache_folder: Path, logger: logging.Logger
-) -> GitRepo:
+def clone_if_remote(repo_path: str, logger: logging.Logger) -> GitRepo:
     """Build a GitRepo; If repo_path isn't a directory, clone it"""
     if Path(repo_path).is_dir():
         logger.info("Given an existing (local) repo: no cloning")
         # Clone it into cache anyway
         return GitRepo(path=repo_path)  # TODO: Actually clone-move the repo on the way.
+
     # SSH clone URL e.g: git@github.com:OverkillGuy/python-template
-    if ":" in repo_path:  # Presence of : is proxy for SSH clone URL
+    if repo_path.startswith("git@"):  # It's an SSH clone URL
         *_junk, repo_blurb = repo_path.split(":")
         org, repo_name = repo_blurb.split("/")
+    elif repo_path.startswith("http"): # it's an HTTP(s) clone URL
+        http_junk, repo_blurb = repo_path.split("://")
+        path = repo_blurb.split("/")
+        path_list = path[:-1]
+        org = ""
+        for bit in path_list:
+            org = org + f"/{bit}"
+        repo_name = path[-1]
     else:
         org = "local"
         repo_name = Path(repo_path).name
-    clone_target = cache_folder / org / repo_name
+
+    clone_target = Path(f".mass_driver/{org[1:]}/{repo_name}")
+    logger.info(f"Using {clone_target} to store repo {repo_name}")
+
     if clone_target.is_dir():
         logger.info("Given a URL for we cloned already: no cloning")
         return GitRepo(clone_target)
@@ -37,17 +43,6 @@ def clone_if_remote(
         multi_options=["--depth=1"],
     )
     return cloned
-
-
-def get_cache_folder(cache: bool, logger: logging.Logger) -> Path:
-    """Create a cache folder, either locally or in temp"""
-    cache_folder = DEFAULT_CACHE
-    if not cache:
-        cache_folder = Path(mkdtemp(suffix=".cache"))
-        logger.info(
-            f"Using repo cache folder: {cache_folder}/ (Won't wipe it on exit!)"
-        )
-    return cache_folder
 
 
 def commit(repo: GitRepo, migration: MigrationLoaded):

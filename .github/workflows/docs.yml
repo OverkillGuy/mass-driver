@@ -5,6 +5,7 @@ on:
   # Runs on pushes targeting the default branch
   push:
     branches: ["main"]
+  pull_request:
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -21,30 +22,34 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  # Single deploy job since we're just deploying
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Python install
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - name: Poetry setup
+        uses: Gr1N/setup-poetry@v9
+      - run: poetry install --with=docs
+      - name: Build the docs
+        run: make docs
+      - name: Upload artifact to github pages
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: 'docs/build/html'
   deploy:
+    if: github.ref == 'refs/heads/main'
+    needs: build
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-      - name: Python install
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.11'
-      - name: Poetry setup
-        uses: Gr1N/setup-poetry@v8
-      - run: poetry install --with=docs
-      - name: Build the docs
-        run: make docs
       - name: Setup Pages
-        uses: actions/configure-pages@v2
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v1
-        with:
-          path: 'docs/build/html'
+        uses: actions/configure-pages@v5
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v1
+        uses: actions/deploy-pages@v4

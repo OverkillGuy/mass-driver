@@ -4,12 +4,10 @@ Variants for sequential or parallel
 """
 
 import logging
+import os
 from concurrent import futures
 from copy import deepcopy
 
-from mass_driver.git import (
-    get_cache_folder,
-)
 from mass_driver.models.activity import (
     ActivityLoaded,
     ActivityOutcome,
@@ -37,7 +35,6 @@ def sequential_run(
     repo_count = len(repos.keys())
     migration = activity.migration
     scan = activity.scan
-    cache_folder = get_cache_folder(cache, logger=logger)
     cloned_repos: IndexedClonedRepos = {}
     scanner_results: IndexedScanResult | None = None
     patch_results: IndexedPatchResult | None = None
@@ -53,9 +50,9 @@ def sequential_run(
         repo_logger_name = f"{logger.name}.repo.{repo_id.replace('.','_')}"
         repo_logger = logging.getLogger(repo_logger_name)
         try:
-            logger.info(f"[{repo_index:03d}/{repo_count:03d}] Processing {repo_id}...")
+            repo_logger.info(f"[{repo_index:03d}/{repo_count:03d}] Processing {repo_id}...")
             cloned_repo, repo_gitobj = clone_repo(
-                repo, cache_folder, logger=repo_logger
+                repo, logger=repo_logger
             )
             cloned_repos[repo_id] = cloned_repo
         except Exception as e:
@@ -79,6 +76,7 @@ def sequential_run(
                 )
                 patch_results[repo_id] = result
             except Exception as e:
+                repo_logger.error(f"Called migrate_repo with {cloned_repo} {repo_gitobj} {migration_copy} {repo_logger}")
                 repo_logger.error(f"Error migrating repo '{repo_id}'")
                 repo_logger.error(f"Error was: {e}")
                 patch_results[repo_id] = PatchResult(
@@ -119,7 +117,7 @@ def thread_run(
     logger.info(f"Processing {repo_count} with {' and '.join(what_array)}, via Threads")
 
     futures_map = {}
-    with futures.ThreadPoolExecutor(max_workers=8) as executor:
+    with futures.ThreadPoolExecutor(max_workers=int(os.environ.get("MASS_DRIVER_THREADS", 8))) as executor:
         for repo_id, repo in repos.items():
             future_obj = executor.submit(
                 per_repo_process,

@@ -27,10 +27,10 @@ from mass_driver.models.scan import ScanLoaded
 
 
 def clone_repo(
-    repo: SourcedRepo, cache_path: Path, logger: logging.Logger
+    repo: SourcedRepo, logger: logging.Logger
 ) -> tuple[ClonedRepo, GitRepo]:
     """Clone a repo (if needed) and switch branch"""
-    repo_gitobj = clone_if_remote(repo.clone_url, cache_path, logger=logger)
+    repo_gitobj = clone_if_remote(repo_path=repo.clone_url, logger=logger)
     switch_branch_then_pull(repo_gitobj, repo.force_pull, repo.upstream_branch)
     repo_local_path = Path(repo_gitobj.working_dir)
     cloned_repo = ClonedRepo(
@@ -59,19 +59,16 @@ def migrate_repo(
             outcome=PatchOutcome.PATCH_ERROR,
             details=f"Unhandled exception caught during patching. Error was: {e}",
         )
-        return (result, e)
+        return result, e
     logger.info(result.outcome.value)
     if result.outcome != PatchOutcome.PATCHED_OK:
-        return (result, None)
+        return result, None
     # Patched OK: Save the mutation
     commit(repo_gitobj, migration)
-    return (result, None)
+    return result, None
 
 
-def scan_repo(
-    config: ScanLoaded,
-    cloned_repo: ClonedRepo,
-) -> ScanResult:
+def scan_repo(config: ScanLoaded, cloned_repo: ClonedRepo) -> ScanResult:
     """Apply all Scanners on a single repo"""
     scan_result: ScanResult = {}
     for scanner in config.scanners:
@@ -87,11 +84,13 @@ def scan_repo(
     return scan_result
 
 
-def forge_per_repo(
-    config: ForgeLoaded,
-    repo: ClonedRepo,
-) -> PRResult:
-    """Process a single repo"""
+def forge_per_repo(config: ForgeLoaded, repo: ClonedRepo) -> PRResult:
+    """
+    Run the forge
+    :param config:
+    :param repo:
+    :return:
+    """
     repo_path = repo.cloned_path
     if repo_path is None:
         raise ValueError("Repo not cloned locally, can't create PR of it")

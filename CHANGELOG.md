@@ -5,6 +5,28 @@ The project uses semantic versioning (see [semver](https://semver.org)).
 
 ## [Unreleased]
 
+## v0.18.x
+
+### Added
+
+- `dev` dependencies group in `pyproject.yoml` including:
+  - `bump-pydantic` used in the pydantic v2 migration
+  - `pre-commit` for anyone who hasn't got it
+
+### Fixed
+
+- Updated `pydantic` and refactor from `v1` to `^2.7`
+- Updated `astroid` lib to `^3.2.0`
+- Github actions updates
+  - Updated all actions to use node `20` where needed
+    - See [Github announcement](https://github.blog/changelog/2023-09-22-github-actions-transitioning-from-node-16-to-node-20/)
+  - Update next `python` version used in tests from beta to latest `3.12` release
+  - Update docs build to run on `3.12`
+  - Split docs into `build` and `deploy` jobs so docs are tested/made at PR.
+- CHANGELOG doc template updated to hide unreleased changes in doc build.
+
+## [End Unreleased]
+
 ### Added
 
 - New "deleter" PatchDriver, deletes file(s) specified if found.

@@ -1,5 +1,6 @@
 """The main run-command of Forges, creating mass-PRs from existing branhces"""
 import logging
+import sys
 
 from mass_driver.models.activity import ActivityOutcome, IndexedPRResult
 from mass_driver.models.forge import PROutcome, PRResult
@@ -29,7 +30,7 @@ def main(
             pr_results[repo_id] = result
         except Exception as e:
             logging.error(f"Error processing repo '{repo_id}'")
-            logging.error("Error was: {e}")
+            logging.error(f"Error was: {e}")
             pr_results[repo_id] = PRResult(
                 outcome=PROutcome.PR_FAILED,
                 details=f"Unhandled exception caught during patching. Error was: {e}",
@@ -42,8 +43,9 @@ def main(
 
 def pause_until_ok(message: str):
     """Halt until keyboard input is a variant of YES"""
-    continue_asking = True
-    while continue_asking:
-        typed_text = input(message)
-        if typed_text.lower() in ["y", "yes", "ok", "c", "continue"]:
-            continue_asking = False
+    while True:
+        user_in = input(message).lower()
+        if user_in in ["y", "ye", "yes", "ok", "c", "continue"]:
+            break
+        elif user_in in ["n", "no"]:
+            sys.exit(0)
