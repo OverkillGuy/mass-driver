@@ -57,8 +57,8 @@ def massdrive(repo_url: str, activity_configfilepath: Path, repo_is_path: bool =
     the local path as a git repo or not. This means if giving a proper git
     cloneable URL, set `repo_is_path=False`.
 
-    Note:
-        See pytest-datadir's "datadir" fixture for convenient data linking
+    See Also:
+        Pytest-datadir's "datadir" fixture for convenient data linking
 
     Returns:
         A tuple of (PatchResult, ForgeResult, ScanResult) returned by mass-driver for

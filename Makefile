@@ -85,7 +85,7 @@ install-hooks:
 
 ## Build the 'release' docker image (just the package installed)
 .PHONY: docker-build-release
-docker-build-release: export-requirements
+docker-build-release:
 	docker build \
 		-t "${DOCKER_REGISTRY}${DOCKER_IMAGE_NAME}:${APP_VERSION}" \
 		-f release.Dockerfile \
@@ -128,27 +128,12 @@ lock:
 update:
 	poetry update --lock
 
-## Generate a pip-compatible requirements.txt
-## From the poetry.lock. Mostly for CI use.
-.PHONY: export-requirements
-export-requirements: lock
-	sha256sum poetry.lock > requirements.txt \
-		&& sed -i '1s/^/# /' requirements.txt \
-		&& poetry export --format=requirements.txt >>requirements.txt
-
-
-## Confirm the requirements.txt's source (poetry.lock) is identical to current
-## poetry.lock file
-check-requirements:
-	head -n1 requirements.txt | sed 's/^# //' | sha256sum -c
-
 ## Install tools (poetry, pre-commit) via pipx
 ## Assumes you have pipx installed
 # See https://jiby.tech/post/my-python-toolbox/#pipx-for-cli-installs-not-pip
 .PHONY: install-tools
 install-tools:
 	pipx install poetry
-	pipx inject poetry poetry-plugin-export
 	pipx install pre-commit
 
 ## Ensure Poetry will generate virtualenv inside the git repo /.venv/

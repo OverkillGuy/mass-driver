@@ -16,12 +16,8 @@ FROM python:3.11-slim as runner
 
 # Bring the wheel file
 COPY --from=builder /workdir/dist /app
-# And pinned dependencies from lockfile
-COPY requirements.txt /app
 
-# Install the prod-requirements (pinned from poetry.lock to SHA256)
-# Then the actual code (with all dependencies already met)
-RUN pip install --no-cache-dir -r /app/requirements.txt && \
-    pip install --no-cache-dir /app/*.whl
+# Install the package
+RUN pip install --no-cache-dir /app/*.whl
 
 ENTRYPOINT ["mass-driver"]

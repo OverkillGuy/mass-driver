@@ -15,11 +15,12 @@ import os
 import sys
 
 sys.path.insert(0, os.path.abspath("../../src"))
+sys.path.insert(0, os.path.abspath("../../docs/source"))
 
 # -- Project information -----------------------------------------------------
 
 project = "Mass Driver"
-copyright = "2022, Jb Doyon"
+copyright = "2025, Jb Doyon"
 author = "Jb Doyon"
 
 
@@ -63,7 +64,7 @@ autodoc2_packages = [
 ]
 # Enable all docstrings as Myst Markdown
 autodoc2_docstring_parser_regexes = [
-    (r".*", "myst"),
+    (r".*", "docstring_parser"),
 ]
 
 myst_heading_anchors = 2

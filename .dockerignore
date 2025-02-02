@@ -6,9 +6,6 @@
 # do matter a lot, and you'll want to keep Poetry.lock tracked = keep
 # commented
 
-# Avoid arbitrary git changes invalidating docker context
-.git
-
 ################################################################################
 # Global ignore list, common in BOTH .dockerignore, and .gitignore
 # Make sure that whatever is done below is copied to the other file

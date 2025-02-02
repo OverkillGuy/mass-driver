@@ -2,7 +2,7 @@ FROM python:3.11-bookworm
 
 # Bring poetry, our package manager, and pre-commit hooks
 ARG POETRY_VERSION=1.8.1
-ARG PRECOMMIT_VERSION=3.6.2
+ARG PRECOMMIT_VERSION=4.1.0
 RUN pip install --no-cache-dir \
     poetry==${POETRY_VERSION} \
     pre-commit==${PRECOMMIT_VERSION}
