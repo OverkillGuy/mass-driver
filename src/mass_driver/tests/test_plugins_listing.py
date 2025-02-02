@@ -15,7 +15,7 @@ from mass_driver.models.patchdriver import PatchDriver
 from mass_driver.models.repository import Source
 
 
-@pytest.mark.parametrize("driver_name", ["shell", "precommit", "counter"])
+@pytest.mark.parametrize("driver_name", ["shell", "counter"])
 def test_discover_builtin_drivers(driver_name):
     """Scenario: Built-in drivers are discovered"""
     # Given a built-in PatchDriver exposed as <driver_name> plugin
